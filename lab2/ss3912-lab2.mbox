@@ -1,0 +1,472 @@
+From d82e267cac729b6143baae1a28b09cbcc6558e4a Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sun, 7 Oct 2012 22:08:42 -0400
+Subject: [PATCH 1/2] Committed all files
+
+---
+ part1/Makefile        |   15 +++++++++++
+ part1/ascend_order.c  |   24 +++++++++++++++++
+ part1/ascend_order.h  |    6 +++++
+ part1/descend_order.c |   22 ++++++++++++++++
+ part1/descend_order.h |    6 +++++
+ part1/isort           |  Bin 0 -> 8794 bytes
+ part1/main.c          |   70 +++++++++++++++++++++++++++++++++++++++++++++++++
+ part2/Makefile        |    9 +++++++
+ part2/twecho          |  Bin 0 -> 10480 bytes
+ part2/twecho.c        |   34 ++++++++++++++++++++++--
+ 10 files changed, 184 insertions(+), 2 deletions(-)
+ create mode 100644 part1/Makefile
+ create mode 100644 part1/ascend_order.c
+ create mode 100644 part1/ascend_order.h
+ create mode 100644 part1/descend_order.c
+ create mode 100644 part1/descend_order.h
+ create mode 100755 part1/isort
+ create mode 100644 part1/main.c
+ create mode 100644 part2/Makefile
+ create mode 100755 part2/twecho
+
+diff --git a/part1/Makefile b/part1/Makefile
+new file mode 100644
+index 0000000..e40822b
+--- /dev/null
++++ b/part1/Makefile
+@@ -0,0 +1,15 @@
++main: main.o ascend_order.o descend_order.o 
++	gcc -o isort -Wall -g main.o ascend_order.o descend_order.o 
++
++main.o: main.c ascend_order.h descend_order.h
++
++ascend_order.o: ascend_order.c ascend_order.h 
++
++descend_order.o: descend_order.c descend_order.h 
++
++.PHONY: clean 
++clean: 
++	rm -f *.o *~  
++
++.PHONY: all
++all: clean main 
+diff --git a/part1/ascend_order.c b/part1/ascend_order.c
+new file mode 100644
+index 0000000..2e41c4d
+--- /dev/null
++++ b/part1/ascend_order.c
+@@ -0,0 +1,24 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include "ascend_order.h"
++
++
++int ascend_order(int * t, int a)
++{
++	int j, i, temp; 
++	
++	for(j=1; j<a; j++)
++	{
++		temp=t[j]; 
++		for(i=j-1; (i >=0) && (t[i] > temp); i--)
++		{
++			t[i+1]=t[i]; 
++		}/*end inner for loop*/ 
++	
++		t[i+1]=temp; 
++
++	}/*end outer for loop*/
++
++	return * t; 
++
++} /*end function*/ 
+diff --git a/part1/ascend_order.h b/part1/ascend_order.h
+new file mode 100644
+index 0000000..4e39f2e
+--- /dev/null
++++ b/part1/ascend_order.h
+@@ -0,0 +1,6 @@
++#ifndef _ASCEND_ORDER_H_
++#define _ASCEND_ORDER_H_ 
++
++int ascend_order(int * t, int a); 
++
++#endif 
+diff --git a/part1/descend_order.c b/part1/descend_order.c
+new file mode 100644
+index 0000000..654ec39
+--- /dev/null
++++ b/part1/descend_order.c
+@@ -0,0 +1,22 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include "descend_order.h" 
++
++int descend_order(int * s, int a)
++{
++	int i, j, temp; 
++
++	for(j=1; j<a; j++)
++	{
++		temp= s[j]; 
++		for(i=j-1; (i >=0) && (s[i] < temp); i--)
++		{
++			s[i+1]=s[i]; 
++		} /*end inner for loop*/ 
++		
++		s[i+1]=temp; 
++
++	} /*end outer for loop*/ 
++
++	return * s; 
++}/*end function*/ 
+diff --git a/part1/descend_order.h b/part1/descend_order.h
+new file mode 100644
+index 0000000..d1604ad
+--- /dev/null
++++ b/part1/descend_order.h
+@@ -0,0 +1,6 @@
++#ifndef _DESCEND_ORDER_H_
++#define _DESCEND_ORDER_H_
++
++int descend_order(int * s, int a);
++
++#endif 
+diff --git a/part1/isort b/part1/isort
+new file mode 100755
+index 0000000000000000000000000000000000000000..16487905737665892d98eaea0ce34dbf09909bff
+GIT binary patch
+literal 8794
+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
+aWLl!ZWKvJ!7+a2@OQvtK{cVi@6YO7<xpprA
+
+literal 0
+HcmV?d00001
+
+diff --git a/part1/main.c b/part1/main.c
+new file mode 100644
+index 0000000..091bfbd
+--- /dev/null
++++ b/part1/main.c
+@@ -0,0 +1,70 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include "ascend_order.h"
++#include "descend_order.h" 
++
++int ascend_order(int * t, int a);
++int descend_order(int * s, int a);
++
++int main()
++{
++	int a; /*the user input for size of array*/
++	
++	printf("Please enter the size of the array you wish to crease: \n");
++	scanf("%d", & a); 
++	
++	int *array=(int *) malloc(a *sizeof(int)); /*original array and allocating memory to it*/ 
++	int *array_one=(int *) malloc(a *sizeof(int));  /*first copy of array and allocating memory to it*/
++	int *array_two=(int *) malloc(a *sizeof(int)); /*second copy of array and allocating memory to it*/
++
++	int i;  
++	for (i=0; i<a; i++)
++	{
++		array[i]= random(); /*fills the ith place in the array with a random number*/
++	} /*end for loop*/ 
++	
++	int c; 
++	for (c=0; c<a; c++)
++	{
++		array_one[c] = array[c]; /*copies array into array_one */ 
++	} /*end for loop*/ 
++
++	ascend_order(array_one, a); /*sorts array_one so smallest integer is first*/
++
++	int d; 
++	for (d=0; d<a; d++)
++	{
++		array_two[d]= array[d]; /*copies array into array_two */ 
++	} /*end for loop*/  
++
++	descend_order(array_two,a); /*sorts array_two so largest integer is first */ 
++
++	printf("The elements of the original array: \n"); 
++	
++	int e; 
++	for(e=0; e<a; e++)
++	{
++		printf("%d\n", array[e]); /*printing each element of the original array*/ 
++	} /*end for loop */ 
++
++	printf("The elements of the first copy are: \n"); 
++	
++	int f; 
++	for(f=0; f<a; f++)
++	{
++		printf("%d\n", array_one[f]); 
++	} /*end for loop*/ 
++
++	printf("The elements of the second copy are: \n"); 
++
++	int g; 
++	for(g=0; g<a; g++)
++	{
++		printf("%d\n", array_two[g]); 
++	} /*end for loop*/ 
++	
++	free(array); //freeing the memory allocated
++	free(array_one); 
++	free(array_two);  
++
++} /*end main function*/ 
+diff --git a/part2/Makefile b/part2/Makefile
+new file mode 100644
+index 0000000..c13845a
+--- /dev/null
++++ b/part2/Makefile
+@@ -0,0 +1,9 @@
++twecho: twecho.o 
++	gcc -o twecho -Wall -g twecho.c
++
++.PHONY: clean
++clean: 
++	rm -f *.o *~
++
++.PHONY: all
++all: clean main 
+diff --git a/part2/twecho b/part2/twecho
+new file mode 100755
+index 0000000000000000000000000000000000000000..829560ba6a96fec657e72b5d2eb008a5bc489099
+GIT binary patch
+literal 10480
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/part2/twecho.c b/part2/twecho.c
+index c70e975..76df57c 100644
+--- a/part2/twecho.c
++++ b/part2/twecho.c
+@@ -9,13 +9,43 @@
+ 
+ static char **duplicateArgs(int argc, char **argv)
+ {
++	char** cpyarray=(char **)calloc((argc+1), sizeof(char *)); 
+ 
+-}
++	int b; 
++		
++	for (b=0; b<argc; b++)//loops through every string 
++	{
++		int d= 1+ strlen(argv[b]); 
++		
++		cpyarray[b]= (char *) calloc(d , sizeof(char)); //same as malloc but no need to manually add zero at the end 
++		int f; 
++		for(f=0; f<d; f++)//loops through every character of the string 
++		{
++			
++			cpyarray[b][f]= toupper(argv[b][f]); 
++
++		} //end inner for loop 	 
++	
++	}//end outer for loop 
++
++	return cpyarray; 
++
++}//end function 
+ 
+ static void freeDuplicatedArgs(char **copy)
+ {
++	int g=0; 
++ 
++	while(copy[g] != 0)
++	{
+ 
+-}
++		free(copy[g]); 
++		g++; 
++	} //end while loop 
++
++	free(copy); 
++
++}//end function
+ 
+ /*
+  * DO NOT MODIFY main().
+-- 
+1.7.9.5
+
+
+From fc185dddedd4daf67767e80d965e3224e341193a Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sun, 7 Oct 2012 22:11:46 -0400
+Subject: [PATCH 2/2] README committed
+
+---
+ README.txt |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/README.txt b/README.txt
+index 66dfd3e..d828f70 100644
+--- a/README.txt
++++ b/README.txt
+@@ -1,11 +1,12 @@
+-This file should contain:
+-
+-  - your name
+-  - your UNI
+-  - lab assignment number
+-  - description for each part
+-  
+-The description should indicate whether your solution for the part is
+-working or not.  You may also want to include anything else you would
+-like to communicate to the grader such as extra functionalities you
+-implemented or how you tried to fix your non-working code.
++Sabina Smajlaj
++ss3912
++Lab2
++
++Part1:
++
++The code works as specified. 
++
++
++Part2: 
++
++The code works as specified. 
+-- 
+1.7.9.5
+

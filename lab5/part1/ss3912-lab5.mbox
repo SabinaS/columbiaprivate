@@ -1,0 +1,145 @@
+From 3f2262921b06647b97a309e8db9f3349c7b1f1f3 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sun, 28 Oct 2012 12:12:07 -0400
+Subject: [PATCH] Comitted all files
+
+---
+ README.txt                     |    9 ++++++
+ part1/Makefile                 |   18 +++++++++++
+ part1/mdb-lookup-server-nc-2.c |   68 ++++++++++++++++++++++++++++++++++++++++
+ part1/mdb-lookup-server-nc.sh  |    7 +++++
+ 4 files changed, 102 insertions(+)
+ create mode 100644 README.txt
+ create mode 100644 part1/Makefile
+ create mode 100644 part1/mdb-lookup-server-nc-2.c
+ create mode 100755 part1/mdb-lookup-server-nc.sh
+
+diff --git a/README.txt b/README.txt
+new file mode 100644
+index 0000000..384b7d2
+--- /dev/null
++++ b/README.txt
+@@ -0,0 +1,9 @@
++Sabina Smajlaj
++ss3912	
++LAb Assignemnt #5
++
++Programs work as they should.
++
++This is a few minutes late just because it has been taking me a long time to submit it. 
++
++Run make all instead of make. 
+diff --git a/part1/Makefile b/part1/Makefile
+new file mode 100644
+index 0000000..b4bc669
+--- /dev/null
++++ b/part1/Makefile
+@@ -0,0 +1,18 @@
++CC=gcc
++CFLAGS= -Wall -g 
++
++.PHONY: default
++default: mdb-lookup-server-nc-2 mdb-lookup-server-nc-1
++
++mdb-lookup-server-nc-2: 
++
++mdb-lokup-server-nc-1: 
++
++.PHONY: clean
++clean: 
++	rm -f *.o *~
++
++.PHONY: all
++all: clean default
++
++
+diff --git a/part1/mdb-lookup-server-nc-2.c b/part1/mdb-lookup-server-nc-2.c
+new file mode 100644
+index 0000000..435e649
+--- /dev/null
++++ b/part1/mdb-lookup-server-nc-2.c
+@@ -0,0 +1,68 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/wait.h>
++#include <sys/types.h>
++#include <unistd.h>
++
++static void die(const char *s)
++{
++	perror(s);
++	exit(1);
++}
++int main(int argc, char **argv)
++{
++	if (argc != 2) {
++        fprintf(stderr, "usage: %s <port>\n", argv[0]);
++        exit(1);
++    	}//end if 
++
++	while("\n"){
++		
++		int b; 
++		pid_t thispid; 
++		thispid = waitpid( (pid_t) -1, NULL, WNOHANG); //id of terminated programs 
++		printf("%d", thispid); 
++		
++		int a; 
++
++		printf("Please enter a port number:"); 
++		
++		while("\n"){ // inner while in case user keeping pressing enter 		
++			printf("Please enter a port number:"); 
++			scanf("%d", &a); 
++		}//end inner while loop 
++
++		scanf("%d", &a);
++ 
++		pid_t pid = fork();
++
++		if (pid < 0) {
++		die("fork failed");
++		} 
++		
++		else if (pid == 0) {
++		// child process
++		fprintf(stderr, "[pid=%d] ", (int)getpid());
++		b= (int)getpid(); 
++		fprintf(stderr, "mdb-lookup-server started on port %s\n", argv[1]);
++		execl("./mdb-lookup-server-nc.sh", "mdb-lookup-server-nc.sh", (char *) 0);
++		die("execl failed");
++		} 
++		else {
++		// parent process
++		if (waitpid(pid,
++			    NULL, // no status                    
++			    0) // no options
++			!= pid)
++		    die("waitpid failed");
++		fprintf(stderr, "[pid=%d] ", (int)pid);
++		fprintf(stderr, "mdb-lookup-server terminated\n");
++		} //end if  		
++		
++		printf("An instance of mdb-lookup-server has started on pid and port number: "); 
++		printf("%d %d", b, a); //printing out the pid and port number 
++
++	}//end outer while loop 
++return 0;
++   
++}
+diff --git a/part1/mdb-lookup-server-nc.sh b/part1/mdb-lookup-server-nc.sh
+new file mode 100755
+index 0000000..950d0e5
+--- /dev/null
++++ b/part1/mdb-lookup-server-nc.sh
+@@ -0,0 +1,7 @@
++#!/bin/sh
++PID=${BASHPID-$$}
++
++mkfifo mypipe
++cat mypipe-$PID | nc -l $1 | /home/jae/cs3157-pub/bin/mdb-lookup-cs3157 > mypipe-$PID 
++
++rm -f mypipe-$PID 
+-- 
+1.7.9.5
+

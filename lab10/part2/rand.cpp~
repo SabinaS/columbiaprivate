@@ -1,0 +1,143 @@
+#ifndef __TLIST_H__
+#define __TLIST_H__
+
+using namespace std;
+#include <list>
+#include <algorithm>
+#include <iostream>
+
+// class declaration
+template <typename T>
+class TList;
+
+// put-to operator
+template <typename T>
+ostream& operator<<(ostream& os, const TList<T>& l);
+
+// increment and assign operator
+template <typename T>
+TList<T>& operator+=(const TList<T>& tl1, const TList<T>& tl2);
+
+// Member declarations
+template <typename T>
+class TList
+{
+	// The compiler-generated ctor, dtor, copytor, and assignment operator are
+	// good enough for us.
+	
+	public:
+		TList<T>& addFront(const T& t);
+		T popFront();
+		int size() const;
+		void reverse();
+		// Array Operator
+		T& operator[](int i);
+		// Const Array Operator
+		const T& operator[](int i) const;
+		// Addition (concatenation) operator
+		TList<T> operator+(const TList<T>& tl);
+		friend ostream& operator<< <T>(ostream& os, const TList<T>& tl);
+		friend TList<T>& operator+= <T>(const TList<T>& tl1, const
+			TList<T>& tl2);
+	
+	private:
+		list<T> ls;
+};
+
+template <typename T>
+TList<T>& TList<T>::addFront(const T& t)
+{
+	ls.push_front(t);
+	return *this;
+}
+
+template <typename T>
+T TList<T>::popFront()
+{
+	T t = ls.front();
+	T t2(t);
+	ls.pop_front();
+	return t;
+}
+
+template <typename T>
+int inline TList<T>::size() const
+{
+	// Not always constant, depending on the implementation.
+	return ls.size();
+}
+
+// All we're doing is calling reverse
+template <typename T>
+void inline TList<T>::reverse()
+{
+	ls.reverse();
+}
+
+template <typename T>
+T& TList<T>::operator[](int i)
+{
+	// Get the iterator
+	typename list<T>::iterator itr;
+	itr = ls.begin();
+	// Increment it i times
+	int pos = 0;
+	while(pos++ < i)
+		itr++;
+	return *itr;
+}
+
+template <typename T>
+const T& TList<T>::operator[](int i) const
+{
+	return ((TList<T>&) *this)[i];
+}
+
+template <typename T>
+TList<T>& operator+=(const TList<T>& tl1, const TList<T>& tl2)
+{
+	// Cast away the constedness
+	TList<T>& temp = (TList<T>&) tl1;
+	
+	// First, reverse the list
+	temp.ls.reverse();
+	// We'll use the insert function for a list
+	typename list<T>::iterator zero;
+	zero = temp.ls.begin();
+	// Call the insert function
+	// But first, we have to reverse that list too
+	TList<T>& temp2 = (TList<T>&) tl2;
+	temp2.ls.reverse();
+	temp.ls.insert(zero, tl2.ls.begin(), tl2.ls.end());
+	// Then unreverse the lists
+	temp.ls.reverse();
+	temp2.ls.reverse();
+	return temp;
+}
+
+template <typename T>
+TList<T> TList<T>::operator+(const TList<T>& tl)
+{
+	// Make a temporary list and copy construct it
+	TList<T> temp = *this;
+	// Increment it with tl:
+	temp += tl;
+	return temp;
+}
+
+template <typename T>
+ostream& operator<<(ostream& os, const TList<T>& tl)
+{
+	// First, print the open bracket
+	os << "{ ";
+	// Then traverse the list and print out each string.
+	typename list<T>::const_iterator i;
+	for(i = tl.ls.begin(); i != tl.ls.end(); ++i)
+		os << *i << " ";
+	// Close the bracket
+	os << "}";
+	return os;
+}
+
+#endif
+

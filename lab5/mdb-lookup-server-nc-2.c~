@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+static void die(const char *s)
+{
+	perror(s);
+	exit(1);
+}
+int main(int argc, char **argv)
+{
+	if (argc != 2) {
+        fprintf(stderr, "usage: %s <port>\n", argv[0]);
+        exit(1);
+    	}//end if 
+
+	while("\n"){
+		
+		int b; 
+		pid_t thispid; 
+		thispid = waitpid( (pid_t) -1, NULL, WNOHANG); //id of terminated programs 
+		printf("%d", thispid); 
+		
+		int a; 
+
+		printf("Please enter a port number:"); 
+		
+		while("\n"){ // inner while in case user keeping pressing enter 		
+			printf("Please enter a port number:"); 
+			scanf("%d", &a); 
+		}//end inner while loop 
+
+		scanf("%d", &a);
+ 
+		pid_t pid = fork();
+
+		if (pid < 0) {
+		die("fork failed");
+		} 
+		
+		else if (pid == 0) {
+		// child process
+		fprintf(stderr, "[pid=%d] ", (int)getpid());
+		b= (int)getpid(); 
+		fprintf(stderr, "mdb-lookup-server started on port %s\n", argv[1]);
+		execl("./mdb-lookup-server-nc.sh", "mdb-lookup-server-nc.sh", (char *) 0);
+		die("execl failed");
+		} 
+		else {
+		// parent process
+		if (waitpid(pid,
+			    NULL, // no status                    
+			    0) // no options
+			!= pid)
+		    die("waitpid failed");
+		fprintf(stderr, "[pid=%d] ", (int)pid);
+		fprintf(stderr, "mdb-lookup-server terminated\n");
+		} //end if  		
+		
+		printf("An instance of mdb-lookup-server has started on pid and port number: "); 
+		printf("%d %d", b, a); //printing out the pid and port number 
+
+	}//end outer while loop 
+return 0;
+   
+}

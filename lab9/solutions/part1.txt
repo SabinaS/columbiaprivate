@@ -1,0 +1,103 @@
+Here is a solution for lab 9 part 1, courtesy of Dan Federman, 
+a former 3157er and now a developer at Apple.
+
+a)
+
+$ cat -n test4.cpp   
+     1	#include "mystring.h"
+     2	
+     3	static MyString add(MyString s1, MyString s2)
+     4	{
+     5	    MyString temp(" and ");
+     6	    return s1 + temp + s2;
+     7	}
+     8	
+     9	int main()
+    10	{
+    11	    MyString s1("one");
+    12	    MyString s2("two");
+    13	
+    14	    MyString s3 = add(s1, s2);
+    15	
+    16	    cout << s3 << endl;
+    17	    return 0;
+    18	}
+
+BASIC4TRACE: (0x7fffadb22660)->MyString(const char *)       //line 11 [MyString s1("one")], constructor, s1
+BASIC4TRACE: (0x7fffadb22650)->MyString(const char *)       //line 12 [MyString s2("two")], constructor, s2
+BASIC4TRACE: (0x7fffadb22680)->MyString(const MyString&)    //line 3 [MyString s1], copy constructor, s1 (parameter)
+BASIC4TRACE: (0x7fffadb22690)->MyString(const MyString&)    //line 3 [MyString s2], copy constructor, s2 (parameter)
+BASIC4TRACE: (0x7fffadb225e0)->MyString(const char *)       //line 5 [MyString temp(" and ")], constructor, temp
+BASIC4TRACE: op+(const MyString&, const MyString&)          //line 6 [s1 + temp], operator+, no name since the created MyString is created in the return statement
+BASIC4TRACE: (0x7fffadb22580)->MyString()                   //line 6 [s1 + temp] [in mystring.ccp: MyString temp], default constructor, temp
+BASIC4TRACE: (0x7fffadb22600)->MyString(const MyString&)    //line 6 [s1 + temp] [in mystring.ccp: return temp], copy constructor, temp copied into a variable with no name -- value about to be op+ with s2 and then returned
+BASIC4TRACE: (0x7fffadb22580)->~MyString()                  //line 6 [s1 + temp] [in mystring.ccp: }], destructor, temp
+BASIC4TRACE: op+(const MyString&, const MyString&)          //line 6 [... + s2], operator+, no name since the created MyString is created in the return statement
+BASIC4TRACE: (0x7fffadb22580)->MyString()                   //line 6 [... + s2] [in mystring.ccp: MyString temp], default constructor, temp
+BASIC4TRACE: (0x7fffadb225f0)->MyString(const MyString&)    //line 6 [... + s2] [in mystring.ccp: return temp], copy constructor, temp coppied into a variable with no name -- value about to be op+ with s2 and then returned
+BASIC4TRACE: (0x7fffadb22580)->~MyString()                  //line 6 [... + s2] [in mystring.ccp: }], destructor, temp
+BASIC4TRACE: (0x7fffadb22670)->MyString(const MyString&)    //line 14 [add(s1, s2)], copy constructor, unnamed variable result of add
+BASIC4TRACE: (0x7fffadb225f0)->~MyString()                  //line 7 [}], destructor, unnamed value of ... + s2
+BASIC4TRACE: (0x7fffadb22600)->~MyString()                  //line 7 [}], destructor, unnamed value of s1 + temp
+BASIC4TRACE: (0x7fffadb225e0)->~MyString()                  //line 7 [}], destructor, temp
+BASIC4TRACE: (0x7fffadb22640)->MyString(const MyString&)    //line 14 [s3 = ...], copy constructor, s3
+BASIC4TRACE: (0x7fffadb22670)->~MyString()                  //line 14 [;], destructor, unnamed variable result of add
+BASIC4TRACE: (0x7fffadb22690)->~MyString()                  //line 14 [;] -- add ended, parameter s2 never used again, destructor, s2
+BASIC4TRACE: (0x7fffadb22680)->~MyString()                  //line 14 [;] -- add ended, parameter s1 never used again, destructor, s1
+one and two                                                 //line 16 [cout << s3 << endl], s3
+BASIC4TRACE: (0x7fffadb22640)->~MyString()                  //line 18 [}] -- s3 never used again, destructor, s3
+BASIC4TRACE: (0x7fffadb22650)->~MyString()                  //line 18 [}] -- s2 never used again, destructor, s2
+BASIC4TRACE: (0x7fffadb22660)->~MyString()                  //line 18 [}] -- s1 never used again, destructor, s1
+
+b)
+
+BASIC4TRACE: (0x7fff2796a4d0)->MyString(const char *)
+BASIC4TRACE: (0x7fff2796a4c0)->MyString(const char *)
+// no copy constructors since parameters refer to the origional s1 and s2
+BASIC4TRACE: (0x7fff2796a450)->MyString(const char *)
+BASIC4TRACE: op+(const MyString&, const MyString&)
+BASIC4TRACE: (0x7fff2796a3f0)->MyString()
+BASIC4TRACE: (0x7fff2796a470)->MyString(const MyString&)
+BASIC4TRACE: (0x7fff2796a3f0)->~MyString()
+BASIC4TRACE: op+(const MyString&, const MyString&)
+BASIC4TRACE: (0x7fff2796a3f0)->MyString()
+BASIC4TRACE: (0x7fff2796a460)->MyString(const MyString&)
+BASIC4TRACE: (0x7fff2796a3f0)->~MyString()
+BASIC4TRACE: (0x7fff2796a4e0)->MyString(const MyString&)
+BASIC4TRACE: (0x7fff2796a460)->~MyString()
+BASIC4TRACE: (0x7fff2796a470)->~MyString()
+BASIC4TRACE: (0x7fff2796a450)->~MyString()
+BASIC4TRACE: (0x7fff2796a4b0)->MyString(const MyString&)
+BASIC4TRACE: (0x7fff2796a4e0)->~MyString()
+// no need to destruct parameters s1 and s2 since they are only references to the origional MyString object's
+one and two
+BASIC4TRACE: (0x7fff2796a4b0)->~MyString()
+BASIC4TRACE: (0x7fff2796a4c0)->~MyString()
+BASIC4TRACE: (0x7fff2796a4d0)->~MyString()
+
+c)
+
+-fno-elide-constructors
+          The C++ standard allows an implementation to omit creating a
+          temporary which is only used to initialize another object of the
+          same type.  Specifying this option disables that optimization, and
+          forces G++ to call the copy constructor in all cases.
+
+BASIC4TRACE: (0x7fffaf49e010)->MyString(const char *)
+BASIC4TRACE: (0x7fffaf49e000)->MyString(const char *)
+BASIC4TRACE: (0x7fffaf49dfa0)->MyString(const char *)
+BASIC4TRACE: op+(const MyString&, const MyString&)
+BASIC4TRACE: (0x7fffaf49dfb0)->MyString()
+//no more need for creating and destroying a temporary s1+temp
+BASIC4TRACE: op+(const MyString&, const MyString&)
+BASIC4TRACE: (0x7fffaf49dff0)->MyString()
+//no more need for creating and destroying a temporary ...+s2
+BASIC4TRACE: (0x7fffaf49dfb0)->~MyString()
+BASIC4TRACE: (0x7fffaf49dfa0)->~MyString()
+one and two
+BASIC4TRACE: (0x7fffaf49dff0)->~MyString()
+BASIC4TRACE: (0x7fffaf49e000)->~MyString()
+BASIC4TRACE: (0x7fffaf49e010)->~MyString()
+
+// fewer default and copy constructors and destructors since no temporaries are being created, used for copying, and then destroyed
+

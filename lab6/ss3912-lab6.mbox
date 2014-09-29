@@ -1,0 +1,482 @@
+From e4f5f6ebd0c5faccdcc0d134be58efac5a8228d7 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Fri, 16 Nov 2012 20:54:07 -0500
+Subject: [PATCH 1/5] Added mdb-lookup-server
+
+---
+ part1/mdb-lookup-server.c |  190 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 190 insertions(+)
+ create mode 100644 part1/mdb-lookup-server.c
+
+diff --git a/part1/mdb-lookup-server.c b/part1/mdb-lookup-server.c
+new file mode 100644
+index 0000000..bb3b3cc
+--- /dev/null
++++ b/part1/mdb-lookup-server.c
+@@ -0,0 +1,190 @@
++
++#include <stdio.h>      /* for printf() and fprintf() */
++#include <sys/socket.h> /* for socket(), bind(), and connect() */
++#include <arpa/inet.h>  /* for sockaddr_in and inet_ntoa() */
++#include <stdlib.h>     /* for atoi() and exit() */
++#include <string.h>     /* for memset() */
++#include <unistd.h>     /* for close() */
++#include <signal.h> 	/*for sigpip */ 
++#include "mdb.h"
++#include "mylist.h" 
++
++#define MAXPENDING 5    /* Maximum outstanding connection requests */
++#define KeyMax 5
++
++void DieWithError(char *errorMessage);  /* Error handling function */
++void HandleTCPClient(int clntSocket, char *databaseb_filename);   /* TCP client handling function */
++
++
++static void die(const char *msg){
++	perror(msg);	
++	exit(1); 
++}// end die 
++
++int main(int argc, char *argv[])
++{
++    int servSock;                    /* Socket descriptor for server */
++    int clntSock;                    /* Socket descriptor for client */
++    struct sockaddr_in echoServAddr; /* Local address */
++    struct sockaddr_in echoClntAddr; /* Client address */
++    unsigned short echoServPort;     /* Server port */
++    unsigned int clntLen;            /* Length of client address data structure */
++
++    // ignore SIGPIPE so that we don’t terminate when we call
++    // send() on a disconnected socket.
++    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) 
++        die("signal() failed");
++
++    if (argc != 3)     /* Test for correct number of arguments */
++    {
++        fprintf(stderr, "Usage:  %s <Server Port>\n", argv[0]);
++        exit(1);
++    }
++
++    echoServPort = atoi(argv[1]);  /* First arg:  local port; change from string to int */
++    char *database_filename = argv[1]; 
++
++    /* Create socket for incoming connections */
++    if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
++        die("socket() failed");
++      
++    /* Construct local address structure */
++    memset(&echoServAddr, 0, sizeof(echoServAddr));   /* Zero out structure */
++    echoServAddr.sin_family = AF_INET;                 /* Internet address family */
++    echoServAddr.sin_addr.s_addr = htonl(INADDR_ANY); /* Any incoming interface */
++    echoServAddr.sin_port = htons(echoServPort);      /* Local port */
++
++    /* Bind to the local address */
++    if (bind(servSock, (struct sockaddr *) &echoServAddr, sizeof(echoServAddr)) < 0)
++        die("bind() failed");
++
++    /* Mark the socket so it will listen for incoming connections */
++    if (listen(servSock, MAXPENDING) < 0)
++        die("listen() failed");
++
++    for (;;) /* Run forever */
++    {
++        /* Set the size of the in-out parameter */
++        clntLen = sizeof(echoClntAddr);
++
++        /* Wait for a client to connect */
++        if ((clntSock = accept(servSock, (struct sockaddr *) &echoClntAddr, 
++                               &clntLen)) < 0)
++            die("accept() failed");
++
++	/* clntSock is connected to client */
++	fprintf(stderr, "\nconnection started from: %s\n", inet_ntoa(echoClntAddr.sin_addr)); 
++
++	HandleTCPClient(clntSock, database_filename); 
++	
++	fprintf(stderr, "connection terminated from: %s\n", inet_ntoa(echoClntAddr.sin_addr)); 
++	
++    }//end for 
++    /* NOT REACHED */
++  
++}//end main
++
++void HandleTCPClient(int clntSocket, char *database_filename)
++{
++
++	FILE *fp = fopen(database_filename, "rb");		
++	if (fp == NULL) 
++	die(database_filename);
++
++	/*
++	* read all records into memory
++	*/
++
++	struct List list;
++	initList(&list);
++
++	struct MdbRec r;
++	struct Node *node = NULL;
++
++	while (fread(&r, sizeof(r), 1, fp) == 1) {
++
++		// allocate memory for a new record and copy into it the one
++		// that was just read from the database.
++		struct MdbRec *rec = (struct MdbRec *)malloc(sizeof(r));
++		if (!rec)
++		    die("malloc failed");
++		memcpy(rec, &r, sizeof(r));
++
++		// add the record to the linked list.
++		node = addAfter(&list, node, rec);
++		if (node == NULL) 
++		    die("addAfter() failed");
++	}//end while loop 
++
++	// see if fread() produced error
++	if (ferror(fp)) 
++	die(database_filename);
++
++	/*
++	* lookup loop
++	*/
++
++	FILE * input = fdopen(clntSocket, "r"); 
++	if(input == NULL){
++		die("fdopen failed"); 
++	}//end if 
++
++	char line[1000];
++	char key[KeyMax + 1];
++	char sendArray[1000];
++	int length; 
++	int rest; 
++
++	while (fgets(line, sizeof(line), input) != NULL) {
++
++		// must null-terminate the string manually after strncpy().
++		strncpy(key, line, sizeof(key) - 1);
++		key[sizeof(key) - 1] = '\0';
++
++		// if newline is there, remove it.
++		size_t last = strlen(key) - 1;
++		if (key[last] == '\n')
++		    key[last] = '\0';
++
++		// traverse the list, printing out the matching records
++		struct Node *node = list.head;
++		int recNo = 1;
++		while (node) {
++		    struct MdbRec *rec = (struct MdbRec *)node->data;
++			if (strstr(rec->name, key) || strstr(rec->msg, key)) {
++				length= sprintf(sendArray, "%4d: {%s} said {%s}\n", recNo, rec->name, rec->msg); 
++				if((rest= send(clntSocket, sendArray, length, 0)) != length){
++					perror("send() failed");
++					break; 
++				}//end inner if 
++			}//end outer if 
++		    node = node->next;
++		    recNo++;
++		}//end inner while 
++
++	}//end outer while 
++
++	length= sprintf(sendArray, "\n"); 
++
++	if ((rest = send(clntSocket, sendArray, length, 0)) !=length) {
++		perror("send() failed"); 
++	}//end if 
++
++	// see if fgets() produced error
++	if(ferror(input)) {
++		perror("fgets failed"); 
++	}//end if 
++
++	/*
++	* clean up and quit
++	*/
++
++	// free all the records
++	traverseList(&list, &free);
++
++	removeAllNodes(&list);
++
++	fclose(fp);
++	fclose(input); 
++}//end HandleTCPClient
++
+-- 
+1.7.9.5
+
+
+From 098476c8c420a3e22ceafae9fefe587a8ce37008 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Fri, 16 Nov 2012 20:55:44 -0500
+Subject: [PATCH 2/5] Added http-client
+
+---
+ part2/http-client.c |  144 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
+ create mode 100644 part2/http-client.c
+
+diff --git a/part2/http-client.c b/part2/http-client.c
+new file mode 100644
+index 0000000..9309266
+--- /dev/null
++++ b/part2/http-client.c
+@@ -0,0 +1,144 @@
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <arpa/inet.h>
++#include <unistd.h>
++#include <netdb.h>
++#include <stdio.h> 
++#include <stdlib.h>
++#include <string.h> 
++
++#define BUFFER_SIZE 4096
++
++static void die(const char *msg){
++	perror(msg);
++	exit(1);
++}//end die 
++
++int main(int argc, char ** argv)
++{
++
++	char *serverName; 
++	char *serverIP; 
++	char *serverPort; 
++	char *filePath; 
++	char *fname; 
++	int socketInt; 
++	struct sockaddr_in serverAddr; 
++	struct hostent * host; 
++	char buf[BUFFER_SIZE];
++
++	if (argc != 4){
++		fprintf(stderr, "usage: http-client <host name> <port number> <file path>\n"); 
++		exit(1); 
++	}//end if usage 
++
++	serverName= argv[1];
++	serverPort= argv[2]; 
++	filePath= argv[3]; 
++
++	char *p = strrchr(filePath, '/'); 
++	if(!p){ 
++		fprintf(stderr, "usage: http-client <host name> <port number> <file path>\n"); 
++		exit(1); 
++	} //end if usage 
++	
++	fname = p+1; 
++	
++	if((host = gethostbyname(serverName)) == NULL) {
++		die("gethostbyname failed"); 
++	}//end if die 
++
++	serverIP = inet_ntoa(*(struct in_addr *)host->h_addr); 
++	
++	/*create socket */ 
++	if((socketInt = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) <0) {
++		die("socket failed"); 
++	}//end if die 
++
++	/*construct server address */ 
++		memset(&serverAddr, 0, sizeof(serverAddr));   /* Zero out structure */
++		serverAddr.sin_family = AF_INET;                 /* Internet address family */
++		serverAddr.sin_addr.s_addr = inet_addr(serverIP); 
++		unsigned short port = atoi(serverPort); 
++		serverAddr.sin_port = htons(port);      /* port */
++
++	/*connect*/ 
++	if(connect(socketInt, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) <0) {
++		die("connect failed"); 
++	} //end if die 
++
++	/*send HTTP request */ 
++	snprintf(buf, sizeof(buf), 
++			"GET %s HTTP/1.0\r\n" 
++			"Host: %s\r\n" 
++			"\r\n", 
++			filePath, serverName, serverPort); 
++	if(send(socketInt, buf, strlen(buf), 0) != strlen(buf)) {	
++		die("send failed"); 
++
++	}//end if die 
++		
++	/*wrapping socket with FILE * */
++	FILE *filedata; 
++
++	if((filedata = fdopen(socketInt, "r")) == NULL){
++		die("fopen failed");	
++	}//end if die 
++	
++	/* start reading */ 
++	if(fgets(buf, sizeof(buf), filedata) ==NULL) {
++		if(ferror(filedata))
++			die("IO error");
++		else{
++			fprintf(stderr, "no response from server");
++			exit(1);  
++		}//end else
++	}//end if fgets
++	
++	 
++	if(strncmp("HTTP/1.0 ", buf, 9) != 0 && strncmp("HTTP/1.1 ", buf, 9) !=0) {
++		fprintf(stderr, "protocl response unknown: %s\n", buf); 
++		exit(1); 
++	}//end if 
++
++	if(strncmp("200", buf +9, 3) !=0){
++		fprintf(stderr, "request not successful: %s\n", buf);
++		exit(1);
++	}//end if 200 
++
++	/*skipping header file*/
++	for (;;) {
++		if(fgets(buf, sizeof(buf), filedata) == NULL) {
++			if(ferror(filedata))
++				die("IO error"); 
++			else {
++				fprintf(stderr, "file not sent");
++				exit(1); 
++			}//end else
++		}//end if
++		
++
++		if(strcmp("\r\n", buf) ==0) { //end of header lines 
++			break; 
++		}//end if 
++
++	}//end for 
++
++	FILE *output = fopen(fname, "wb"); 
++	if(output == NULL)
++		die("file cannot be opened");	
++	size_t x; 
++	while ((x= fread(buf, 1, sizeof(buf), filedata)) > 0){
++		if(fwrite(buf, 1, x, output) != x)
++			die("writeout failed"); 
++	}//end while 
++
++	if(ferror(filedata))
++		die("readout failed");
++	
++	fclose(output); 
++	fclose(filedata); 
++
++	return 0; 
++
++}//end main 
+-- 
+1.7.9.5
+
+
+From 15107ac323067b090d0494073988e5be1c2fcf0f Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Fri, 16 Nov 2012 20:56:30 -0500
+Subject: [PATCH 3/5] Added Makefile
+
+---
+ part2/Makefile |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 part2/Makefile
+
+diff --git a/part2/Makefile b/part2/Makefile
+new file mode 100644
+index 0000000..0d61acd
+--- /dev/null
++++ b/part2/Makefile
+@@ -0,0 +1,12 @@
++CC  = gcc
++CXX = g++
++
++.PHONY: default
++default: http-client 
++
++.PHONY: clean
++clean:
++	rm -f *.o *~ 
++
++.PHONY: all
++all: clean default
+-- 
+1.7.9.5
+
+
+From 3bb220215095e89090ee60329eba78559b119cfc Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Fri, 16 Nov 2012 22:41:35 -0500
+Subject: [PATCH 4/5] Changed server
+
+---
+ part1/mdb-lookup-server.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/part1/mdb-lookup-server.c b/part1/mdb-lookup-server.c
+index bb3b3cc..c27cc9b 100644
+--- a/part1/mdb-lookup-server.c
++++ b/part1/mdb-lookup-server.c
+@@ -1,4 +1,3 @@
+-
+ #include <stdio.h>      /* for printf() and fprintf() */
+ #include <sys/socket.h> /* for socket(), bind(), and connect() */
+ #include <arpa/inet.h>  /* for sockaddr_in and inet_ntoa() */
+@@ -12,8 +11,7 @@
+ #define MAXPENDING 5    /* Maximum outstanding connection requests */
+ #define KeyMax 5
+ 
+-void DieWithError(char *errorMessage);  /* Error handling function */
+-void HandleTCPClient(int clntSocket, char *databaseb_filename);   /* TCP client handling function */
++void HandleTCPClient(int clntSocket, char *database_filename);   /* TCP client handling function */
+ 
+ 
+ static void die(const char *msg){
+@@ -37,11 +35,11 @@ int main(int argc, char *argv[])
+ 
+     if (argc != 3)     /* Test for correct number of arguments */
+     {
+-        fprintf(stderr, "Usage:  %s <Server Port>\n", argv[0]);
++        fprintf(stderr, "Usage:  %s <database_file> <Server Port>\n", argv[0]);
+         exit(1);
+     }
+ 
+-    echoServPort = atoi(argv[1]);  /* First arg:  local port; change from string to int */
++    echoServPort = atoi(argv[2]);  /* Second arg:  local port; change from string to int */
+     char *database_filename = argv[1]; 
+ 
+     /* Create socket for incoming connections */
+-- 
+1.7.9.5
+
+
+From 2317f108af3ae4617f3d5cdc6b768e9d4e02f8f7 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Fri, 16 Nov 2012 23:15:06 -0500
+Subject: [PATCH 5/5] Changed Makefile
+
+---
+ part1/Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/part1/Makefile b/part1/Makefile
+index 813b8ec..221b9b0 100644
+--- a/part1/Makefile
++++ b/part1/Makefile
+@@ -6,11 +6,11 @@
+ CC  = gcc
+ CXX = g++
+ 
+-INCLUDES = -I../../lab3/part1
++INCLUDES = -I../../../lab3/part1
+ CFLAGS   = -g -Wall $(INCLUDES)
+ CXXFLAGS = -g -Wall $(INCLUDES)
+ 
+-LDFLAGS = -g -L../../lab3/part1
++LDFLAGS = -g -L../../../lab3/part1
+ LDLIBS = -lmylist
+ 
+ .PHONY: default
+-- 
+1.7.9.5
+

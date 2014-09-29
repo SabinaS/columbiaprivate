@@ -1,0 +1,23 @@
+testing addFront(): 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0 
+testing flipSignDouble(): -9.0 -8.0 -7.0 -6.0 -5.0 -4.0 -3.0 -2.0 -1.0 
+testing flipSignDouble() again: 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0 
+testing findNode(): OK
+popped 9.0, the rest is: [ 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0 ]
+popped 8.0, the rest is: [ 7.0 6.0 5.0 4.0 3.0 2.0 1.0 ]
+popped 7.0, the rest is: [ 6.0 5.0 4.0 3.0 2.0 1.0 ]
+popped 6.0, the rest is: [ 5.0 4.0 3.0 2.0 1.0 ]
+popped 5.0, the rest is: [ 4.0 3.0 2.0 1.0 ]
+popped 4.0, the rest is: [ 3.0 2.0 1.0 ]
+popped 3.0, the rest is: [ 2.0 1.0 ]
+popped 2.0, the rest is: [ 1.0 ]
+popped 1.0, the rest is: [ ]
+testing addAfter(): 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 
+popped 1.0, and reversed the rest: [ 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 ]
+popped 9.0, and reversed the rest: [ 2.0 3.0 4.0 5.0 6.0 7.0 8.0 ]
+popped 2.0, and reversed the rest: [ 8.0 7.0 6.0 5.0 4.0 3.0 ]
+popped 8.0, and reversed the rest: [ 3.0 4.0 5.0 6.0 7.0 ]
+popped 3.0, and reversed the rest: [ 7.0 6.0 5.0 4.0 ]
+popped 7.0, and reversed the rest: [ 4.0 5.0 6.0 ]
+popped 4.0, and reversed the rest: [ 6.0 5.0 ]
+popped 6.0, and reversed the rest: [ 5.0 ]
+popped 5.0, and reversed the rest: [ ]

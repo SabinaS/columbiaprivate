@@ -1,0 +1,958 @@
+From 7c8d4cf2894e37d7e815cc433f719046bd46d52d Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Wed, 5 Dec 2012 22:07:42 -0500
+Subject: [PATCH 1/3] Made changes
+
+---
+ Makefile     |    4 +-
+ README.txt   |   35 ++++++++++
+ mystring.cpp |  218 ++++++++++++++++++++++++++++++++++++++++++++++------------
+ mystring.h   |   23 +++++++
+ test4.cpp    |   15 ++--
+ test5.cpp    |   35 ++++++++++
+ 6 files changed, 276 insertions(+), 54 deletions(-)
+ create mode 100644 README.txt
+ create mode 100644 test5.cpp
+
+diff --git a/Makefile b/Makefile
+index 48455fd..6d18282 100644
+--- a/Makefile
++++ b/Makefile
+@@ -11,8 +11,8 @@ CXXFLAGS = -g -Wall $(INCLUDES)
+ LDFLAGS = -g
+ LDLIBS  =
+ 
+-executables = test1 test2 test3 test4
+-objects = mystring.o test1.o test2.o test3.o test4.o
++executables = test1 test2 test3 test4 
++objects = mystring.o test1.o test2.o test3.o test4.o 
+ 
+ .PHONY: default
+ default: $(executables)
+diff --git a/README.txt b/README.txt
+new file mode 100644
+index 0000000..7706511
+--- /dev/null
++++ b/README.txt
+@@ -0,0 +1,35 @@
++Sabina Smajlaj
++ss3912
++Assignment #9
++
++Part1:(a) 
++	BASIC4TRACE: (0xbffff9a0)->MyString(const char *) -- MyString s1("one"); //The "one" char is read in 
++	BASIC4TRACE: (0xbffff998)->MyString(const char *) -- MyString s2("two"); //The "two" char is read in
++	BASIC4TRACE: (0xbffff9b0)->MyString(const MyString&) --  MyString s1("one"); //The s1 MyString obejct is created 
++	BASIC4TRACE: (0xbffff9b8)->MyString(const MyString&) -- MyString s2("two"); /The s2 MyString obejct is created 
++	BASIC4TRACE: (0xbffff948)->MyString(const char *) --   MyString temp(" and "); //The in "add" function, a char "and" is read in
++	BASIC4TRACE: op+(const MyString&, const MyString&) --  return s1 + temp + s2; // In the "add" function, s1, temp and s2 are added 
++	BASIC4TRACE: (0xbffff8f8)->MyString() -- MyString s3 = add(s1, s2); //the MyString function is called 
++	BASIC4TRACE: (0xbffff958)->MyString(const MyString&) -- MyString s3 = add(s1, s2); //A new s3 MyString object is created 
++	BASIC4TRACE: (0xbffff8f8)->˜MyString() -- MyString s3 = add(s1, s2);
++	BASIC4TRACE: op+(const MyString&, const MyString&) -- MyString s3 = add(s1, s2); //the values s1 and s2 are added 
++	BASIC4TRACE: (0xbffff8f8)->MyString() -- #include "mystring.h" //the = operation is accessed 
++	BASIC4TRACE: (0xbffff950)->MyString(const MyString&) --   MyString s3 = add(s1, s2); //the right side is placed into the left side 
++	BASIC4TRACE: (0xbffff8f8)->˜MyString() -- cout << s3 << endl;
++	BASIC4TRACE: (0xbffff9a8)->MyString(const MyString&) -- MyString s3 = add(s1, s2);
++	BASIC4TRACE: (0xbffff950)->˜MyString() -- #include "mystring.h"
++	BASIC4TRACE: (0xbffff958)->˜MyString() -- #include "mystring.h"
++	BASIC4TRACE: (0xbffff948)->˜MyString() -- #include "mystring.h"
++	BASIC4TRACE: (0xbffff990)->MyString(const MyString&) -- MyString s3 = add(s1, s2);
++	BASIC4TRACE: (0xbffff9a8)->˜MyString() --  #include "mystring.h"
++	BASIC4TRACE: (0xbffff9b8)->˜MyString() -- #include "mystring.h"
++	BASIC4TRACE: (0xbffff9b0)->˜MyString() -- #include "mystring.h"
++	one and two
++	BASIC4TRACE: (0xbffff990)->˜MyString() --  return 0;
++	BASIC4TRACE: (0xbffff998)->˜MyString() --  return 0;
++	BASIC4TRACE: (0xbffff9a0)->˜MyString() --  return 0;
++
++(b) 
++
++
++(c) The flag is used to turn off return value optimazation. RVO is a technique used by the complier to eliminate the temporary object created to hold a function's return value; after the function is called, this value is no longer available. This technique is used to increase speed. However, the flag disables this feature, allowing the return value to remain. 
+diff --git a/mystring.cpp b/mystring.cpp
+index 4ab4941..1dab185 100644
+--- a/mystring.cpp
++++ b/mystring.cpp
+@@ -11,10 +11,10 @@ MyString::MyString()
+     fprintf(stderr, "BASIC4TRACE: (%p)->MyString()\n", this);
+ #endif
+ 
+-    data = new char[1];
+-    data[0] = '\0';
+-    
+-    len = 0;
++	data = new char[1];
++	data[0] = '\0';
++
++	len = 0;
+ }
+ 
+ // constructor
+@@ -25,15 +25,15 @@ MyString::MyString(const char* p)
+     fprintf(stderr, "BASIC4TRACE: (%p)->MyString(const char *)\n", this);
+ #endif
+ 
+-    if (p) {
++	if (p) {
+ 	len = strlen(p);
+ 	data = new char[len+1];
+ 	strcpy(data, p);
+-    } else {
++	} else {
+ 	data = new char[1];
+ 	data[0] = '\0';
+ 	len = 0;
+-    }
++	}
+ }
+ 
+ // destructor
+@@ -44,7 +44,7 @@ MyString::~MyString()
+     fprintf(stderr, "BASIC4TRACE: (%p)->~MyString()\n", this);
+ #endif
+ 
+-    delete[] data;
++	delete[] data;
+ }
+ 
+ // copy constructor 
+@@ -55,10 +55,10 @@ MyString::MyString(const MyString& s)
+     fprintf(stderr, "BASIC4TRACE: (%p)->MyString(const MyString&)\n", this);
+ #endif
+ 
+-    len = s.len;
+-    
+-    data = new char[len+1];
+-    strcpy(data, s.data);
++	len = s.len;
++
++	data = new char[len+1];
++	strcpy(data, s.data);
+ }
+ 
+ // assignment operator
+@@ -69,23 +69,23 @@ MyString& MyString::operator=(const MyString& rhs)
+     fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+ #endif
+ 
+-    if (this == &rhs) {
++	if (this == &rhs) {
+ 	return *this;
+-    }
++	}
+ 
+-    // first, deallocate memory that 'this' used to hold
++	// first, deallocate memory that 'this' used to hold
+ 
+-    delete[] data;
++	delete[] data;
+ 
+-    // now copy from rhs
+-    
+-    len = rhs.len;
++	// now copy from rhs
+ 
+-    data = new char[len+1];
+-    strcpy(data, rhs.data);
++	len = rhs.len;
+ 
+-    return *this;
+-}
++	data = new char[len+1];
++	strcpy(data, rhs.data);
++
++	return *this;
++	}
+ 
+ // operator+
+ 
+@@ -96,58 +96,186 @@ MyString operator+(const MyString& s1, const MyString& s2)
+ 	    "BASIC4TRACE: op+(const MyString&, const MyString&)\n");
+ #endif
+ 
+-    MyString temp;
++	MyString temp;
+ 
+-    delete[] temp.data;
++	delete[] temp.data;
+ 
+-    temp.len = s1.len + s2.len;
++	temp.len = s1.len + s2.len;
+ 
+-    temp.data = new char[temp.len+1];
+-    strcpy(temp.data, s1.data);
+-    strcat(temp.data, s2.data);
++	temp.data = new char[temp.len+1];
++	strcpy(temp.data, s1.data);
++	strcat(temp.data, s2.data);
+ 
+-    return temp;
++	return temp;
+ }
+ 
+ // put-to operator
+ 
+ ostream& operator<<(ostream& os, const MyString& s)
+ {
+-    os << s.data;
+-    return os;
++	os << s.data;
++	return os;
+ }
+ 
+ // get-from operator
+ 
+ istream& operator>>(istream& is, MyString& s)
+ {
+-    // this is kinda cheating, but this is just to illustrate how this
+-    // function can work.
+-    
+-    string temp;
+-    is >> temp;
++	// this is kinda cheating, but this is just to illustrate how this
++	// function can work.
+ 
+-    delete[] s.data;
++	string temp;
++	is >> temp;
+ 
+-    s.len = strlen(temp.c_str());
+-    s.data = new char[s.len+1];
+-    strcpy(s.data, temp.c_str());
++	delete[] s.data;
+ 
+-    return is;
++	s.len = strlen(temp.c_str());
++	s.data = new char[s.len+1];
++	strcpy(s.data, temp.c_str());
++
++	return is;
+ }
+ 
+ // operator[] - in real life this function should be declared inline
+ 
+ char& MyString::operator[](int i) 
+ {
+-    return data[i];
++	return data[i];
+ }
+ 
+ // operator[] const - in real life this should be inline
+ 
+ const char& MyString::operator[](int i) const
+ {
+-    // illustration of casting away constness
+-    return ((MyString&)*this)[i];
++	// illustration of casting away constness
++	return ((MyString&)*this)[i];
++}
++
++// less-than operator
++
++MyString& MyString::operator<(const MyString& s) const 
++{
++#ifdef BASIC4TRACE
++    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
++#endif
++
++	
++	return min(strcmp(this.data, s.data), 0); 
++
++
++	 //negative if first arg is smaller than second, is same zero, is first larger pos 
++
++	
++}
++
++// less-than-or-equal-to operator
++
++MyString& MyString::operator<=(const MyString& s) const 
++{
++#ifdef BASIC4TRACE
++    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
++#endif
++
++	if (strcmp(this.data, s.data) == 0){
++		return 1;
++	}; 
++	
++	else if(min(strcmp(this.data, s.data), 0) !=){
++		return 1; 
++	};
++
++	else {
++		return 0; 
++	};  
++	
++}
++
++// greater-than operator
++
++MyString& MyString::operator>(const MyString& s) const 
++{
++#ifdef BASIC4TRACE
++    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
++#endif
++	
++	return max(strcmp(this.data, s.data), 0); 
++	
++}
++// greater-than-or-equal-to operator 
++
++MyString& MyString::operator>=(const MyString& s) const 
++{
++#ifdef BASIC4TRACE
++    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
++#endif
++
++	if (strcmp(this.data, s.data) == 0){
++		return 1;
++	}; 
++	
++	else if(max(strcmp(this.data, s.data), 0) !=){
++		return 1; 
++	};
++
++	else {
++		return 0; 
++	};  
++}
++
++// equal-to operator
++
++MyString& MyString::operator==(const MyString& s) const 
++{
++#ifdef BASIC4TRACE
++    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
++#endif
++
++	if (strcmp(this.data, s.data) == 0){
++		return 1;
++	}; 
++	
++	else{
++		return 0; 
++	}; 
++	
++}
++
++// not-equal-to operator
++
++MyString& MyString::operator!=(const MyString& s) const 
++{
++#ifdef BASIC4TRACE
++    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
++#endif
++
++	if (strcmp(this.data, s.data) == 0){
++		return 1;
++	}; 
++	
++	else{
++		return 0; 
++	}; 
++		
+ }
+ 
++
++MyString& MyString::operator+=(const MyString& s, const MyString& s1) const 
++{
++
++	MyString &temp = (MyString&) s; 
++	char *tempArray = (char*)calloc(1, s.len +1)*sizeof(char)); 
++	strcpy(tempArray, s.data); 
++
++	delete[] temp.data; 
++
++	temp.data = new char [s.len + s1.len + 1]; 
++	
++	strcpy(temp.data, tempArray); 
++	strcpy(temp.data + s.len, s1.data); 
++	
++	temp.len = s.len + s1.len; 
++	
++	return temp; 
++	
++	
++}
+diff --git a/mystring.h b/mystring.h
+index 43f66cf..9080bc1 100644
+--- a/mystring.h
++++ b/mystring.h
+@@ -42,6 +42,29 @@ class MyString {
+ 	// operator[] const
+ 	const char& operator[](int i) const;
+ 
++	// operator<
++	friend MyString operator<(const MyString& s);
++
++	// operator<= 
++	friend MyString operator<=(const MyString& s); 
++	
++	// operator>
++	friend MyString operator>(const MyString& s);
++
++	// operator>= 
++	friend MyString operator>=(const MyString& s); 
++
++	// operator==
++	friend MyString operator==(const MyString& s);
++
++	// operator!= 
++	friend MyString operator!=(const MyString& s); 
++
++	// operator+= 
++	friend MyString operator+=(const MyString& s, const MyString& s1); 
++
++
++
+     private:
+ 
+ 	char* data;
+diff --git a/test4.cpp b/test4.cpp
+index b0c9e44..09f63c2 100644
+--- a/test4.cpp
++++ b/test4.cpp
+@@ -2,17 +2,18 @@
+ 
+ static MyString add(MyString s1, MyString s2)
+ {
+-    MyString temp(" and ");
+-    return s1 + temp + s2;
++	static MyString add(const MyString& s1, const MyString& s2)
++//	MyString temp(" and ");
++//	return s1 + temp + s2;
+ }
+ 
+ int main()
+ {
+-    MyString s1("one");
+-    MyString s2("two");
++	MyString s1("one");
++	MyString s2("two");
+ 
+-    MyString s3 = add(s1, s2);
++	MyString s3 = add(s1, s2);
+ 
+-    cout << s3 << endl;
+-    return 0;
++	cout << s3 << endl;
++	return 0;
+ }
+diff --git a/test5.cpp b/test5.cpp
+new file mode 100644
+index 0000000..f96eeb2
+--- /dev/null
++++ b/test5.cpp
+@@ -0,0 +1,35 @@
++#include <stdio.h> 
++#include <cassert.h>
++
++int main(){ 
++
++	MyString *s1 = new MyString("abcd"); 
++	MyString *s2 = new MyString("abce"); 
++
++
++	cout << "Testing < assertion:" << endl; 
++	assert(*s1 < *s2); 
++	cout << "Testing <= assertion:" << endl; 
++	assert(*s1 <= *s2); 
++	cout << "Testing > assertion:" << endl; 
++	assert(*s1 > *s2); 
++	cout << "Testing >= assertion:" << endl; 
++	assert(*s1 >= *s2); 
++	cout << "Testing == assertion:" << endl; 
++	assert(*s1 == *s2); 
++	cout << "Testing != assertion:" << endl; 
++	assert(*s1 != *s2); 
++
++
++	MyString sp(" ");
++        MyString period(".");
++        MyString str;
++        str += "This" + sp + "should" + sp 
++            += "work" + sp + "without" 
++            += sp + "any" + sp + "memory" 
++            += sp + "leak" 
++            += period;
++        cout << str << endl;
++
++	return 0; 
++}//end amin 
+-- 
+1.7.9.5
+
+
+From f46f7f097ea207a4fadedfb2c0d64e0209205ca1 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Thu, 6 Dec 2012 00:30:44 -0500
+Subject: [PATCH 2/3] changes
+
+---
+ Makefile     |    6 ++--
+ README.txt   |  102 +++++++++++++++++++++++++++++++++++++++++++++------------
+ mystring.cpp |  103 +++++++++++++++++++++++++---------------------------------
+ mystring.h   |   14 ++++----
+ test4.cpp    |    8 ++---
+ test5.cpp    |   14 ++++----
+ 6 files changed, 147 insertions(+), 100 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 6d18282..92bff0c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,5 +1,5 @@
+ CC  = g++
+-CXX = g++ -O0 -fno-elide-constructors
++#CXX = g++ -O0 -fno-elide-constructors
+ 
+ # Comment out one of the following 2 lines to enable/disable BASIC4TRACE.
+ INCLUDES = -DBASIC4TRACE
+@@ -11,8 +11,8 @@ CXXFLAGS = -g -Wall $(INCLUDES)
+ LDFLAGS = -g
+ LDLIBS  =
+ 
+-executables = test1 test2 test3 test4 
+-objects = mystring.o test1.o test2.o test3.o test4.o 
++executables = test1 test2 test3 test4 test5
++objects = mystring.o test1.o test2.o test3.o test4.o test5.o 
+ 
+ .PHONY: default
+ default: $(executables)
+diff --git a/README.txt b/README.txt
+index 7706511..9974329 100644
+--- a/README.txt
++++ b/README.txt
+@@ -5,31 +5,91 @@ Assignment #9
+ Part1:(a) 
+ 	BASIC4TRACE: (0xbffff9a0)->MyString(const char *) -- MyString s1("one"); //The "one" char is read in 
+ 	BASIC4TRACE: (0xbffff998)->MyString(const char *) -- MyString s2("two"); //The "two" char is read in
+-	BASIC4TRACE: (0xbffff9b0)->MyString(const MyString&) --  MyString s1("one"); //The s1 MyString obejct is created 
+-	BASIC4TRACE: (0xbffff9b8)->MyString(const MyString&) -- MyString s2("two"); /The s2 MyString obejct is created 
+-	BASIC4TRACE: (0xbffff948)->MyString(const char *) --   MyString temp(" and "); //The in "add" function, a char "and" is read in
+-	BASIC4TRACE: op+(const MyString&, const MyString&) --  return s1 + temp + s2; // In the "add" function, s1, temp and s2 are added 
+-	BASIC4TRACE: (0xbffff8f8)->MyString() -- MyString s3 = add(s1, s2); //the MyString function is called 
+-	BASIC4TRACE: (0xbffff958)->MyString(const MyString&) -- MyString s3 = add(s1, s2); //A new s3 MyString object is created 
+-	BASIC4TRACE: (0xbffff8f8)->˜MyString() -- MyString s3 = add(s1, s2);
+-	BASIC4TRACE: op+(const MyString&, const MyString&) -- MyString s3 = add(s1, s2); //the values s1 and s2 are added 
+-	BASIC4TRACE: (0xbffff8f8)->MyString() -- #include "mystring.h" //the = operation is accessed 
+-	BASIC4TRACE: (0xbffff950)->MyString(const MyString&) --   MyString s3 = add(s1, s2); //the right side is placed into the left side 
+-	BASIC4TRACE: (0xbffff8f8)->˜MyString() -- cout << s3 << endl;
+-	BASIC4TRACE: (0xbffff9a8)->MyString(const MyString&) -- MyString s3 = add(s1, s2);
+-	BASIC4TRACE: (0xbffff950)->˜MyString() -- #include "mystring.h"
+-	BASIC4TRACE: (0xbffff958)->˜MyString() -- #include "mystring.h"
+-	BASIC4TRACE: (0xbffff948)->˜MyString() -- #include "mystring.h"
++	BASIC4TRACE: (0xbffff9b0)->MyString(const MyString&) --  MyString s3 = add(s1, s2);
++	BASIC4TRACE: (0xbffff9b8)->MyString(const MyString&) -- MyString s3 = add(s1, s2);
++	BASIC4TRACE: (0xbffff948)->MyString(const char *) --   MyString temp(" and "); //in the "add" function, a char "and" is read in
++	BASIC4TRACE: op+(const MyString&, const MyString&) --  return s1 + temp + s2; // In the "add" function, s1 and temp are evaulated first 
++	BASIC4TRACE: (0xbffff8f8)->MyString() -- MyString temp; //in operator+ 
++	BASIC4TRACE: (0xbffff958)->MyString(const MyString&) -- return temp; //copying return to place where it wont be deleted 
++	BASIC4TRACE: (0xbffff8f8)->˜MyString() -- deleting temporary variable 
++	BASIC4TRACE: op+(const MyString&, const MyString&) -- return s1 + temp + s2; // In the "add" function, evaluate temp2 and s2 and put it into temp3 
++	BASIC4TRACE: (0xbffff8f8)->MyString() -- MyString temp; //in operator+ 
++	BASIC4TRACE: (0xbffff950)->MyString(const MyString&) --   return temp; //copying return to place where it wont be deleted 
++	BASIC4TRACE: (0xbffff8f8)->˜MyString() -- deleting temporary variable 
++
++	BASIC4TRACE: (0xbffff9a8)->MyString(const MyString&) -- return s1 + temp + s2; //complier wants to place this into somewhere where it wont be lost 
++	BASIC4TRACE: (0xbffff950)->˜MyString() -- deleting temp 
++	BASIC4TRACE: (0xbffff958)->˜MyString() -- deleteing temp2
++	BASIC4TRACE: (0xbffff948)->˜MyString() -- deleteing temp3
+ 	BASIC4TRACE: (0xbffff990)->MyString(const MyString&) -- MyString s3 = add(s1, s2);
+-	BASIC4TRACE: (0xbffff9a8)->˜MyString() --  #include "mystring.h"
+-	BASIC4TRACE: (0xbffff9b8)->˜MyString() -- #include "mystring.h"
+-	BASIC4TRACE: (0xbffff9b0)->˜MyString() -- #include "mystring.h"
++	BASIC4TRACE: (0xbffff9a8)->˜MyString() --  deleting result of add(s1, s2) 
++	BASIC4TRACE: (0xbffff9b8)->˜MyString() -- deleting copied value of s1
++	BASIC4TRACE: (0xbffff9b0)->˜MyString() -- deleting copied value of s2
+ 	one and two
+-	BASIC4TRACE: (0xbffff990)->˜MyString() --  return 0;
+-	BASIC4TRACE: (0xbffff998)->˜MyString() --  return 0;
+-	BASIC4TRACE: (0xbffff9a0)->˜MyString() --  return 0;
++	BASIC4TRACE: (0xbffff990)->˜MyString() --  deleting s3 
++	BASIC4TRACE: (0xbffff998)->˜MyString() --  deleting s1
++	BASIC4TRACE: (0xbffff9a0)->˜MyString() --  deleting s2 
+ 
+ (b) 
+ 
++BASIC4TRACE: (0x7fff0fc8dce0)->MyString(const char *)
++BASIC4TRACE: (0x7fff0fc8dcf0)->MyString(const char *)
++BASIC4TRACE: (0x7fff0fc8dc90)->MyString(const char *)
++BASIC4TRACE: op+(const MyString&, const MyString&)
++BASIC4TRACE: (0x7fff0fc8dc30)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dc40)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dca0)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dc40)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dc30)->~MyString()
++BASIC4TRACE: op+(const MyString&, const MyString&)
++BASIC4TRACE: (0x7fff0fc8dc30)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dc40)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dcb0)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dc40)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dc30)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dd10)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dcb0)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dca0)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dc90)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dd00)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff0fc8dd10)->~MyString()
++one and two
++BASIC4TRACE: (0x7fff0fc8dd00)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dcf0)->~MyString()
++BASIC4TRACE: (0x7fff0fc8dce0)->~MyString()
++
++s1 and s2 are references instead of actual values. This saves having to copy the value each time we need it. We hence don't need to copy the value to a temporary variable and also don't have to destroy it. 
++
+ 
+ (c) The flag is used to turn off return value optimazation. RVO is a technique used by the complier to eliminate the temporary object created to hold a function's return value; after the function is called, this value is no longer available. This technique is used to increase speed. However, the flag disables this feature, allowing the return value to remain. 
++
++BASIC4TRACE: (0x7fff414270e0)->MyString(const char *)
++BASIC4TRACE: (0x7fff414270f0)->MyString(const char *)
++BASIC4TRACE: (0x7fff414270a0)->MyString(const char *)
++BASIC4TRACE: op+(const MyString&, const MyString&)
++BASIC4TRACE: (0x7fff41427050)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff414270b0)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff41427050)->~MyString()
++BASIC4TRACE: op+(const MyString&, const MyString&)
++BASIC4TRACE: (0x7fff41427050)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff41427100)->MyString(const MyString&)
++BASIC4TRACE: (0x7fff41427050)->~MyString()
++BASIC4TRACE: (0x7fff414270b0)->~MyString()
++BASIC4TRACE: (0x7fff414270a0)->~MyString()
++one and two
++BASIC4TRACE: (0x7fff41427100)->~MyString()
++BASIC4TRACE: (0x7fff414270f0)->~MyString()
++BASIC4TRACE: (0x7fff414270e0)->~MyString()
++
++Here, we are not creating temporary objects for s1, s2 and s3. We need to only delete the actual values of s1, s2 and s3, which we do here:
++BASIC4TRACE: (0x7fff41427100)->~MyString()
++BASIC4TRACE: (0x7fff414270f0)->~MyString()
++BASIC4TRACE: (0x7fff414270e0)->~MyString()
++
++And of temp, temp2, and temp3:
++BASIC4TRACE: (0x7fff41427050)->~MyString()
++BASIC4TRACE: (0x7fff414270b0)->~MyString()
++BASIC4TRACE: (0x7fff414270a0)->~MyString()
++
++Part2 works as specified. Please excuse it being a few minutes late. I forgot that you ahve to "git add" files every time they are changed, and hence kept submitting unchanged files. 
++
+diff --git a/mystring.cpp b/mystring.cpp
+index 1dab185..5ca4a67 100644
+--- a/mystring.cpp
++++ b/mystring.cpp
+@@ -1,5 +1,7 @@
+ #include <cstring>
+ #include <cstdio>
++#include <stdio.h>
++#include <stdlib.h> 
+ 
+ #include "mystring.h"
+ 
+@@ -92,21 +94,18 @@ MyString& MyString::operator=(const MyString& rhs)
+ MyString operator+(const MyString& s1, const MyString& s2)
+ {
+ #ifdef BASIC4TRACE
+-    fprintf(stderr, 
+-	    "BASIC4TRACE: op+(const MyString&, const MyString&)\n");
+-#endif
+-
+-	MyString temp;
+-
+-	delete[] temp.data;
++    fprintf(stderr, "BASIC4TRACE: op+(const MyString&, const MyString&)\n"); 
++#endif	
++	MyString temp(s1); 
++	return (MyString) operator+=(temp, s2); 
++	
++//	temp.len = s1.len + s2.len;
+ 
+-	temp.len = s1.len + s2.len;
++//	temp.data = new char[temp.len+1];
++//	strcpy(temp.data, s1.data);
++//	strcat(temp.data, s2.data);
+ 
+-	temp.data = new char[temp.len+1];
+-	strcpy(temp.data, s1.data);
+-	strcat(temp.data, s2.data);
+ 
+-	return temp;
+ }
+ 
+ // put-to operator
+@@ -153,14 +152,11 @@ const char& MyString::operator[](int i) const
+ 
+ // less-than operator
+ 
+-MyString& MyString::operator<(const MyString& s) const 
++int operator<(const MyString& s, const MyString& s1)  
+ {
+-#ifdef BASIC4TRACE
+-    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+-#endif
+ 
+ 	
+-	return min(strcmp(this.data, s.data), 0); 
++	return min(strcmp(s.data, s1.data), 0); 
+ 
+ 
+ 	 //negative if first arg is smaller than second, is same zero, is first larger pos 
+@@ -170,100 +166,89 @@ MyString& MyString::operator<(const MyString& s) const
+ 
+ // less-than-or-equal-to operator
+ 
+-MyString& MyString::operator<=(const MyString& s) const 
++int operator<=(const MyString& s, const MyString& s1 )  
+ {
+-#ifdef BASIC4TRACE
+-    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+-#endif
+ 
+-	if (strcmp(this.data, s.data) == 0){
++
++	if (strcmp(s.data, s1.data) == 0){
+ 		return 1;
+-	}; 
++	} 
+ 	
+-	else if(min(strcmp(this.data, s.data), 0) !=){
++	else if(min(strcmp(s.data, s1.data), 0) !=0){
+ 		return 1; 
+-	};
++	}
+ 
+ 	else {
+ 		return 0; 
+-	};  
++	}  
+ 	
+ }
+ 
+ // greater-than operator
+ 
+-MyString& MyString::operator>(const MyString& s) const 
++int operator>(const MyString& s, const MyString& s1)  
+ {
+-#ifdef BASIC4TRACE
+-    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+-#endif
++
+ 	
+-	return max(strcmp(this.data, s.data), 0); 
++	return max(strcmp(s.data, s1.data), 0); 
+ 	
+ }
+ // greater-than-or-equal-to operator 
+ 
+-MyString& MyString::operator>=(const MyString& s) const 
++int operator>=(const MyString& s, const MyString& s1) 
+ {
+-#ifdef BASIC4TRACE
+-    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+-#endif
+ 
+-	if (strcmp(this.data, s.data) == 0){
++	if (strcmp(s.data, s1.data) == 0){
+ 		return 1;
+-	}; 
++	}
+ 	
+-	else if(max(strcmp(this.data, s.data), 0) !=){
++	else if(max(strcmp(s.data, s1.data), 0) !=0){
+ 		return 1; 
+-	};
++	}
+ 
+ 	else {
+ 		return 0; 
+-	};  
++	}  
+ }
+ 
+ // equal-to operator
+ 
+-MyString& MyString::operator==(const MyString& s) const 
++int operator==(const MyString& s, const MyString& s1)  
+ {
+-#ifdef BASIC4TRACE
+-    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+-#endif
+ 
+-	if (strcmp(this.data, s.data) == 0){
++	if (strcmp(s.data, s1.data) == 0){
+ 		return 1;
+-	}; 
++	} 
+ 	
+ 	else{
+ 		return 0; 
+-	}; 
++	}
+ 	
+ }
+ 
+ // not-equal-to operator
+ 
+-MyString& MyString::operator!=(const MyString& s) const 
++int operator!=(const MyString& s, const MyString& s1)  
+ {
+-#ifdef BASIC4TRACE
+-    fprintf(stderr, "BASIC4TRACE: (%p)->op=(const MyString&)\n", this);
+-#endif
+ 
+-	if (strcmp(this.data, s.data) == 0){
+-		return 1;
+-	}; 
++
++	if (strcmp(s.data, s1.data) == 0){
++		return 0;
++	} 
+ 	
+ 	else{
+-		return 0; 
+-	}; 
++		return 1; 
++	}
+ 		
+ }
+ 
+ 
+-MyString& MyString::operator+=(const MyString& s, const MyString& s1) const 
++MyString& operator+=(const MyString& s, const MyString& s1)  
+ {
+ 
++
+ 	MyString &temp = (MyString&) s; 
+-	char *tempArray = (char*)calloc(1, s.len +1)*sizeof(char)); 
++	char *tempArray = (char*)calloc(1, (s.len +1)*sizeof(char)); 
+ 	strcpy(tempArray, s.data); 
+ 
+ 	delete[] temp.data; 
+@@ -272,7 +257,7 @@ MyString& MyString::operator+=(const MyString& s, const MyString& s1) const
+ 	
+ 	strcpy(temp.data, tempArray); 
+ 	strcpy(temp.data + s.len, s1.data); 
+-	
++
+ 	temp.len = s.len + s1.len; 
+ 	
+ 	return temp; 
+diff --git a/mystring.h b/mystring.h
+index 9080bc1..43ff6a5 100644
+--- a/mystring.h
++++ b/mystring.h
+@@ -43,25 +43,25 @@ class MyString {
+ 	const char& operator[](int i) const;
+ 
+ 	// operator<
+-	friend MyString operator<(const MyString& s);
++	friend int operator<(const MyString& s, const MyString& s1); 
+ 
+ 	// operator<= 
+-	friend MyString operator<=(const MyString& s); 
++	friend int operator<=(const MyString& s, const MyString& s1); 
+ 	
+ 	// operator>
+-	friend MyString operator>(const MyString& s);
++	friend int operator>(const MyString& s, const MyString& s1); 
+ 
+ 	// operator>= 
+-	friend MyString operator>=(const MyString& s); 
++	friend int operator>=(const MyString& s, const MyString& s1); 
+ 
+ 	// operator==
+-	friend MyString operator==(const MyString& s);
++	friend int operator==(const MyString& s, const MyString& s1); 
+ 
+ 	// operator!= 
+-	friend MyString operator!=(const MyString& s); 
++	friend int operator!=(const MyString& s, const MyString& s1); 
+ 
+ 	// operator+= 
+-	friend MyString operator+=(const MyString& s, const MyString& s1); 
++	friend MyString& operator+=(const MyString& s, const MyString& s1); 
+ 
+ 
+ 
+diff --git a/test4.cpp b/test4.cpp
+index 09f63c2..bec3639 100644
+--- a/test4.cpp
++++ b/test4.cpp
+@@ -1,10 +1,10 @@
+ #include "mystring.h"
+ 
+-static MyString add(MyString s1, MyString s2)
++static MyString add(const MyString& s1, const MyString& s2)
+ {
+-	static MyString add(const MyString& s1, const MyString& s2)
+-//	MyString temp(" and ");
+-//	return s1 + temp + s2;
++	//static MyString add(const MyString& s1, const MyString& s2)
++	MyString temp(" and ");
++	return s1 + temp + s2;
+ }
+ 
+ int main()
+diff --git a/test5.cpp b/test5.cpp
+index f96eeb2..6492b75 100644
+--- a/test5.cpp
++++ b/test5.cpp
+@@ -1,10 +1,12 @@
+-#include <stdio.h> 
+-#include <cassert.h>
++#include <cstdio> 
++#include <cassert>
++#include "mystring.h"
+ 
+ int main(){ 
+ 
+ 	MyString *s1 = new MyString("abcd"); 
+-	MyString *s2 = new MyString("abce"); 
++	MyString *s2 = new MyString("abce");
++	MyString *s3 = new MyString("abcc"); 
+ 
+ 
+ 	cout << "Testing < assertion:" << endl; 
+@@ -12,11 +14,11 @@ int main(){
+ 	cout << "Testing <= assertion:" << endl; 
+ 	assert(*s1 <= *s2); 
+ 	cout << "Testing > assertion:" << endl; 
+-	assert(*s1 > *s2); 
++	assert(*s1 > *s3); 
+ 	cout << "Testing >= assertion:" << endl; 
+-	assert(*s1 >= *s2); 
++	assert(*s1 >= *s3); 
+ 	cout << "Testing == assertion:" << endl; 
+-	assert(*s1 == *s2); 
++	assert(*s1 == *s1); 
+ 	cout << "Testing != assertion:" << endl; 
+ 	assert(*s1 != *s2); 
+ 
+-- 
+1.7.9.5
+
+
+From 82d04d561cfa74768c7b74332a712c1c1934c0f8 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Thu, 6 Dec 2012 00:32:31 -0500
+Subject: [PATCH 3/3] changed
+
+---
+ README.txt |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/README.txt b/README.txt
+index 9974329..71c64f7 100644
+--- a/README.txt
++++ b/README.txt
+@@ -91,5 +91,5 @@ BASIC4TRACE: (0x7fff41427050)->~MyString()
+ BASIC4TRACE: (0x7fff414270b0)->~MyString()
+ BASIC4TRACE: (0x7fff414270a0)->~MyString()
+ 
+-Part2 works as specified. Please excuse it being a few minutes late. I forgot that you ahve to "git add" files every time they are changed, and hence kept submitting unchanged files. 
++Part2 works as specified. Please excuse it being a few minutes late. I forgot that you have to "git add" files every time they are changed, and hence kept submitting unchanged files. Please view this code! I worked very hard on it!
+ 
+-- 
+1.7.9.5
+

@@ -1,0 +1,1235 @@
+From b0d27dfd59c05e362cd0a217ff5da25cfb3106ce Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sat, 13 Oct 2012 18:54:28 -0400
+Subject: [PATCH 1/5] Committed all files
+
+---
+ part1/Makefile      |   15 ++++
+ part1/mylist-test.c |  221 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ part1/mylist.h      |    2 +-
+ 3 files changed, 235 insertions(+), 3 deletions(-)
+ create mode 100644 part1/Makefile
+
+diff --git a/part1/Makefile b/part1/Makefile
+new file mode 100644
+index 0000000..a7fb63e
+--- /dev/null
++++ b/part1/Makefile
+@@ -0,0 +1,15 @@
++mylist-test: mylist-test.o 
++	gcc -c mylist-test -Wall -g -L. -lmylist -o mylist-test.o 
++
++ar rc libmylist.a mylist-test.o
++
++mylist-test.o: mylist.h 
++
++.PHONY: clean 
++clean: 
++	rm -f *.o *~  
++
++.PHONY: all
++all: clean main 
++
++
+diff --git a/part1/mylist-test.c b/part1/mylist-test.c
+index 817f2a6..815ed9b 100644
+--- a/part1/mylist-test.c
++++ b/part1/mylist-test.c
+@@ -1,7 +1,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <assert.h>
+-#include "mylist.h"
++#include "mylist.h" 
+ 
+ static void printDouble(void *p)
+ {
+@@ -86,4 +86,221 @@ int main()
+     }
+ 
+     return 0;
+-}
++}//end main 
++
++/*
++ * Create a node that holds the given data pointer,
++ * and add the node to the front of the list.
++ *
++ * Note that this function does not manage the lifetime of the object
++ * pointed to by 'data'.
++ * 
++ * It returns the newly created node on success and NULL on failure.
++ */
++
++struct Node *addFront(struct List *list, void *data){
++
++	struct node *Front; //pointer to front node 
++	Front= new List(item, NULL); //make front node null, ITEM??
++	Front= malloc( sizeof(struct node) ); //allocating memory to it 
++	
++	struct node *newNode; //creating new node 
++	newNode= malloc( sizeof(struct node) ); //allocating memory to it 
++
++	newNode= new List(); //What does list take as parameters??? 
++	Front -> data = newNode; //add to front??? data instead of next?? 
++
++	if(newNode !=0)
++		return newNode; //return data if newly created node sucessful 
++	else()
++		return NULL; //return null if fails 
++
++}//end addFront 
++
++/*
++ * Traverse the list, calling f() with each data item.
++ */
++
++void traverseList(struct List *list, void (*f)(void *)){
++
++	struct node *traverser; 
++
++  	if ( traverser != 0 ) {
++		while ( traverser->next != 0) //looking at each element in the list 
++        	{
++            		traverser = traverser->next.f(); //calling f() on each new data item 
++        	}//end while loop 
++    	} //end if statement     
++
++}//end traverseList 
++
++/*
++ * Traverse the list, comparing each data item with 'dataSought' using
++ * 'compar' function.  ('compar' returns 0 if the data pointed to by
++ * the two parameters are equal, non-zero value otherwise.)
++ *
++ * Returns the first node containing the matching data, 
++ * NULL if not found.
++ */
++
++struct Node *findNode(struct List *list, const void *dataSought, int (*compar)(const void *, const void *)) {
++
++	struct node *traverser; 
++
++  	if ( traverser != 0 ) {
++		while ( traverser->next != 0) //for each element 
++        	{
++            		if ( compar(*next, *dataSought) ==0){ //looks for match using compar and returns node containing match 
++				return data; 
++			}//end inner if 
++
++        	}//end while loop 
++
++		return NULL; //returns null if no match found 
++    	} //end if statement     
++
++}//end findNode 
++
++/*
++ * Flip the sign of the double value pointed to by 'data' by
++ * multiplying -1 to it and putting the result back into the memory
++ * location.
++ */
++void flipSignDouble(void *data){
++
++	double x= *data; 
++	double y= x*(-1); 
++
++	data= &y; //data now holds the address of the new value 
++
++}//end flipSignDouble 
++
++/*
++ * Compare two double values pointed to by the two pointers.
++ * Return 0 if they are the same value, 1 otherwise.
++ */
++int compareDouble(const void *data1, const void *data2) { 
++
++	double x= *data1; 
++	double y= *data2; 
++	
++	if (x-y ==0){
++		return 0; //return zero if the same 
++	}
++	else 
++		return 1; //return 1 if different 
++
++} //end compareDouble 
++
++
++/*
++ * Remove the first node from the list, deallocate the memory for the
++ * ndoe, and return the 'data' pointer that was stored in the node.
++ * Returns NULL is the list is empty.
++ */
++void *popFront(struct List *list){
++
++	struct node *traverser; 
++
++  	if ( traverser != 0 ) { //while list not empty 
++		
++		struct node *front= addFront(); 
++		struct node *temp = frony --> next; 
++		front -> data = front -> next -> data; 
++		front -> next = temp -> next; 
++		free(temp); 
++	
++    	} //end if statement  
++
++	else
++		return NULL; //returns null if list is empty    
++}//end popFront  
++
++/*
++ * Remove all nodes from the list, deallocating the memory for the
++ * nodes.  You can implement this function using popFront().
++ */
++void removeAllNodes(struct List *list){
++
++	struct node *traverser; 
++
++  	if ( traverser != 0 ) {
++		while ( traverser->next != 0) //looking at each element in the list 
++        	{
++            		popFront(next): //removes each node at front hence removing all nodes 
++
++        	}//end while loop 
++    	} //end if statement    
++
++}//end removeAllNodes 
++
++/*
++ * Create a node that holds the given data pointer,
++ * and add the node right after the node passed in as the 'prevNode'
++ * parameter.  If 'prevNode' is NULL, this function is equivalent to
++ * addFront().
++ *
++ * Note that prevNode, if not NULL, is assumed to be one of the nodes
++ * in the given list.  The behavior of this function is undefined if
++ * prevNode does not belong in the given list.
++ *
++ * Note that this function does not manage the lifetime of the object
++ * pointed to by 'data'.
++ * 
++ * It returns the newly created node on success and NULL on failure.
++ */
++struct Node *addAfter(struct List *list, struct Node *prevNode, void *data){
++	
++	if( prevNode ==NULL){ 
++		affFront(data); 
++	} //end if statement 
++
++	struct node *dataNode;
++	dataNode= &data; 
++	
++	delete(prevNode)
++
++	return dataNode; 
++	
++
++}//end addAfter 
++
++/* 
++ * Reverse the list.
++ *
++ * Note that this function reverses the list purely by manipulating
++ * pointers.  It does NOT call malloc directly or indirectly (which
++ * means that it does not call addFront() or addAfter()).
++ *
++ * Implementation hint: keep track of 3 consecutive nodes (previous,
++ * current, next) and move them along in a while loop.  Your function
++ * should start like this:
++
++
++      struct Node *prv = NULL;
++      struct Node *cur = list->head;
++      struct Node *nxt;
++
++      while (cur) {
++          ......
++
++
++ * And at the end, prv will end up pointing to the first element of
++ * the reversed list.  Don't forget to assign it to list->head.
++ */
++void reverseList(struct List *list){
++
++	struct Node *prv = NULL;
++      	struct Node *cur = list->head;
++      	struct Node *nxt;
++	struct Node *temp; 
++
++      	while (cur) {
++		temp= cur; 
++		cur = next; 
++		prv= tmep; 
++
++	
++	}//end while loop  
++}//end reversist 
++
+diff --git a/part1/mylist.h b/part1/mylist.h
+index 32c9a04..f3d552d 100644
+--- a/part1/mylist.h
++++ b/part1/mylist.h
+@@ -40,7 +40,7 @@ static inline void initList(struct List *list)
+  * It returns the newly created node on success and NULL on failure.
+  */
+ struct Node *addFront(struct List *list, void *data);
+-
++	
+ /*
+  * Traverse the list, calling f() with each data item.
+  */
+-- 
+1.7.9.5
+
+
+From 5e92358a25e1fee1ac936ec51671ac43a383aa98 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sat, 13 Oct 2012 21:25:01 -0400
+Subject: [PATCH 2/5] Committed all files
+
+---
+ part1/Makefile      |   14 +++-
+ part1/mylist-test.c |  216 --------------------------------------------------
+ part1/mylist.c      |  219 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 229 insertions(+), 220 deletions(-)
+ create mode 100644 part1/mylist.c
+
+diff --git a/part1/Makefile b/part1/Makefile
+index a7fb63e..fa19e03 100644
+--- a/part1/Makefile
++++ b/part1/Makefile
+@@ -1,9 +1,15 @@
+-mylist-test: mylist-test.o 
+-	gcc -c mylist-test -Wall -g -L. -lmylist -o mylist-test.o 
++mylist-test: mylist-test.o libmylist.a 
++	gcc -c mylist-test.c -Wall -g 
++	gcc mylist-test.o -L. -lmylist -o mylist-test 
+ 
+-ar rc libmylist.a mylist-test.o
++libmylist.a: 
++	gcc -c mylist.c -o mylist.o 
++	ar rc libmylist.a mylist.o 
++	ranlib libmylist.a 
+ 
+-mylist-test.o: mylist.h 
++mylist-test.o: libmylist.a 
++
++mylist.h: mylist.c 
+ 
+ .PHONY: clean 
+ clean: 
+diff --git a/part1/mylist-test.c b/part1/mylist-test.c
+index 815ed9b..113984d 100644
+--- a/part1/mylist-test.c
++++ b/part1/mylist-test.c
+@@ -88,219 +88,3 @@ int main()
+     return 0;
+ }//end main 
+ 
+-/*
+- * Create a node that holds the given data pointer,
+- * and add the node to the front of the list.
+- *
+- * Note that this function does not manage the lifetime of the object
+- * pointed to by 'data'.
+- * 
+- * It returns the newly created node on success and NULL on failure.
+- */
+-
+-struct Node *addFront(struct List *list, void *data){
+-
+-	struct node *Front; //pointer to front node 
+-	Front= new List(item, NULL); //make front node null, ITEM??
+-	Front= malloc( sizeof(struct node) ); //allocating memory to it 
+-	
+-	struct node *newNode; //creating new node 
+-	newNode= malloc( sizeof(struct node) ); //allocating memory to it 
+-
+-	newNode= new List(); //What does list take as parameters??? 
+-	Front -> data = newNode; //add to front??? data instead of next?? 
+-
+-	if(newNode !=0)
+-		return newNode; //return data if newly created node sucessful 
+-	else()
+-		return NULL; //return null if fails 
+-
+-}//end addFront 
+-
+-/*
+- * Traverse the list, calling f() with each data item.
+- */
+-
+-void traverseList(struct List *list, void (*f)(void *)){
+-
+-	struct node *traverser; 
+-
+-  	if ( traverser != 0 ) {
+-		while ( traverser->next != 0) //looking at each element in the list 
+-        	{
+-            		traverser = traverser->next.f(); //calling f() on each new data item 
+-        	}//end while loop 
+-    	} //end if statement     
+-
+-}//end traverseList 
+-
+-/*
+- * Traverse the list, comparing each data item with 'dataSought' using
+- * 'compar' function.  ('compar' returns 0 if the data pointed to by
+- * the two parameters are equal, non-zero value otherwise.)
+- *
+- * Returns the first node containing the matching data, 
+- * NULL if not found.
+- */
+-
+-struct Node *findNode(struct List *list, const void *dataSought, int (*compar)(const void *, const void *)) {
+-
+-	struct node *traverser; 
+-
+-  	if ( traverser != 0 ) {
+-		while ( traverser->next != 0) //for each element 
+-        	{
+-            		if ( compar(*next, *dataSought) ==0){ //looks for match using compar and returns node containing match 
+-				return data; 
+-			}//end inner if 
+-
+-        	}//end while loop 
+-
+-		return NULL; //returns null if no match found 
+-    	} //end if statement     
+-
+-}//end findNode 
+-
+-/*
+- * Flip the sign of the double value pointed to by 'data' by
+- * multiplying -1 to it and putting the result back into the memory
+- * location.
+- */
+-void flipSignDouble(void *data){
+-
+-	double x= *data; 
+-	double y= x*(-1); 
+-
+-	data= &y; //data now holds the address of the new value 
+-
+-}//end flipSignDouble 
+-
+-/*
+- * Compare two double values pointed to by the two pointers.
+- * Return 0 if they are the same value, 1 otherwise.
+- */
+-int compareDouble(const void *data1, const void *data2) { 
+-
+-	double x= *data1; 
+-	double y= *data2; 
+-	
+-	if (x-y ==0){
+-		return 0; //return zero if the same 
+-	}
+-	else 
+-		return 1; //return 1 if different 
+-
+-} //end compareDouble 
+-
+-
+-/*
+- * Remove the first node from the list, deallocate the memory for the
+- * ndoe, and return the 'data' pointer that was stored in the node.
+- * Returns NULL is the list is empty.
+- */
+-void *popFront(struct List *list){
+-
+-	struct node *traverser; 
+-
+-  	if ( traverser != 0 ) { //while list not empty 
+-		
+-		struct node *front= addFront(); 
+-		struct node *temp = frony --> next; 
+-		front -> data = front -> next -> data; 
+-		front -> next = temp -> next; 
+-		free(temp); 
+-	
+-    	} //end if statement  
+-
+-	else
+-		return NULL; //returns null if list is empty    
+-}//end popFront  
+-
+-/*
+- * Remove all nodes from the list, deallocating the memory for the
+- * nodes.  You can implement this function using popFront().
+- */
+-void removeAllNodes(struct List *list){
+-
+-	struct node *traverser; 
+-
+-  	if ( traverser != 0 ) {
+-		while ( traverser->next != 0) //looking at each element in the list 
+-        	{
+-            		popFront(next): //removes each node at front hence removing all nodes 
+-
+-        	}//end while loop 
+-    	} //end if statement    
+-
+-}//end removeAllNodes 
+-
+-/*
+- * Create a node that holds the given data pointer,
+- * and add the node right after the node passed in as the 'prevNode'
+- * parameter.  If 'prevNode' is NULL, this function is equivalent to
+- * addFront().
+- *
+- * Note that prevNode, if not NULL, is assumed to be one of the nodes
+- * in the given list.  The behavior of this function is undefined if
+- * prevNode does not belong in the given list.
+- *
+- * Note that this function does not manage the lifetime of the object
+- * pointed to by 'data'.
+- * 
+- * It returns the newly created node on success and NULL on failure.
+- */
+-struct Node *addAfter(struct List *list, struct Node *prevNode, void *data){
+-	
+-	if( prevNode ==NULL){ 
+-		affFront(data); 
+-	} //end if statement 
+-
+-	struct node *dataNode;
+-	dataNode= &data; 
+-	
+-	delete(prevNode)
+-
+-	return dataNode; 
+-	
+-
+-}//end addAfter 
+-
+-/* 
+- * Reverse the list.
+- *
+- * Note that this function reverses the list purely by manipulating
+- * pointers.  It does NOT call malloc directly or indirectly (which
+- * means that it does not call addFront() or addAfter()).
+- *
+- * Implementation hint: keep track of 3 consecutive nodes (previous,
+- * current, next) and move them along in a while loop.  Your function
+- * should start like this:
+-
+-
+-      struct Node *prv = NULL;
+-      struct Node *cur = list->head;
+-      struct Node *nxt;
+-
+-      while (cur) {
+-          ......
+-
+-
+- * And at the end, prv will end up pointing to the first element of
+- * the reversed list.  Don't forget to assign it to list->head.
+- */
+-void reverseList(struct List *list){
+-
+-	struct Node *prv = NULL;
+-      	struct Node *cur = list->head;
+-      	struct Node *nxt;
+-	struct Node *temp; 
+-
+-      	while (cur) {
+-		temp= cur; 
+-		cur = next; 
+-		prv= tmep; 
+-
+-	
+-	}//end while loop  
+-}//end reversist 
+-
+diff --git a/part1/mylist.c b/part1/mylist.c
+new file mode 100644
+index 0000000..339640c
+--- /dev/null
++++ b/part1/mylist.c
+@@ -0,0 +1,219 @@
++/*
++ * Create a node that holds the given data pointer,
++ * and add the node to the front of the list.
++ *
++ * Note that this function does not manage the lifetime of the object
++ * pointed to by 'data'.
++ * 
++ * It returns the newly created node on success and NULL on failure.
++ */
++
++struct Node *addFront(struct List *list, void *data){
++
++	struct Node *newNode; //creating new node 
++	newNode= malloc( sizeof(struct Node) ); //allocating memory to it 
++	
++	newNode -> data = data; //datas not same thing 
++
++	newNode -> next= list ->head; //head is first element 
++	head ->NewNode; //first element now points to new node we created 
++
++	return newNode; //return data if newly created node sucessful 
++
++
++}//end addFront 
++
++/*
++ * Traverse the list, calling f() with each data item.
++ */
++
++void traverseList(struct List *list, void (*f)(void *)){ //f is pointer to function that takes void * and returns void 
++
++	struct Node *traverser= list -> head; 
++
++
++	while ( traverser->next != 0) //looking at each element in the list 
++        {
++            	f(traverser -> data); 
++		traverser = traverser->next; 
++        }//end while loop 
++  
++
++}//end traverseList 
++
++/*
++ * Compare two double values pointed to by the two pointers.
++ * Return 0 if they are the same value, 1 otherwise.
++ */
++int compareDouble(const void *data1, const void *data2) {
++	
++	double c= *(double *) data1- *(double *) data2; 
++	if (c ==0) {
++		return 0; 
++	}
++	else return 1; 
++
++} //end compareDouble 
++
++/*
++ * Traverse the list, comparing each data item with 'dataSought' using
++ * 'compar' function.  ('compar' returns 0 if the data pointed to by
++ * the two parameters are equal, non-zero value otherwise.)
++ *
++ * Returns the first node containing the matching data, 
++ * NULL if not found.
++ */
++
++struct Node *findNode(struct List *list, const void *dataSought, int (*compar)(const void *, const void *)) {
++
++	struct node *traverser = list -> head; 
++ 
++	while ( traverser->next != 0) //for each element 
++	{
++    		if ( compareDouble(*traverser, *dataSought) ==0){ //looks for match using compare and returns node containing match 
++			return traverser; 
++		}//end inner if 
++
++	}//end while loop 
++
++	return NULL; //returns null if no match found 
++       
++
++}//end findNode 
++
++/*
++ * Flip the sign of the double value pointed to by 'data' by
++ * multiplying -1 to it and putting the result back into the memory
++ * location.
++ */
++void flipSignDouble(void *data) {
++	
++	double x = * (double *) data; 
++	double y= x*(-1); 
++
++	*data= y; //data now holds the address of the new value 
++
++}//end flipSignDouble 
++
++
++/*
++ * Remove the first node from the list, deallocate the memory for the
++ * ndoe, and return the 'data' pointer that was stored in the node.
++ * Returns NULL is the list is empty.
++ */
++void *popFront(struct List *list){
++
++	struct Node *traverser= List -> head; 
++
++  	if ( traverser -> next!= 0 ) { //while list not empty 
++		
++		list -> head = list -> head -> next; 
++		void * pointer= traverser ->data; 
++		free(traverser); 
++		return pointer; 
++	
++    	} //end if statement  
++
++	else
++		return NULL; //returns null if list is empty    
++}//end popFront  
++
++/*
++ * Remove all nodes from the list, deallocating the memory for the
++ * nodes.  You can implement this function using popFront().
++ */
++void removeAllNodes(struct List *list){
++
++	struct node *traverser; 
++
++  	if ( traverser != 0 ) {
++		while ( traverser->next != 0) //looking at each element in the list 
++        	{
++            		popFront(next): //removes each node at front hence removing all nodes 
++
++        	}//end while loop 
++    	} //end if statement    
++
++}//end removeAllNodes 
++
++/*
++ * Create a node that holds the given data pointer,
++ * and add the node right after the node passed in as the 'prevNode'
++ * parameter.  If 'prevNode' is NULL, this function is equivalent to
++ * addFront().
++ *
++ * Note that prevNode, if not NULL, is assumed to be one of the nodes
++ * in the given list.  The behavior of this function is undefined if
++ * prevNode does not belong in the given list.
++ *
++ * Note that this function does not manage the lifetime of the object
++ * pointed to by 'data'.
++ * 
++ * It returns the newly created node on success and NULL on failure.
++ */
++struct Node *addAfter(struct List *list, struct Node *prevNode, void *data){
++	
++	if( prevNode ==NULL){ 
++		addFront(data); 
++	} //end if statement 
++
++	struct Node *dataNode -> data= data; //holds data pointer 
++	dataNode= &data; 
++	
++	delete(prevNode)
++
++	return dataNode; 
++	
++
++}//end addAfter 
++
++/* 
++ * Reverse the list.
++ *
++
++ * Flip the sign of the double value pointed to by 'data' by
++ * multiplying -1 to it and putting the result back into the memory
++ * location.
++ */
++void flipSignDouble(void *data){
++
++	double x= *data; 
++/*
++
++ * Note that this function reverses the list purely by manipulating
++ * pointers.  It does NOT call malloc directly or indirectly (which
++ * means that it does not call addFront() or addAfter()).
++ *
++ * Implementation hint: keep track of 3 consecutive nodes (previous,
++ * current, next) and move them along in a while loop.  Your function
++ * should start like this:
++
++
++      struct Node *prv = NULL;
++      struct Node *cur = list->head;
++      struct Node *nxt;
++
++      while (cur) {
++          ......
++
++
++ * And at the end, prv will end up pointing to the first element of
++ * the reversed list.  Don't forget to assign it to list->head.
++ */
++void reverseList(struct List *list){
++
++	struct Node *prv = NULL;
++      	struct Node *cur = list->head;
++      	struct Node *nxt;
++	struct Node *temp; 
++
++      	while (cur) {
++		temp= cur; 
++		cur = next; 
++		prv= tmep; 
++
++	
++	}//end while loop  
++}//end reversist 
++
++
+-- 
+1.7.9.5
+
+
+From 438994e2779ba4fc91df30746a56be7037d2ece3 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sat, 13 Oct 2012 23:09:35 -0400
+Subject: [PATCH 3/5] Comitted all files
+
+---
+ part1/Makefile      |    4 +--
+ part1/mylist-test.c |    8 ++---
+ part1/mylist.c      |   84 +++++++++++++++++++++++++--------------------------
+ 3 files changed, 47 insertions(+), 49 deletions(-)
+
+diff --git a/part1/Makefile b/part1/Makefile
+index fa19e03..fc0ffe7 100644
+--- a/part1/Makefile
++++ b/part1/Makefile
+@@ -2,7 +2,7 @@ mylist-test: mylist-test.o libmylist.a
+ 	gcc -c mylist-test.c -Wall -g 
+ 	gcc mylist-test.o -L. -lmylist -o mylist-test 
+ 
+-libmylist.a: 
++libmylist.a: mylist.h 
+ 	gcc -c mylist.c -o mylist.o 
+ 	ar rc libmylist.a mylist.o 
+ 	ranlib libmylist.a 
+@@ -13,7 +13,7 @@ mylist.h: mylist.c
+ 
+ .PHONY: clean 
+ clean: 
+-	rm -f *.o *~  
++	rm -f *.o *~ libmylist.a mylist-test 
+ 
+ .PHONY: all
+ all: clean main 
+diff --git a/part1/mylist-test.c b/part1/mylist-test.c
+index 113984d..08846ad 100644
+--- a/part1/mylist-test.c
++++ b/part1/mylist-test.c
+@@ -65,7 +65,7 @@ int main()
+     }
+ 
+     // test addAfter()
+-    printf("testing addAfter(): ");
++   printf("testing addAfter(): ");
+     node = NULL;
+     for (i = 0; i < n; i++) {
+ 	// We keep adding after the previously added node,
+@@ -74,8 +74,8 @@ int main()
+ 	if (node == NULL) 
+ 	    die("addAfter() failed");
+     }
+-    traverseList(&list, &printDouble);
+-    printf("\n");
++   traverseList(&list, &printDouble);
++   printf("\n");
+ 
+     // test reverseList()
+     while ((data = popFront(&list)) != NULL) {
+@@ -83,7 +83,7 @@ int main()
+ 	reverseList(&list);
+ 	traverseList(&list, &printDouble);
+ 	printf("]\n");
+-    }
++  }
+ 
+     return 0;
+ }//end main 
+diff --git a/part1/mylist.c b/part1/mylist.c
+index 339640c..b76f3fd 100644
+--- a/part1/mylist.c
++++ b/part1/mylist.c
+@@ -1,3 +1,8 @@
++#include <stdio.h> 
++#include <stdlib.h>
++#include "mylist.h" 
++
++
+ /*
+  * Create a node that holds the given data pointer,
+  * and add the node to the front of the list.
+@@ -11,12 +16,12 @@
+ struct Node *addFront(struct List *list, void *data){
+ 
+ 	struct Node *newNode; //creating new node 
+-	newNode= malloc( sizeof(struct Node) ); //allocating memory to it 
++	newNode= (struct Node *)malloc( sizeof(struct Node) ); //allocating memory to it 
+ 	
+ 	newNode -> data = data; //datas not same thing 
+ 
+ 	newNode -> next= list ->head; //head is first element 
+-	head ->NewNode; //first element now points to new node we created 
++	list -> head = newNode; //first element now points to new node we created 
+ 
+ 	return newNode; //return data if newly created node sucessful 
+ 
+@@ -32,7 +37,7 @@ void traverseList(struct List *list, void (*f)(void *)){ //f is pointer to funct
+ 	struct Node *traverser= list -> head; 
+ 
+ 
+-	while ( traverser->next != 0) //looking at each element in the list 
++	while ( traverser != 0) //looking at each element in the list 
+         {
+             	f(traverser -> data); 
+ 		traverser = traverser->next; 
+@@ -66,13 +71,15 @@ int compareDouble(const void *data1, const void *data2) {
+ 
+ struct Node *findNode(struct List *list, const void *dataSought, int (*compar)(const void *, const void *)) {
+ 
+-	struct node *traverser = list -> head; 
++	struct Node *traverser = list -> head; 
+  
+-	while ( traverser->next != 0) //for each element 
++	while ( traverser != 0) //for each element 
+ 	{
+-    		if ( compareDouble(*traverser, *dataSought) ==0){ //looks for match using compare and returns node containing match 
++    		if ( compar(traverser -> data, dataSought) == 0){ //looks for match using compare and returns node containing match 
+ 			return traverser; 
+ 		}//end inner if 
++		
++		traverser=  traverser -> next; 
+ 
+ 	}//end while loop 
+ 
+@@ -88,10 +95,10 @@ struct Node *findNode(struct List *list, const void *dataSought, int (*compar)(c
+  */
+ void flipSignDouble(void *data) {
+ 	
+-	double x = * (double *) data; 
+-	double y= x*(-1); 
++	double * x = (double *) data; 
++	double y= *x*(-1); //dereference x 
+ 
+-	*data= y; //data now holds the address of the new value 
++	*x= y; //data now holds the address of the new value 
+ 
+ }//end flipSignDouble 
+ 
+@@ -103,11 +110,11 @@ void flipSignDouble(void *data) {
+  */
+ void *popFront(struct List *list){
+ 
+-	struct Node *traverser= List -> head; 
++	struct Node *traverser= list -> head; 
+ 
+-  	if ( traverser -> next!= 0 ) { //while list not empty 
++  	if ( traverser != 0 ) { //while list not empty 
+ 		
+-		list -> head = list -> head -> next; 
++		list -> head = traverser -> next; 
+ 		void * pointer= traverser ->data; 
+ 		free(traverser); 
+ 		return pointer; 
+@@ -124,16 +131,12 @@ void *popFront(struct List *list){
+  */
+ void removeAllNodes(struct List *list){
+ 
+-	struct node *traverser; 
+-
+-  	if ( traverser != 0 ) {
+-		while ( traverser->next != 0) //looking at each element in the list 
+-        	{
+-            		popFront(next): //removes each node at front hence removing all nodes 
+-
+-        	}//end while loop 
+-    	} //end if statement    
+-
++	while ( list->head != 0) //looking at each element in the list 
++	{
++    		popFront(list); //removes each node at front hence removing all nodes 
++	
++	}//end while loop 
++   
+ }//end removeAllNodes 
+ 
+ /*
+@@ -153,31 +156,24 @@ void removeAllNodes(struct List *list){
+  */
+ struct Node *addAfter(struct List *list, struct Node *prevNode, void *data){
+ 	
++	struct Node *dataNode= NULL; 
+ 	if( prevNode ==NULL){ 
+-		addFront(data); 
++		dataNode= addFront(list, data); 
++		
+ 	} //end if statement 
+-
+-	struct Node *dataNode -> data= data; //holds data pointer 
+-	dataNode= &data; 
++	else {
++	dataNode= (struct Node *)malloc(sizeof(struct Node)); 
++	dataNode -> data= data; //holds data pointer 
+ 	
+-	delete(prevNode)
+-
++	dataNode-> next=prevNode -> next; 
++	prevNode-> next= dataNode; 
++	} 
+ 	return dataNode; 
+ 	
+ 
+ }//end addAfter 
+ 
+-/* 
+- * Reverse the list.
+- *
+ 
+- * Flip the sign of the double value pointed to by 'data' by
+- * multiplying -1 to it and putting the result back into the memory
+- * location.
+- */
+-void flipSignDouble(void *data){
+-
+-	double x= *data; 
+ /*
+ 
+  * Note that this function reverses the list purely by manipulating
+@@ -205,15 +201,17 @@ void reverseList(struct List *list){
+ 	struct Node *prv = NULL;
+       	struct Node *cur = list->head;
+       	struct Node *nxt;
+-	struct Node *temp; 
+ 
+       	while (cur) {
+-		temp= cur; 
+-		cur = next; 
+-		prv= tmep; 
+-
++		
++		nxt = cur -> next; 
++		cur -> next = prv; 
++		prv = cur; 
++		cur = nxt; 
+ 	
+ 	}//end while loop  
++
++	list -> head = prv; 
+ }//end reversist 
+ 
+ 
+-- 
+1.7.9.5
+
+
+From f37551766cbd45f1e8f0b512d274e3894ae9fab8 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sat, 13 Oct 2012 23:46:05 -0400
+Subject: [PATCH 4/5] Committed all files
+
+---
+ part2/Makefile  |   13 +++++++++++++
+ part2/revecho.c |   41 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+ create mode 100644 part2/Makefile
+ create mode 100644 part2/revecho.c
+
+diff --git a/part2/Makefile b/part2/Makefile
+new file mode 100644
+index 0000000..6f81628
+--- /dev/null
++++ b/part2/Makefile
+@@ -0,0 +1,13 @@
++CFLAGS= -Wall -g -I../part1 
++
++revecho: revecho.o 
++	gcc -Wall -g -o revecho revecho.o -L../part1 -lmylist -I../part1 
++
++.PHONY: clean 
++clean: 
++	rm -f *.o *~ revecho 
++
++.PHONY: all
++all: clean main 
++
++
+diff --git a/part2/revecho.c b/part2/revecho.c
+new file mode 100644
+index 0000000..cc3f995
+--- /dev/null
++++ b/part2/revecho.c
+@@ -0,0 +1,41 @@
++#include <stdio.h>
++#include <string.h>
++#include "mylist.h"
++
++int main (int argc, char ** argv) {
++
++	struct List thisList; 
++	initList(&thisList); //passing memeory address of list 
++
++	int c=1; //0 true, 1 false, initialized to false 
++	
++	argv++; //dont want name of program as input 
++
++	void thisFunction(void *s){
++		printf("%s\n", (char *)s); 
++	}//end function 
++		
++	while (*argv !=0){
++
++		if(c!=0){
++			c= strcmp("dude", *argv);  //returns 0 if equal, 1 otherwise 
++			
++		}//end if 
++		
++		addFront(&thisList, *argv); 
++		argv++; 
++
++	}//end while 
++
++	traverseList(&thisList, &thisFunction); 
++	
++	if(c==0){
++
++	printf("Dude was found!"); 
++	}//end if 
++
++	else printf("Dude was not found =( "); 
++
++
++	return 0; 
++}//end mai
+-- 
+1.7.9.5
+
+
+From e31264f43b9b55f81ee579088e094c26b5655044 Mon Sep 17 00:00:00 2001
+From: Sabina Smajlaj <ss3912@columbia.edu>
+Date: Sat, 13 Oct 2012 23:56:30 -0400
+Subject: [PATCH 5/5] Committed all files
+
+---
+ README.txt      |  102 +++++++++++++++++++++++++++++++++++++++++++++++++------
+ part2/revecho.c |    5 +--
+ 2 files changed, 94 insertions(+), 13 deletions(-)
+
+diff --git a/README.txt b/README.txt
+index 66dfd3e..d495113 100644
+--- a/README.txt
++++ b/README.txt
+@@ -1,11 +1,91 @@
+-This file should contain:
+-
+-  - your name
+-  - your UNI
+-  - lab assignment number
+-  - description for each part
+-  
+-The description should indicate whether your solution for the part is
+-working or not.  You may also want to include anything else you would
+-like to communicate to the grader such as extra functionalities you
+-implemented or how you tried to fix your non-working code.
++Sabina Smajlaj
++ss3912
++Lab #3
++
++Part1
++
++Instead of "make all", please use the command "make clean" and then "make" since my Makefile does not contain a 'main' function.
++
++All parts run as specified. 
++
++This is the valgrind output:
++
++ss3912@damascus /home/ss3912/cs3157/lab3/part1 $ valgrind --leak-check=yes ./mylist-test
++==2785== Memcheck, a memory error detector
++==2785== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
++==2785== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
++==2785== Command: ./mylist-test
++==2785== 
++testing addFront(): 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0 
++testing flipSignDouble(): -9.0 -8.0 -7.0 -6.0 -5.0 -4.0 -3.0 -2.0 -1.0 
++testing flipSignDouble() again: 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0 
++testing findNode(): OK
++popped 9.0, the rest is: [ 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0 ]
++popped 8.0, the rest is: [ 7.0 6.0 5.0 4.0 3.0 2.0 1.0 ]
++popped 7.0, the rest is: [ 6.0 5.0 4.0 3.0 2.0 1.0 ]
++popped 6.0, the rest is: [ 5.0 4.0 3.0 2.0 1.0 ]
++popped 5.0, the rest is: [ 4.0 3.0 2.0 1.0 ]
++popped 4.0, the rest is: [ 3.0 2.0 1.0 ]
++popped 3.0, the rest is: [ 2.0 1.0 ]
++popped 2.0, the rest is: [ 1.0 ]
++popped 1.0, the rest is: [ ]
++testing addAfter(): 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 
++popped 1.0, and reversed the rest: [ 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 ]
++popped 9.0, and reversed the rest: [ 2.0 3.0 4.0 5.0 6.0 7.0 8.0 ]
++popped 2.0, and reversed the rest: [ 8.0 7.0 6.0 5.0 4.0 3.0 ]
++popped 8.0, and reversed the rest: [ 3.0 4.0 5.0 6.0 7.0 ]
++popped 3.0, and reversed the rest: [ 7.0 6.0 5.0 4.0 ]
++popped 7.0, and reversed the rest: [ 4.0 5.0 6.0 ]
++popped 4.0, and reversed the rest: [ 6.0 5.0 ]
++popped 6.0, and reversed the rest: [ 5.0 ]
++popped 5.0, and reversed the rest: [ ]
++==2785== 
++==2785== HEAP SUMMARY:
++==2785==     in use at exit: 0 bytes in 0 blocks
++==2785==   total heap usage: 18 allocs, 18 frees, 288 bytes allocated
++==2785== 
++==2785== All heap blocks were freed -- no leaks are possible
++==2785== 
++==2785== For counts of detected and suppressed errors, rerun with: -v
++==2785== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
++
++
++
++
++Part2
++
++Here as well, instead of "make all", please use the command "make clean" and then "make" since my Makefile does not contain a 'main' function.
++
++All parts run as specified. 
++
++This is the valgrind output:
++
++ss3912@damascus /home/ss3912/cs3157/lab3/part2 $ valgrind --leak-check=yes ./revecho my bad dude
++==3480== Memcheck, a memory error detector
++==3480== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
++==3480== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
++==3480== Command: ./revecho my bad dude
++==3480== 
++dude
++bad
++my
++Dude was found!==3480== 
++==3480== HEAP SUMMARY:
++==3480==     in use at exit: 0 bytes in 0 blocks
++==3480==   total heap usage: 3 allocs, 3 frees, 48 bytes allocated
++==3480== 
++==3480== All heap blocks were freed -- no leaks are possible
++==3480== 
++==3480== For counts of detected and suppressed errors, rerun with: -v
++==3480== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
++
++
++
++
++
++
++
++
++
++
++
+diff --git a/part2/revecho.c b/part2/revecho.c
+index cc3f995..365f964 100644
+--- a/part2/revecho.c
++++ b/part2/revecho.c
+@@ -34,8 +34,9 @@ int main (int argc, char ** argv) {
+ 	printf("Dude was found!"); 
+ 	}//end if 
+ 
+-	else printf("Dude was not found =( "); 
+-
++	else printf("Dude was not found =( "); 	
++	
++	removeAllNodes(&thisList); 
+ 
+ 	return 0; 
+ }//end mai
+-- 
+1.7.9.5
+

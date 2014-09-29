@@ -1,0 +1,88 @@
+
+(a)
+
+$ gcc -Wall -g hole.c 
+$ ./a.out  
+
+$ ll -s 
+total 52
+ 4 drwxr-xr-x 3 jae phd    4096 2011-11-06 18:58 ./
+ 4 drwxr-xr-x 5 jae phd    4096 2011-10-25 23:28 ../
+12 -rwxr-xr-x 1 jae phd   11313 2011-11-06 18:58 a.out*
+ 4 -rw-r--r-- 1 jae phd     270 2011-10-25 23:28 copy.c
+ 4 -rw-r--r-- 1 jae phd     330 2011-10-25 23:28 copy-nobuf.c
+12 -rw-r--r-- 1 jae phd 1000001 2011-11-06 18:58 file-with-hole
+ 4 -rw-r--r-- 1 jae phd     468 2011-10-25 23:28 hole.c
+ 4 -rw-r--r-- 1 jae phd    3829 2011-10-25 23:28 output-linux.txt
+ 4 drwxr-xr-x 6 jae phd    4096 2011-11-02 16:13 .svn/
+
+$ od -c file-with-hole 
+0000000   A  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0
+0000020  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0
+*
+3641100   Z
+3641101
+
+$ du -h file-with-hole 
+12K	file-with-hole
+
+(b)
+
+$ gcc -Wall -g copy.c 
+$ ./a.out < file-with-hole > file-copied   
+
+$ ll -s 
+total 1036
+  4 drwxr-xr-x 3 jae phd    4096 2011-11-06 19:04 ./
+  4 drwxr-xr-x 5 jae phd    4096 2011-10-25 23:28 ../
+ 12 -rwxr-xr-x 1 jae phd   11277 2011-11-06 19:04 a.out*
+  4 -rw-r--r-- 1 jae phd     270 2011-10-25 23:28 copy.c
+  4 -rw-r--r-- 1 jae phd     330 2011-10-25 23:28 copy-nobuf.c
+984 -rw-r--r-- 1 jae phd 1000001 2011-11-06 19:04 file-copied
+ 12 -rw-r--r-- 1 jae phd 1000001 2011-11-06 18:58 file-with-hole
+  4 -rw-r--r-- 1 jae phd     468 2011-10-25 23:28 hole.c
+  4 -rw-r--r-- 1 jae phd    3829 2011-10-25 23:28 output-linux.txt
+  4 drwxr-xr-x 6 jae phd    4096 2011-11-02 16:13 .svn/
+
+$ du -h *   
+12K	a.out
+4.0K	copy.c
+4.0K	copy-nobuf.c
+984K	file-copied
+12K	file-with-hole
+4.0K	hole.c
+4.0K	output-linux.txt
+
+$ cmp file-with-hole file-copied 
+$ 
+
+(c)
+
+$ gcc -Wall -g copy.c 
+$ time ./a.out <file-with-hole >file-copied 
+real	0m0.039s
+user	0m0.020s
+sys	0m0.000s
+$ time ./a.out <file-with-hole >file-copied 
+real	0m0.039s
+user	0m0.020s
+sys	0m0.000s
+$ time ./a.out <file-with-hole >file-copied 
+real	0m0.051s
+user	0m0.020s
+sys	0m0.000s
+
+$ gcc -Wall -g copy-nobuf.c 
+$ time ./a.out <file-with-hole >file-copied 
+real	0m0.960s
+user	0m0.110s
+sys	0m0.820s
+$ time ./a.out <file-with-hole >file-copied 
+real	0m0.859s
+user	0m0.110s
+sys	0m0.720s
+$ time ./a.out <file-with-hole >file-copied 
+real	0m0.869s
+user	0m0.150s
+sys	0m0.700s
+

@@ -1,0 +1,7 @@
+#!/bin/sh
+PID=${BASHPID-$$}
+
+mkfifo mypipe-$PID
+cat mypipe-$PID | nc -l $1 | /home/jae/cs3157-pub/bin/mdb-lookup-cs3157 > mypipe-$PID 
+
+rm -f mypipe-$PID 
