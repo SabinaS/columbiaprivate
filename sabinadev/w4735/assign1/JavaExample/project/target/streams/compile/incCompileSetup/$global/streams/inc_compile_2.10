@@ -1,0 +1,158 @@
+format version: 5
+output mode:
+1 items
+0 -> single
+output directories:
+1 items
+output dir -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes
+compile options:
+0 items
+javac options:
+0 items
+compiler version:
+1 items
+0 -> 2.10.4
+compile order:
+1 items
+0 -> Mixed
+name hashing:
+1 items
+0 -> true
+products:
+9 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$1.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$1.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$2.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$3.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$4.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$scalaSettings$1.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$scalaSettings$2.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$.class
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild.class
+binary dependencies:
+9 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home/jre/lib/rt.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/apply-macro/jars/apply-macro-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/collections/jars/collections-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/ivy/jars/ivy-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/main-settings/jars/main-settings-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/main/jars/main-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/sbt/jars/sbt-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.ivy2/cache/org.scala-sbt/task-system/jars/task-system-0.13.6.jar
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> /Users/alangordon/.sbt/boot/scala-2.10.4/lib/scala-library.jar
+direct source dependencies:
+0 items
+direct external dependencies:
+0 items
+public inherited source dependencies:
+0 items
+public inherited external dependencies:
+0 items
+member reference internal dependencies:
+0 items
+member reference external dependencies:
+0 items
+inheritance internal dependencies:
+0 items
+inheritance external dependencies:
+0 items
+class names:
+9 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$1
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$root$1
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$root$2
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$root$3
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$root$4
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$scalaSettings$1
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild$$anonfun$scalaSettings$2
+used names:
+38 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> ++
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> ++=
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> :=
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> <init>
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> Append
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> Build
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> FullInstance
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> InitializeInstance
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> JavaSampleBuild
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> Keys
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> Project
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> Seq
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> appendN
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> appendSeq
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> apply
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> buildSettings
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> canBuildFrom
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> collection
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> defaultSettings
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> file
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> name
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> package
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> pure
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> root
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> sbt
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> scalaSettings
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> scalaVersion
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> scalacOptions
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> set
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> settings
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$1
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$2
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$3
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$4
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$5
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$6
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$7
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> x$8
+product stamps:
+9 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$1.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$1.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$2.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$3.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$root$4.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$scalaSettings$1.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$$anonfun$scalaSettings$2.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild$.class -> lastModified(1424100315000)
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/target/scala-2.10/sbt-0.13/classes/JavaSampleBuild.class -> lastModified(1424100315000)
+source stamps:
+1 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> hash(7864d98d5ed594a72ee12eccd6d4b781d2394a91)
+binary stamps:
+9 items
+/Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home/jre/lib/rt.jar -> lastModified(1406304240000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/apply-macro/jars/apply-macro-0.13.6.jar -> lastModified(1410534371000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/collections/jars/collections-0.13.6.jar -> lastModified(1410534359000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/ivy/jars/ivy-0.13.6.jar -> lastModified(1410534421000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/main-settings/jars/main-settings-0.13.6.jar -> lastModified(1410534449000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/main/jars/main-0.13.6.jar -> lastModified(1410534483000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/sbt/jars/sbt-0.13.6.jar -> lastModified(1410534474000)
+/Users/alangordon/.ivy2/cache/org.scala-sbt/task-system/jars/task-system-0.13.6.jar -> lastModified(1410534425000)
+/Users/alangordon/.sbt/boot/scala-2.10.4/lib/scala-library.jar -> lastModified(1395179187000)
+class names:
+9 items
+/Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home/jre/lib/rt.jar -> java.lang.Object
+/Users/alangordon/.ivy2/cache/org.scala-sbt/apply-macro/jars/apply-macro-0.13.6.jar -> sbt.appmacro.Instance$
+/Users/alangordon/.ivy2/cache/org.scala-sbt/collections/jars/collections-0.13.6.jar -> sbt.Init
+/Users/alangordon/.ivy2/cache/org.scala-sbt/ivy/jars/ivy-0.13.6.jar -> sbt.Configuration
+/Users/alangordon/.ivy2/cache/org.scala-sbt/main-settings/jars/main-settings-0.13.6.jar -> sbt.std.FullInstance$
+/Users/alangordon/.ivy2/cache/org.scala-sbt/main/jars/main-0.13.6.jar -> sbt.Build
+/Users/alangordon/.ivy2/cache/org.scala-sbt/sbt/jars/sbt-0.13.6.jar -> sbt.package$
+/Users/alangordon/.ivy2/cache/org.scala-sbt/task-system/jars/task-system-0.13.6.jar -> sbt.Task
+/Users/alangordon/.sbt/boot/scala-2.10.4/lib/scala-library.jar -> scala.collection.generic.GenericCompanion
+internal apis:
+1 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> 
+rO0ABXNyABB4c2J0aS5hcGkuU291cmNlFlpwRASfbtoCAAZJAAdhcGlIYXNoWgAIaGFzTWFjcm9MABhfaW50ZXJuYWxPbmx5X25hbWVIYXNoZXN0ACRMeHNidGkvYXBpL19pbnRlcm5hbE9ubHlfTmFtZUhhc2hlcztMAANhcGl0ABVMeHNidGkvYXBpL1NvdXJjZUFQSTtMAAtjb21waWxhdGlvbnQAF0x4c2J0aS9hcGkvQ29tcGlsYXRpb247WwAEaGFzaHQAAltCeHBdN7qiAHNyACJ4c2J0aS5hcGkuX2ludGVybmFsT25seV9OYW1lSGFzaGVzVNq+mfrU7EwCAAJbAA9pbXBsaWNpdE1lbWJlcnN0ACNbTHhzYnRpL2FwaS9faW50ZXJuYWxPbmx5X05hbWVIYXNoO1sADnJlZ3VsYXJNZW1iZXJzcQB+AAd4cHVyACNbTHhzYnRpLmFwaS5faW50ZXJuYWxPbmx5X05hbWVIYXNoO0lagLbdlov0AgAAeHAAAAAAdXEAfgAJAAAAHHNyACB4c2J0aS5hcGkuX2ludGVybmFsT25seV9OYW1lSGFzaFsO9SJ2OFfPAgACSQAEaGFzaEwABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZzt4cJHOE410AAZub3RpZnlzcQB+AAxOf7DddAAEd2FpdHNxAH4ADMpgX1p0AA0kYXNJbnN0YW5jZU9mc3EAfgAMmfd+XXQADGJ1aWxkTG9hZGVyc3NxAH4ADFDfUCh0AARyb290c3EAfgAMx/44f3QABmVxdWFsc3NxAH4ADCrybVl0AAxhc0luc3RhbmNlT2ZzcQB+AAyhGwcudAAScHJvamVjdERlZmluaXRpb25zc3EAfgAM3L02CnQADHN5bmNocm9uaXplZHNxAH4ADIpi7m50AA9KYXZhU2FtcGxlQnVpbGRzcQB+AAy83/O7dAANJGlzSW5zdGFuY2VPZnNxAH4ADC0p3D50AAlub3RpZnlBbGxzcQB+AAw0LciodAALcm9vdFByb2plY3RzcQB+AAyM1sjKdAAMaXNJbnN0YW5jZU9mc3EAfgAMKbObM3QAAj09c3EAfgAMq5WOC3QABWNsb25lc3EAfgAMv04uOnQADXNjYWxhU2V0dGluZ3NzcQB+AAzzJQx0dAAIdG9TdHJpbmdzcQB+AAxGH87cdAACIT1zcQB+AAwos7AHdAAIcHJvamVjdHNzcQB+AAwpFlBRdAAIZ2V0Q2xhc3NzcQB+AAx8EubcdAACbmVzcQB+AAzd2PIDdAANYnVpbGRTZXR0aW5nc3NxAH4ADJ6klmx0AAJlcXNxAH4ADKOqrvJ0AAhzZXR0aW5nc3NxAH4ADM+es/J0AAIjI3NxAH4ADIi4u+B0AAhmaW5hbGl6ZXNxAH4ADG2HClV0AAhoYXNoQ29kZXNyABN4c2J0aS5hcGkuU291cmNlQVBJuV6n+SkjOKQCAAJbAAtkZWZpbml0aW9uc3QAF1tMeHNidGkvYXBpL0RlZmluaXRpb247WwAIcGFja2FnZXN0ABRbTHhzYnRpL2FwaS9QYWNrYWdlO3hwdXIAF1tMeHNidGkuYXBpLkRlZmluaXRpb247iMlc57TjXg4CAAB4cAAAAAFzcgATeHNidGkuYXBpLkNsYXNzTGlrZYM0HKHfsJdsAgAETAAOZGVmaW5pdGlvblR5cGV0ABpMeHNidGkvYXBpL0RlZmluaXRpb25UeXBlO1sAEHNhdmVkQW5ub3RhdGlvbnN0ABNbTGphdmEvbGFuZy9TdHJpbmc7TAAIc2VsZlR5cGV0ABBMeHNidGkvYXBpL0xhenk7TAAJc3RydWN0dXJlcQB+AE94cgAheHNidGkuYXBpLlBhcmFtZXRlcml6ZWREZWZpbml0aW9u+RFusdVQPOICAAFbAA50eXBlUGFyYW1ldGVyc3QAGltMeHNidGkvYXBpL1R5cGVQYXJhbWV0ZXI7eHIAFHhzYnRpLmFwaS5EZWZpbml0aW9uhyob6HFC40YCAARMAAZhY2Nlc3N0ABJMeHNidGkvYXBpL0FjY2VzcztbAAthbm5vdGF0aW9uc3QAF1tMeHNidGkvYXBpL0Fubm90YXRpb247TAAJbW9kaWZpZXJzdAAVTHhzYnRpL2FwaS9Nb2RpZmllcnM7TAAEbmFtZXEAfgANeHBzcgAQeHNidGkuYXBpLlB1YmxpY7pYPa5sLWBCAgAAeHIAEHhzYnRpLmFwaS5BY2Nlc3PdYpr4HWMxSAIAAHhwdXIAF1tMeHNidGkuYXBpLkFubm90YXRpb24765frGRD2jUgCAAB4cAAAAABzcgATeHNidGkuYXBpLk1vZGlmaWVyc8cREyFpnNwkAgABQgAFZmxhZ3N4cABxAH4AIXVyABpbTHhzYnRpLmFwaS5UeXBlUGFyYW1ldGVyO9ltJg8onfK2AgAAeHAAAAAAfnIAGHhzYnRpLmFwaS5EZWZpbml0aW9uVHlwZQAAAAAAAAAAEgAAeHIADmphdmEubGFuZy5FbnVtAAAAAAAAAAASAAB4cHQABk1vZHVsZXVyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAABzcgATeHNidGkuU2FmZUxhenkkSW1wbFACLpOXl0A/AgADWgAIYml0bWFwJDBMAAJfdHQAEkxqYXZhL2xhbmcvT2JqZWN0O0wABGV2YWx0ABFMc2NhbGEvRnVuY3Rpb24wO3hyABZ4c2J0aS5hcGkuQWJzdHJhY3RMYXp503e1AV+756ACAAB4cABwc3IAIHhzYnRpLlNhZmVMYXp5JCRhbm9uZnVuJHN0cmljdCQxAAAAAAAAAAACAAFMAAd2YWx1ZSQxcQB+AGd4cHNyABN4c2J0aS5hcGkuRW1wdHlUeXBlvP2eRkk7iSQCAAB4cgAUeHNidGkuYXBpLlNpbXBsZVR5cGVyeGKIISO/QAIAAHhyAA54c2J0aS5hcGkuVHlwZT9q2SEWSarKAgAAeHBzcQB+AGYAcHNxAH4Aa3NyABN4c2J0aS5hcGkuU3RydWN0dXJlqar5gJNv2AACAANMAAhkZWNsYXJlZHEAfgBPTAAJaW5oZXJpdGVkcQB+AE9MAAdwYXJlbnRzcQB+AE94cQB+AG9zcQB+AGYAcHNxAH4Aa3VxAH4ASgAAAABzcQB+AGYAcHNxAH4Aa3VxAH4ASgAAAABzcQB+AGYAcHNxAH4Aa3VyABFbTHhzYnRpLmFwaS5UeXBlO3T/pVp7+elBAgAAeHAAAAADc3IAFHhzYnRpLmFwaS5Qcm9qZWN0aW9u89KNVOlFpC0CAAJMAAJpZHEAfgANTAAGcHJlZml4dAAWTHhzYnRpL2FwaS9TaW1wbGVUeXBlO3hxAH4AbnQABUJ1aWxkc3IAE3hzYnRpLmFwaS5TaW5nbGV0b278p1/4z1bkRgIAAUwABHBhdGh0ABBMeHNidGkvYXBpL1BhdGg7eHEAfgBuc3IADnhzYnRpLmFwaS5QYXRomz1cCM6lJ4QCAAFbAApjb21wb25lbnRzdAAaW0x4c2J0aS9hcGkvUGF0aENvbXBvbmVudDt4cHVyABpbTHhzYnRpLmFwaS5QYXRoQ29tcG9uZW50O0PaCXQtZxZ0AgAAeHAAAAACc3IADHhzYnRpLmFwaS5JZJgybIs3U8RAAgABTAACaWRxAH4ADXhyABd4c2J0aS5hcGkuUGF0aENvbXBvbmVudF+aIlsuhp+8AgAAeHB0AANzYnRzcgAOeHNidGkuYXBpLlRoaXPbCe2mzFpAXAIAAHhxAH4AjHNxAH4Af3QABk9iamVjdHNxAH4Ag3NxAH4AhnVxAH4AiQAAAANzcQB+AIt0AARqYXZhc3EAfgCLdAAEbGFuZ3EAfgCQc3EAfgB/dAADQW55c3EAfgCDc3EAfgCGdXEAfgCJAAAAAnNxAH4Ai3QABXNjYWxhcQB+AJB1cgAUW0x4c2J0aS5hcGkuUGFja2FnZTtbExk3cKcnoQIAAHhwAAAAAHNyABV4c2J0aS5hcGkuQ29tcGlsYXRpb27t+uDDauigQgIAAkoACXN0YXJ0VGltZVsAB291dHB1dHN0ABpbTHhzYnRpL2FwaS9PdXRwdXRTZXR0aW5nO3hwAAABS5L+SaJ1cgAaW0x4c2J0aS5hcGkuT3V0cHV0U2V0dGluZzt/asLzp4elQgIAAHhwAAAAAXNyABd4c2J0aS5hcGkuT3V0cHV0U2V0dGluZ3rZmkd0+x17AgACTAAPb3V0cHV0RGlyZWN0b3J5cQB+AA1MAA9zb3VyY2VEaXJlY3RvcnlxAH4ADXhwdABmL1VzZXJzL2FsYW5nb3Jkb24vRG9jdW1lbnRzL3NhYmluYWRldi93NDczNS90ZXN0L0phdmFTYW1wbGUvcHJvamVjdC90YXJnZXQvc2NhbGEtMi4xMC9zYnQtMC4xMy9jbGFzc2VzdAABL3VyAAJbQqzzF/gGCFTgAgAAeHAAAAAUeGTZjV7VlKcu4S7M1tS3gdI5SpE=
+external apis:
+0 items
+source infos:
+1 items
+/Users/alangordon/Documents/sabinadev/w4735/test/JavaSample/project/build.scala -> 
+AAAAAAAAAAEAAAEAAAAPAB4gICAgUHJvamVjdC5kZWZhdWx0U2V0dGluZ3MgKysBAAABAAEAAAAMAQAMICAgICAgICAgICAgAQBPL1VzZXJzL2FsYW5nb3Jkb24vRG9jdW1lbnRzL3NhYmluYWRldi93NDczNS90ZXN0L0phdmFTYW1wbGUvcHJvamVjdC9idWlsZC5zY2FsYQEATy9Vc2Vycy9hbGFuZ29yZG9uL0RvY3VtZW50cy9zYWJpbmFkZXYvdzQ3MzUvdGVzdC9KYXZhU2FtcGxlL3Byb2plY3QvYnVpbGQuc2NhbGEAfG1ldGhvZCBkZWZhdWx0U2V0dGluZ3MgaW4gb2JqZWN0IFByb2plY3QgaXMgZGVwcmVjYXRlZDogVXNlIERlZmF1bHRzLmNvcmVEZWZhdWx0U2V0dGluZ3MgaW5zdGVhZCwgY29tYmluZWQgd2l0aCBBdXRvUGx1Z2lucy4B
+compilations:
+1 items
+0 -> rO0ABXNyABV4c2J0aS5hcGkuQ29tcGlsYXRpb27t+uDDauigQgIAAkoACXN0YXJ0VGltZVsAB291dHB1dHN0ABpbTHhzYnRpL2FwaS9PdXRwdXRTZXR0aW5nO3hwAAABS5L+SaJ1cgAaW0x4c2J0aS5hcGkuT3V0cHV0U2V0dGluZzt/asLzp4elQgIAAHhwAAAAAXNyABd4c2J0aS5hcGkuT3V0cHV0U2V0dGluZ3rZmkd0+x17AgACTAAPb3V0cHV0RGlyZWN0b3J5dAASTGphdmEvbGFuZy9TdHJpbmc7TAAPc291cmNlRGlyZWN0b3J5cQB+AAZ4cHQAZi9Vc2Vycy9hbGFuZ29yZG9uL0RvY3VtZW50cy9zYWJpbmFkZXYvdzQ3MzUvdGVzdC9KYXZhU2FtcGxlL3Byb2plY3QvdGFyZ2V0L3NjYWxhLTIuMTAvc2J0LTAuMTMvY2xhc3Nlc3QAAS8=
