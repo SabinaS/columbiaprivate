@@ -49,7 +49,7 @@ class ReduceData {
 		// Create an array of isSkin field
 
 		// Determine the center of mass of isSkin field
-		determineCenterOfMass(binaryMat); 
+		determineCenterOfMass(); 
 		
 		// Test if skin is palm or first 
 		// TODO
@@ -121,29 +121,40 @@ class ReduceData {
 	 * Determines the center of mass, (x, y),
 	 * of the binary field of isSkin() bits
 	 */
-	public void determineCenterOfMass(Mat image) {
+	public void determineCenterOfMass() {
 		int[] centerOfMass = null;
-		Mat imageA = new Mat(image.height(),image.width(),CvType.CV_8UC1);
-		System.out.println("Created imageA");
-		ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
+		
+		// Find the contours 
+		Mat image = getMat(); 
+	    Mat imageHSV = new Mat(image.size(), Core.DEPTH_MASK_8U);
+	    Mat imageBlurr = new Mat(image.size(), Core.DEPTH_MASK_8U);
+	    Mat imageA = new Mat(image.size(), Core.DEPTH_MASK_ALL);
+	    Imgproc.cvtColor(image, imageHSV, Imgproc.COLOR_BGR2GRAY);
+	    Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
+	    Imgproc.adaptiveThreshold(imageBlurr, imageA, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
+
+	    Highgui.imwrite("test1.jpg",imageBlurr);
+
+	    ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
 	    Imgproc.findContours(imageA, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
-	    System.out.println("Found contours.");
-	    System.out.println("Contour size: " + contours.size());
 	    //Imgproc.drawContours(imageBlurr, contours, 1, new Scalar(0,0,255));
+	    System.out.println("Contour size: " + contours.size());
+	    
+	    
 	    for(int i=0; i< contours.size();i++){
-	        System.out.println(Imgproc.contourArea(contours.get(i)));
+	        //System.out.println(Imgproc.contourArea(contours.get(i)));
 	        if (Imgproc.contourArea(contours.get(i)) > 50 ){
 	            Rect rect = Imgproc.boundingRect(contours.get(i));
-	            System.out.println(rect.height);
+	            //System.out.println(rect.height);
 	            if (rect.height > 28){
 	            //System.out.println(rect.x +","+rect.y+","+rect.height+","+rect.width);
-	            	Core.rectangle(image, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),new Scalar(0,0,255));
+	            Core.rectangle(image, new Point(rect.x,rect.height), new Point(rect.y,rect.width),new Scalar(0,0,255));
 	            }
 	        }
 	    }
-	    
-	    Highgui.imwrite("centerOfMass.jpg",image);
+	    Highgui.imwrite("contours.jpg",image);
 
+	    // Get the moments 
 		//return centerOfMass;
 	}
 	
@@ -175,37 +186,13 @@ class DefineGrammar {
 public class DataReduction {
 	public static void main(String[] args) {
 		 // Load the library
+		System.out.println("Hello, OpenCV");
 
+		// Load the native library.
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		new ReduceData().run();
+		System.out.println("After library.");
 
-	    // Consider the image for processing
-		ReduceData temp = new ReduceData(); 
-		Mat image = temp.getMat(); 
-	    Mat imageHSV = new Mat(image.size(), Core.DEPTH_MASK_8U);
-	    Mat imageBlurr = new Mat(image.size(), Core.DEPTH_MASK_8U);
-	    Mat imageA = new Mat(image.size(), Core.DEPTH_MASK_ALL);
-	    Imgproc.cvtColor(image, imageHSV, Imgproc.COLOR_BGR2GRAY);
-	    Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
-	    Imgproc.adaptiveThreshold(imageBlurr, imageA, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
-
-	    Highgui.imwrite("test1.jpg",imageBlurr);
-
-	    ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
-	    Imgproc.findContours(imageA, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
-	    //Imgproc.drawContours(imageBlurr, contours, 1, new Scalar(0,0,255));
-	    System.out.println("Contour size: " + contours.size());
-	    for(int i=0; i< contours.size();i++){
-	        //System.out.println(Imgproc.contourArea(contours.get(i)));
-	        if (Imgproc.contourArea(contours.get(i)) > 50 ){
-	            Rect rect = Imgproc.boundingRect(contours.get(i));
-	            //System.out.println(rect.height);
-	            if (rect.height > 28){
-	            //System.out.println(rect.x +","+rect.y+","+rect.height+","+rect.width);
-	            Core.rectangle(image, new Point(rect.x,rect.height), new Point(rect.y,rect.width),new Scalar(0,0,255));
-	            }
-	        }
-	    }
-	    Highgui.imwrite("contours.jpg",image);
 	}
 
 }
