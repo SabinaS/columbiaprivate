@@ -143,11 +143,13 @@ class ReduceData {
 	    System.out.println("Contour size: " + contours.size());
 
 	    // Draw the contours
-	    Mat drawing = new Mat(image.size(), Core.DEPTH_MASK_8U); 
+	    //Mat drawing = new Mat(image.size(), Core.DEPTH_MASK_8U); 
+	    Mat mask = Mat.zeros(image.rows(),image.cols(),image.type());
 	    for( int i = 0; i< contours.size(); i++ )
 	    {
 	        Scalar color = new Scalar( 0,0,255);
-	        Imgproc.drawContours(drawing, contours, i, color, 1);
+	        //Imgproc.drawContours(drawing, contours, i, color, 1);
+	        Imgproc.drawContours(mask, contours, -1, new Scalar(0,0,255));
 	        System.out.println(Imgproc.contourArea(contours.get(i)));
 
 	    }   
@@ -165,7 +167,7 @@ class ReduceData {
 	        }
 	    }
 	    */
-	    Highgui.imwrite("contours.jpg",drawing);
+	    Highgui.imwrite("contours.jpg",mask);
 
 	    // Get the moments 
 		//return centerOfMass;
@@ -187,7 +189,7 @@ class ReduceData {
 	}
 	
 	public Mat getMat(){
-		Mat image = Highgui.imread(getClass().getResource("/grayscale.jpg").getPath());
+		Mat image = Highgui.imread(getClass().getResource("/hand.jpg").getPath());
 		return image; 
 	}
 }
