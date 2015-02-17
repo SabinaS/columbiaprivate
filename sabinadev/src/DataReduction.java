@@ -139,7 +139,7 @@ class ReduceData {
 	    Highgui.imwrite("edges.jpg",imageCanny);
 	    
 	    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
-	    Imgproc.findContours(imageBlurr, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
+	    Imgproc.findContours(imageCanny, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
 	    System.out.println("Contour size: " + contours.size());
 
 	    // Draw the contours
@@ -150,7 +150,7 @@ class ReduceData {
 	        Scalar color = new Scalar( 0,0,255);
 	        //Imgproc.drawContours(drawing, contours, i, color, 1);
 	        Imgproc.drawContours(mask, contours, -1, new Scalar(0,0,255));
-	        System.out.println(Imgproc.contourArea(contours.get(i)));
+	        System.out.println("contourArea: " + Imgproc.contourArea(contours.get(i)));
 
 	    }   
 	    
@@ -189,7 +189,7 @@ class ReduceData {
 	}
 	
 	public Mat getMat(){
-		Mat image = Highgui.imread(getClass().getResource("/hand.jpg").getPath());
+		Mat image = Highgui.imread(getClass().getResource("/PALM-LOWER-CENTER.JPG").getPath());
 		return image; 
 	}
 }
