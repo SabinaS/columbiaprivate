@@ -61,7 +61,7 @@ class ReduceData {
 		// TODO
 		
 		// Determine Position of skin
-		int[] dimensions = {381, 457};
+		int[] dimensions = {299, 400};
 		determineWhere(dimensions, centerOfMass);
 
 		// Save the visualized detection.
@@ -130,6 +130,7 @@ class ReduceData {
 	 */
 	public double[] determineCenterOfMass() {
 		double[] centerOfMass = new double[10]; 
+		Mat hu = new Mat(); 
 		
 		// Find the contours 
 		Mat image = getMat(); 
@@ -165,8 +166,16 @@ class ReduceData {
 	    List<Moments> moments = new ArrayList<Moments>(contours.size());
 	    for (int i = 0; i < contours.size(); i++) {
 	        moments.add(i, Imgproc.moments(contours.get(i), false));
+		    // Get hu moments
+		    //Imgproc.HuMoments(moments.get(i), hu); 
 	    }
 	    System.out.println("Size of moments: " + moments.size());
+	    Imgproc.HuMoments(moments.get(0), hu); 
+	    System.out.println("hu size: " + hu.total());
+	    double buff[] = new double[(int) (hu.total() * hu.channels())];
+	    hu.get(0, 0, buff);
+	    System.out.println("Buff values: " + buff[0] + " " + buff[1] + " " + buff[2]);
+
 	    
 	   //Compute the Center of Mass
 	    List<MatOfPoint2f> mc = new ArrayList<MatOfPoint2f>(contours.size()); 
@@ -197,8 +206,8 @@ class ReduceData {
 	public void determineWhere(int[] dimensions, double[] centerOfMass){
 		// Compute x-location
 		int x_middle = (int)dimensions[0]/2; 
-		int left_bound = (int)(x_middle-(0.05*x_middle));
-		int right_bound = (int)(x_middle+(0.05*x_middle));
+		int left_bound = (int)(x_middle-(0.1*x_middle));
+		int right_bound = (int)(x_middle+(0.1*x_middle));
 		
 		if(centerOfMass[0]<left_bound){
 			image_description.put("x-where", "left");
@@ -210,8 +219,8 @@ class ReduceData {
 		
 		// Compute y-location
 		int y_middle = (int)dimensions[1]/2; 
-		int upper_bound = (int)(y_middle-(0.05*y_middle));
-		int lower_bound = (int)(y_middle+(0.05*y_middle)); 
+		int upper_bound = (int)(y_middle-(0.1*y_middle));
+		int lower_bound = (int)(y_middle+(0.1*y_middle)); 
 		if(centerOfMass[1]<upper_bound){
 			image_description.put("y-where", "upper");
 		}else if(centerOfMass[0] > lower_bound){
@@ -225,7 +234,7 @@ class ReduceData {
 	}
 	
 	public Mat getMat(){
-		Mat image = Highgui.imread(getClass().getResource("/palm.jpg").getPath());
+		Mat image = Highgui.imread(getClass().getResource("/palm2.jpg").getPath());
 		return image; 
 	}
 }
