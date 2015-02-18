@@ -1,4 +1,6 @@
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.*;
@@ -11,6 +13,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint; 
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -28,13 +31,16 @@ import java.awt.image.DataBufferByte;
  */ 
 
 class ReduceData {
+	// image_description should contain "what", "x_where" and "y_where" 
+	Map<String, String> image_description = new HashMap<String, String>(); 
+	
 	public void run() {
 		System.out.println("\nRunning ReduceData");
 		BufferedImage image = null; 
 		Mat binaryMat = null; 
 		
 		try {
-	         image = ImageIO.read(getClass().getResource("/FIST-CENTER-RIGHT.JPG")); 
+	         image = ImageIO.read(getClass().getResource("/PALM-CENTER-RIGHT.JPG")); 
 
 		} catch (Exception e) {
 	         System.out.println("Errors: " + e.getMessage());
@@ -49,13 +55,14 @@ class ReduceData {
 		// Create an array of isSkin field
 
 		// Determine the center of mass of isSkin field
-		determineCenterOfMass(); 
+		double[] centerOfMass = determineCenterOfMass(); 
 		
 		// Test if skin is palm or first 
 		// TODO
 		
 		// Determine Position of skin
-		// TODO
+		int[] dimensions = {381, 457};
+		determineWhere(dimensions, centerOfMass);
 
 		// Save the visualized detection.
 		String filename = "faceDetection.png";
@@ -121,8 +128,8 @@ class ReduceData {
 	 * Determines the center of mass, (x, y),
 	 * of the binary field of isSkin() bits
 	 */
-	public void determineCenterOfMass() {
-		int[] centerOfMass = null;
+	public double[] determineCenterOfMass() {
+		double[] centerOfMass = new double[10]; 
 		
 		// Find the contours 
 		Mat image = getMat(); 
@@ -130,11 +137,10 @@ class ReduceData {
 	    Mat imageBlurr = new Mat(image.size(), Core.DEPTH_MASK_8U);
 	    Mat imageThresh = new Mat(image.size(), Core.DEPTH_MASK_ALL);
 	    Mat imageCanny = new Mat(image.size(), Core.DEPTH_MASK_ALL);
-	    
+	
 	    Imgproc.cvtColor(image, imageHSV, Imgproc.COLOR_BGR2GRAY);
 	    Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
 	    Imgproc.adaptiveThreshold(imageBlurr, imageThresh, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
-
 	    Imgproc.Canny(imageBlurr, imageCanny, 100, 200); 
 	    Highgui.imwrite("edges.jpg",imageCanny);
 	    
@@ -153,24 +159,28 @@ class ReduceData {
 	        System.out.println("contourArea: " + Imgproc.contourArea(contours.get(i)));
 
 	    }   
-	    
-	    
-	  /*  for(int i=0; i< contours.size();i++){
-	        //System.out.println(Imgproc.contourArea(contours.get(i)));
-	        if (Imgproc.contourArea(contours.get(i)) > 50 ){
-	            Rect rect = Imgproc.boundingRect(contours.get(i));
-	            //System.out.println(rect.height);
-	            if (rect.height > 28){
-	            //System.out.println(rect.x +","+rect.y+","+rect.height+","+rect.width);
-	            Core.rectangle(image, new Point(rect.x,rect.height), new Point(rect.y,rect.width),new Scalar(0,0,255));
-	            }
-	        }
-	    }
-	    */
 	    Highgui.imwrite("contours.jpg",mask);
 
 	    // Get the moments 
-		//return centerOfMass;
+	    List<Moments> moments = new ArrayList<Moments>(contours.size());
+	    for (int i = 0; i < contours.size(); i++) {
+	        moments.add(i, Imgproc.moments(contours.get(i), false));
+	    }
+	    System.out.println("Size of moments: " + moments.size());
+	    
+	   //Compute the Center of Mass
+	    List<MatOfPoint2f> mc = new ArrayList<MatOfPoint2f>(contours.size()); 
+	    int x = 0; 
+	    for( int i = 0; i < contours.size(); i++ ){
+	        //mc.add(( moments.get(i).get_m10()/moments.get(i).get_m00(), moments.get(i).get_m01()/moments.get(i).get_m00() ));
+	        double x_coor =  moments.get(i).get_m10()/moments.get(i).get_m00(); 
+	        double y_coor = moments.get(i).get_m01()/moments.get(i).get_m00(); 
+	        centerOfMass[x] = x_coor;
+	        centerOfMass[x+1] = y_coor; 
+	        System.out.println("Moments: " + x_coor + " " + y_coor); 
+	        x = x+2; 
+	    }
+		return centerOfMass;
 	}
 	
 	/*
@@ -184,12 +194,38 @@ class ReduceData {
 	/*
 	 * Determine the position of the skin
 	 */
-	public void determineWhere(){
-		// TODO
+	public void determineWhere(int[] dimensions, double[] centerOfMass){
+		// Compute x-location
+		int x_middle = (int)dimensions[0]/2; 
+		int left_bound = (int)(x_middle-(0.05*x_middle));
+		int right_bound = (int)(x_middle+(0.05*x_middle));
+		
+		if(centerOfMass[0]<left_bound){
+			image_description.put("x-where", "left");
+		}else if(centerOfMass[0] > right_bound){
+			image_description.put("x-where", "right");
+		}else{
+			image_description.put("x-where", "center");
+		}
+		
+		// Compute y-location
+		int y_middle = (int)dimensions[1]/2; 
+		int upper_bound = (int)(y_middle-(0.05*y_middle));
+		int lower_bound = (int)(y_middle+(0.05*y_middle)); 
+		if(centerOfMass[1]<upper_bound){
+			image_description.put("y-where", "upper");
+		}else if(centerOfMass[0] > lower_bound){
+			image_description.put("y-where", "lower");
+		}else{
+			image_description.put("y-where", "center");
+		}
+		
+		System.out.println("x-where: " + image_description.get("x-where")); 
+		System.out.println("y-where: " + image_description.get("y-where")); 
 	}
 	
 	public Mat getMat(){
-		Mat image = Highgui.imread(getClass().getResource("/PALM-LOWER-CENTER.JPG").getPath());
+		Mat image = Highgui.imread(getClass().getResource("/palm.jpg").getPath());
 		return image; 
 	}
 }
@@ -207,7 +243,6 @@ public class DataReduction {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		new ReduceData().run();
 		System.out.println("After library.");
-
 	}
 
 }
