@@ -3,24 +3,18 @@ import java.util.List;
 import java.util.Map;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.lang.*;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import org.opencv.imgproc.*;
-import org.opencv.highgui.*; 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint; 
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
-import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.imgproc.Imgproc;
 
 import java.awt.image.DataBufferByte;
@@ -53,13 +47,9 @@ class ReduceData {
 		double[] centerOfMass = determineCenterOfMass(filename); 
 		
 		// Determine Position of skin
-		int[] dimensions = {299, 400};
+		int[] dimensions = {3000, 2590};
 		determineWhere(dimensions, centerOfMass);
 
-		// Save the visualized detection.
-		// String filename = "faceDetection.png";
-		// System.out.println(String.format("Writing %s", filename));
-		// Highgui.imwrite(filename, image);
 	}
 	
 	/*
@@ -123,6 +113,7 @@ class ReduceData {
 	    Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
 	    Imgproc.adaptiveThreshold(imageBlurr, imageThresh, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
 	    Imgproc.Canny(imageBlurr, imageCanny, 100, 200); 
+	    //Imgproc.Canny(imageHSV, imageCanny, 100, 200); 
 	    Highgui.imwrite("Edges.jpg",imageCanny);
 	    
 	    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
@@ -134,10 +125,10 @@ class ReduceData {
 	    Mat mask = Mat.zeros(image.rows(),image.cols(),image.type());
 	    for( int i = 0; i< contours.size(); i++ )
 	    {
-	        Scalar color = new Scalar( 0,0,255);
+	        //Scalar color = new Scalar( 0,0,255);
 	        //Imgproc.drawContours(drawing, contours, i, color, 1);
 	        Imgproc.drawContours(mask, contours, -1, new Scalar(0,0,255));
-	        System.out.println("contourArea: " + Imgproc.contourArea(contours.get(i)));
+	        //System.out.println("contourArea: " + Imgproc.contourArea(contours.get(i)));
 
 	    }   
 	    Highgui.imwrite("Contours.jpg",mask);
@@ -158,10 +149,10 @@ class ReduceData {
 	    
 	    // Determine the "what"
 	    if((int)buff[2]>100){
-	    	System.out.println(buff[2] + " > 100");
+	    	//System.out.println(buff[2] + " > 100");
 	    	image_description.put("what", "palm"); 
 	    }else{
-	    	System.out.println(buff[2] + " < 100");
+	    	//System.out.println(buff[2] + " < 100");
 	    	image_description.put("what", "fist"); 
 	    }
 	    System.out.println("What: " + image_description.get("what")); 
@@ -176,7 +167,7 @@ class ReduceData {
 	        double y_coor = moments.get(i).get_m01()/moments.get(i).get_m00(); 
 	        centerOfMass[x] = x_coor;
 	        centerOfMass[x+1] = y_coor; 
-	        System.out.println("Moments: " + x_coor + " " + y_coor); 
+	        //System.out.println("Moments: " + "x " + x_coor + " y " + y_coor); 
 	        x = x+2; 
 	    }
 		return centerOfMass;
@@ -196,8 +187,8 @@ class ReduceData {
 	public void determineWhere(int[] dimensions, double[] centerOfMass){
 		// Compute x-location
 		int x_middle = (int)dimensions[0]/2; 
-		int left_bound = (int)(x_middle-(0.1*x_middle));
-		int right_bound = (int)(x_middle+(0.1*x_middle));
+		int left_bound = (int)(x_middle-(0.2*x_middle));
+		int right_bound = (int)(x_middle+(0.2*x_middle));
 		
 		if(centerOfMass[0]<left_bound){
 			image_description.put("x-where", "left");
@@ -211,12 +202,15 @@ class ReduceData {
 		int y_middle = (int)dimensions[1]/2; 
 		int upper_bound = (int)(y_middle-(0.1*y_middle));
 		int lower_bound = (int)(y_middle+(0.1*y_middle)); 
-		if(centerOfMass[1]<upper_bound){
+		if(centerOfMass[1] < upper_bound){
 			image_description.put("y-where", "upper");
-		}else if(centerOfMass[0] > lower_bound){
+			//System.out.println("Upper: " + centerOfMass[1]);
+		}else if(centerOfMass[1] > lower_bound){
 			image_description.put("y-where", "lower");
+			//System.out.println("Lower: " + centerOfMass[1]);
 		}else{
 			image_description.put("y-where", "center");
+			//System.out.println("Lower: " + centerOfMass[1]);
 		}
 		
 		System.out.println("x-where: " + image_description.get("x-where")); 
@@ -241,22 +235,22 @@ class DefineGrammar {
 			imageMap.put(filename, reduceData.image_description); 
 		}
 		String imageToRead = ""; 
-		if(imageMap.get("/ImagesToRead/image0.jpg").get("what").equals("palm")){
-			if(imageMap.get("/ImagesToRead/image1.jpg").get("what").equals("fist") 
-					&& imageMap.get("/ImagesToRead/image1.jpg").get("x-where").equals("right")
-					&& imageMap.get("/ImagesToRead/image1.jpg").get("y-where").equals("upper")){
-				if(imageMap.get("/ImagesToRead/image2.jpg").get("what").equals("fist") 
-						&& imageMap.get("/ImagesToRead/image2.jpg").get("x-where").equals("left")
-						&& imageMap.get("/ImagesToRead/image2.jpg").get("y-where").equals("upper")){
-					if(imageMap.get("/ImagesToRead/image3.jpg").get("what").equals("palm") 
-						&& imageMap.get("/ImagesToRead/image3.jpg").get("x-where").equals("center")
-						&& imageMap.get("/ImagesToRead/image3.jpg").get("y-where").equals("center")){
-						System.out.println("Password unlocked!"); 
+		if(imageMap.get("/Test2/image0.jpg").get("what").equals("palm")){
+			if(imageMap.get("/Test2/image1.jpg").get("what").equals("fist") 
+					&& imageMap.get("/Test2/image1.jpg").get("x-where").equals("left")
+					&& imageMap.get("/Test2/image1.jpg").get("y-where").equals("lower")){
+				if(imageMap.get("/Test2/image2.jpg").get("what").equals("fist") 
+						&& imageMap.get("/Test2/image2.jpg").get("x-where").equals("left")
+						&& imageMap.get("/Test2/image2.jpg").get("y-where").equals("upper")){
+					if(imageMap.get("/Test2/image3.jpg").get("what").equals("palm") 
+						&& imageMap.get("/Test2/image3.jpg").get("x-where").equals("left")
+						&& imageMap.get("/Test2/image3.jpg").get("y-where").equals("lower")){
+						System.out.println("Password unlocked! HOOORAYYYY"); 
 					}else{
-						System.out.println("Need center center palm"); 
+						System.out.println("Need lower left palm"); 
 					}
 				}else{
-					System.out.println("Need upper right fist"); 
+					System.out.println("Need upper left fist"); 
 				}
 			}else{
 				System.out.println("Need upper right fist"); 
@@ -267,12 +261,12 @@ class DefineGrammar {
 		
 	}
 	public ArrayList<String> defineGrammar(){
-		java.io.File file = new java.io.File("src/ImagesToRead/");
+		java.io.File file = new java.io.File("src/Test2/");
 		long length = folderSize(file); 
 		System.out.println("This many files in folder: " + length);
 		ArrayList<String> filesToSearch = new ArrayList<String>(); 
 		for(int i = 0; i<length; i++){
-			String filename = "/ImagesToRead/image" + Integer.toString(i) + ".jpg"; 
+			String filename = "/Test2/image" + Integer.toString(i) + ".jpg"; 
 			filesToSearch.add(filename); 
 			System.out.println("filename " + filename); 
 		}
