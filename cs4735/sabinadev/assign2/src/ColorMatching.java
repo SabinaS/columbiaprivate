@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.opencv.core.Core;
@@ -24,40 +25,54 @@ public class ColorMatching
 	public void run(){
 		//TODO
 		// Read in the image
-		String filename = "Images/i16.ppm";
-		Mat image = Highgui.imread(getClass().getResource(filename).getPath());
-		Highgui.imwrite("histoimage.jpg", image);
-		Mat b_hist = new Mat();
-		Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
-		//int histSize = 256;
-		//float range[] = {0, 255};
+		Mat src;  
+		src = Highgui.imread(getClass().getResource("Images/i15.ppm").getPath());
+		Highgui.imwrite("histoimage.jpg", src);
+		List<Mat> rgb_planes = new ArrayList<Mat>(); 
+		Core.split(src, rgb_planes);
 		
-		ArrayList<Mat> bgr_planes = new ArrayList<>(); 
-		Core.split(image, bgr_planes);
-		MatOfInt histSize = new MatOfInt(256); 
-		MatOfFloat histRange = new MatOfFloat(0, 256);
+		MatOfInt histSize = new MatOfInt(256);
+	    final MatOfFloat histRange = new MatOfFloat(0f, 256f);
 	    boolean accumulate = false;
+		Mat r_hist = new Mat();
+		Mat g_hist = new Mat();
+		Mat b_hist = new Mat(); 
+		
+		List<Mat> r_plane = new ArrayList<Mat>();
+		r_plane.add(rgb_planes.get(0)); 
+		List<Mat> g_plane = new ArrayList<Mat>();
+		g_plane.add(rgb_planes.get(1)); 
+		List<Mat> b_plane = new ArrayList<Mat>();
+		b_plane.add(rgb_planes.get(2)); 
+		
+		Imgproc.calcHist(r_plane, new MatOfInt(0), new Mat(), r_hist, histSize, histRange, accumulate);
+		Imgproc.calcHist(g_plane, new MatOfInt(0), new Mat(), g_hist, histSize, histRange, accumulate);
+		Imgproc.calcHist(b_plane, new MatOfInt(0), new Mat(), b_hist, histSize, histRange, accumulate);
 
-		Imgproc.calcHist(bgr_planes, new MatOfInt(0), new Mat(), b_hist, histSize, histRange, accumulate);
+		int hist_w = 89;
+		int hist_h = 60;
+		long bin_w = Math.round((double) hist_w / 256); 
+		
+		Mat histImage = new Mat(hist_h, hist_w, CvType.CV_8UC1);
+		Core.normalize(r_hist, r_hist, 3, histImage.rows(), Core.NORM_MINMAX);
+		Core.normalize(g_hist, g_hist, 3, histImage.rows(), Core.NORM_MINMAX);
+		Core.normalize(b_hist, b_hist, 3, histImage.rows(), Core.NORM_MINMAX);
+		
+		for (int i = 1; i < 256; i++) {
+	        Point p1 = new Point(bin_w * (i - 1), hist_h - Math.round(r_hist.get(i - 1, 0)[0]));
+	        Point p2 = new Point(bin_w * (i), hist_h - Math.round(r_hist.get(i, 0)[0]));
+	        Core.line(histImage, p1, p2, new Scalar(255, 0, 0), 2, 8, 0);
 
-	    int hist_w = 89;
-	    int hist_h = 60;
-	    long bin_w;
-	    bin_w = Math.round((double) (hist_w / 256));
+	        Point p3 = new Point(bin_w * (i - 1), hist_h - Math.round(g_hist.get(i - 1, 0)[0]));
+	        Point p4 = new Point(bin_w * (i), hist_h - Math.round(g_hist.get(i, 0)[0]));
+	        Core.line(histImage, p3, p4, new Scalar(0, 255, 0), 2, 8, 0);
 
-	    Mat histImage = new Mat(hist_h, hist_w, CvType.CV_8UC1);
-	    Core.normalize(b_hist, b_hist, 3, histImage.rows(), Core.NORM_MINMAX);
-	    
-	    for (int i = 1; i < 256; i++) {         
-
-
-	        Core.line(histImage, new Point(bin_w * (i - 1),hist_h- Math.round(b_hist.get( i-1,0)[0])), 
-	                new Point(bin_w * (i), hist_h-Math.round(Math.round(b_hist.get(i, 0)[0]))),
-	                new  Scalar(255, 0, 0), 2, 8, 0);
+	        Point p5 = new Point(bin_w * (i - 1), hist_h - Math.round(b_hist.get(i - 1, 0)[0]));
+	        Point p6 = new Point(bin_w * (i), hist_h - Math.round(b_hist.get(i, 0)[0]));
+	        Core.line(histImage, p5, p6, new Scalar(0, 0, 255), 2, 8, 0);
 
 	    }
-
-	    Highgui.imwrite("histogram.jpg", histImage);
+		Highgui.imwrite("histogram.jpg", histImage);
 	}
 	
 	/*
