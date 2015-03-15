@@ -17,14 +17,11 @@ import quicktime.app.image.ImageViewer;
 public class ColorMatching
 {
 	public void run(){
-		//TODO
 		// Read in the image
-		//Mat src;  
-		//src = Highgui.imread(getClass().getResource("Images/i15.jpg").getPath());
 		RGBPixel[][] pixels1= new RGBPixel[89][60];
 		RGBPixel[][] pixels2= new RGBPixel[89][60];
-		pixels1 = readImage("i15.ppm"); 
-		pixels2 = readImage("i16.ppm"); 
+		pixels1 = readImage("i06.ppm"); 
+		pixels2 = readImage("i07.ppm"); 
 		for(int i = 0; i< 89; i++){
 			for(int j = 0; j<60; j++){
 				//System.out.println(pixels1[i][j].getBlue()); 
@@ -51,7 +48,7 @@ public class ColorMatching
 					histogram[a][b][c] = 0; 
 				}
 			}
-		}
+		}//outer for
 		
 		for(int c = 0; c< 89; c++){
 			for(int r=0; r<60; r++){
@@ -161,7 +158,6 @@ public class ColorMatching
 	 * a value between 0 and 1 inclusive of how similar they are. 
 	 */
 	public float compareHistograms(int [][][] histogram1, int [][][] histogram2){
-		//TODO
 		int width = 89;
 		int height = 60; 
 		int goodPixelsImage1 = (width*height) - histogram1[0][0][0]; 
@@ -191,7 +187,63 @@ public class ColorMatching
 	
 	/*
 	 * Takes in target image histogram and a list of histograms 
-	 * and using compareHistory() outputs the three most similar
+	 * and using compareHistograms() outputs the three most or 
+	 * least similar images to the target images, based on the 
+	 * boolean most
+	 */
+	public String[] getThreeMostLeastSimilar(int[][][] originalHistogram, String originalFileName, boolean most){
+		//TODO
+		Map<String, Float> histoCompares = new HashMap<String, Float>(); 
+		
+		for(int i =1; i< 41; i++){
+			String filename = "";
+			if(i<10){
+				filename = "i0" + Integer.toString(i) + ".ppm";
+			}else{
+				filename = "i" + Integer.toString(i) + ".ppm"; 
+			}
+			if(filename.equals(originalFileName))
+				break; 
+			RGBPixel[][] tempPixels = readImage(filename); 
+			int[][][] tempHistogram = generateHistogram(tempPixels);
+			float normalize = compareHistograms(originalHistogram, tempHistogram); 
+			histoCompares.put(filename, normalize); 
+		}
+		
+		// Sort the hashmap
+		 ValueComparator bvc =  new ValueComparator(histoCompares);
+	     TreeMap<String,Float> sorted_map = new TreeMap<String,Float>(bvc);
+	     sorted_map.putAll(histoCompares);
+		
+		String[] imagesToReturn = new String[3]; 
+		
+		//get the 3 most similar
+		//else get 3 least similar
+		if(most){
+			int count=0;
+			for (Map.Entry<String,Float> entry: histoCompares.entrySet()) {
+			     if (count >2 ) break;
+			     imagesToReturn[count] = entry.getKey(); 
+			     //target.put(entry.getKey(), entry.getValue());
+			     count++;
+			}
+		}else{
+			int count=38;
+			for (Map.Entry<String,Float> entry: histoCompares.entrySet()) {
+			     if (count >40 ) break;
+			     imagesToReturn[count] = entry.getKey(); 
+			     //target.put(entry.getKey(), entry.getValue());
+			     count++;
+			}
+		}
+		
+		return imagesToReturn; 
+	}
+	
+	
+	/*
+	 * Takes in target image histogram and a list of histograms 
+	 * and using compareHistograms() outputs the three most similar
 	 * images to the target images. 
 	 */
 	public void getThreeMostSimilar(){
@@ -200,7 +252,7 @@ public class ColorMatching
 	
 	/*
 	 * Takes in target image histogram and a list of histograms 
-	 * and using compareHistory() outputs the three least similar
+	 * and using compareHistograms() outputs the three least similar
 	 * images to the target images. 
 	 */
 	public void getThreeLeastSimilar(){
