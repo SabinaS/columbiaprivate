@@ -1,10 +1,14 @@
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.*; 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*; 
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -20,173 +24,127 @@ import quicktime.app.image.ImageViewer;
 
 public class ColorMatching
 {
-   /*
-    * Takes in an image and generates a 3D array for the RGB
-    * values. Then based on the RGB value, creates a 3D
-    * color histogram. 
-    */
-	//public void generateHistogram(){
-	public void run() throws IOException{
+	public void run(){
 		//TODO
 		// Read in the image
 		//Mat src;  
 		//src = Highgui.imread(getClass().getResource("Images/i15.jpg").getPath());
 		RGBPixel[][] pixels= new RGBPixel[89][60];
-		pixels = readSImage("i15.ppm"); 
-		for(int i = 0; i< 10; i++){
-			for(int j = 0; j<10; j++){
-				//System.out.println(pixels[i][j].redVal); 
+		pixels = readImage("i15.ppm"); 
+		for(int i = 0; i< 89; i++){
+			for(int j = 0; j<60; j++){
+				//System.out.println(pixels[i][j].getBlue()); 
 			}
 		}
+		generateHistogram(pixels); 
 		
 	}
 	
-	public static RGBPixel[][] readSImage(String fName) throws IOException
+   /*
+    * Takes in an image and generates a 3D array for the RGB
+    * values. Then based on the RGB value, creates a 3D
+    * color histogram. 
+    */
+	public void generateHistogram(RGBPixel[][] pixels){
+		int[][][] histogram = new int[8][8][8]; //int array auto filled with 0's
+		
+		for(int c = 0; c< 89; c++){
+			for(int r=0; r<60; r++){
+				int newRed = pixels[c][r].getRed()/32;
+				//System.out.println("red " + newRed); 
+				int newGreen = pixels[c][r].getGreen()/32;
+				int newBlue = pixels[c][r].getBlue()/32; 
+				if((newRed == 0) && (newGreen == 0) && (newBlue ==0)){
+					break;
+				}else{
+					histogram[newRed][newGreen][newBlue] = histogram[newRed][newGreen][newBlue] + 1; 
+					//System.out.println("Histo: " + histogram[newRed][newGreen][newBlue]); 
+				}
+			}
+		}
+		System.out.println("random: " + histogram[1][1][1]); 
+	}
+	
+	public static RGBPixel[][] readImage(String fileName)
 	{
-		System.out.println("this"); 
-		File theFile = new File(fName);
-		System.out.println("file"); 
-		Scanner scan = new Scanner(theFile);
-		System.out.println("scanner"); 
-		int i=0, j=0;
-		int tokenCounter = 0;
-		int cols = 0;
-		int rows = 0;
-		StringTokenizer tokens = null;
-		
-		outloop: 
-		while (scan.hasNextLine())
-		{
-			System.out.println("after"); 
-			String aLine = scan.nextLine();
-			if (aLine.charAt(0) == '#'){
-				System.out.println("saw #"); 
-				continue;
-			}
-			// process the line:
-			tokens = new StringTokenizer(aLine, " ");
-			while (tokens.hasMoreTokens())
-			{
-				tokenCounter++;
-				String aToken = tokens.nextToken();
-				if (tokenCounter == 1) 
-				{
-					// expect that aToken is "P6"
-					if (!aToken.equals("P6")) System.out.println("Expected P6 magic number, got " + aToken);
-				}
-				if (tokenCounter == 2)
-				{
-					// expect that aToken is the number of columns
-					cols = Integer.parseInt(aToken);
-				}
-				if (tokenCounter == 3)
-				{
-					// expect that aToken is the number of rows
-					rows = Integer.parseInt(aToken);
-				}
-				if (tokenCounter == 4)
-				{
-					// expect that aToken is the maximum value
-					// ignore
-					break outloop;
-				}//inner if
-			}//inner while	
-		}//outer while
+		 RGBPixel[][] pixels = new RGBPixel[89][60];
+		 RGBPixel pixel = new RGBPixel(0,0,0); 
+		 for(RGBPixel[] row: pixels){
+			 Arrays.fill(row, pixel); 
+		 }
+		 int depth,width,height;
+		 String line;
+		 StringTokenizer st;
+		 
+		 try {
+	            BufferedReader in =
+	              new BufferedReader(new InputStreamReader(
+	                new BufferedInputStream(
+	                  new FileInputStream(fileName))));
 
-		RGBPixel outImage[][] = new RGBPixel[rows][cols];
+	            DataInputStream in2 =
+	              new DataInputStream(
+	                new BufferedInputStream(
+	                  new FileInputStream(fileName)));
 
-		// still worry if more tokens in previously read line
+	            // read PPM image header
 
-		int channelCount = 0;
-		int redVal = 0, blueVal = 0, greenVal = 0;
-		while (scan.hasNextLine())
-		{
-			String aLine = scan.nextLine();
-			if (aLine.charAt(0) == '#')
-				continue;
+	            // skip comments
+	            line = in.readLine();
+	            System.out.println("line: " + line);
+	            in2.skip((line+"\n").getBytes().length);
+	            do {
+	                line = in.readLine();
+	                in2.skip((line+"\n").getBytes().length);
+	                System.out.println("saw #"); 
+	            } while (line.charAt(0) == '#');
 
-			// process the line:
-			tokens = new StringTokenizer(aLine, " ");
-			while (tokens.hasMoreTokens())
-			{
-				String aToken = tokens.nextToken();
-				if (channelCount == 0) 
-				{
-					redVal = Integer.parseInt(aToken);
-					channelCount++;
-				}
-				else
-				if (channelCount == 1) 
-				{
-					// expect that aToken is the number of columns
-					greenVal = Integer.parseInt(aToken);
-					channelCount++;
-				}
-				else
-				if (channelCount == 2) 
-				{
-					// expect that aToken is the number of rows
-					blueVal = Integer.parseInt(aToken);
-					outImage[i][j] = new RGBPixel(redVal, greenVal, blueVal);
-					j++;
-					if (j >= cols)
-					{
-						i++;
-						j = 0;
-					}
-					channelCount = 0;
-		
-				}//inner if
-			}//inner while		
-		}//outer while
-/*
-		// possible that there's still some tokens on the line already read
-		while (tokens.hasMoreTokens())
-		{
-			int redVal = Integer.parseInt(tokens.nextToken());
-			int greenVal = Integer.parseInt(tokens.nextToken());
-			int blueVal = Integer.parseInt(tokens.nextToken());
-			outImage[i][j] = new RGBPixel(redVal, greenVal, blueVal);
-			j++;
-			if (j >= cols)
-			{
-				i++;
-				j = 0;
-			}
-		}
+	            // the current line has dimensions
+	            st = new StringTokenizer(line);
+	            width = Integer.parseInt(st.nextToken());
+	            height = Integer.parseInt(st.nextToken());
 
-		while (scan.hasNextLine())
-		{
-			String line = scan.nextLine();
-			StringTokenizer tokens2 = new StringTokenizer(line, " ");
-			while (tokens2.hasMoreTokens())
-			{
-				int redVal = Integer.parseInt(tokens2.nextToken());
-				int greenVal = Integer.parseInt(tokens2.nextToken());
-				int blueVal = Integer.parseInt(tokens2.nextToken());
-				outImage[i][j] = new RGBPixel(redVal, greenVal, blueVal);
-				j++;
-				if (j >= cols)
-				{
-					i++;
-					j = 0;
-				}
-			}
-		}
+	            // next line has pixel depth
+	            line = in.readLine();
+	            System.out.println("line2 " + line); 
+	            in2.skip((line+"\n").getBytes().length);
+	            st = new StringTokenizer(line);
+	            depth = Integer.parseInt(st.nextToken());
+	            System.out.println("depth: " + depth); 
 
-*/
-
-		return outImage;
+	            // read pixels now
+	            int a = 0; 
+	            int b = 0; 
+	                for (int c = 0; c < 89; c++){
+	                    for (int r = 0; r < 60; r++){
+	                    	//int x = in2.readUnsignedByte(); 
+	                    	//System.out.println("x : " + x); 
+	                    	int redVal = in2.readUnsignedByte();
+	                    	int greenVal = in2.readUnsignedByte();
+	                    	int blueVal = in2.readUnsignedByte(); 
+	                    	RGBPixel pix = new RGBPixel(redVal, greenVal, blueVal); 
+	                    	/*pixels[c][r].setRed(redVal);
+	                    	pixels[c][r].setGreen(greenVal);
+	                    	pixels[c][r].setBlue(blueVal); */
+	                    	
+	                    	a++; 
+	                    	System.out.println("red: " + greenVal); 
+	                    	//System.out.println("get " + pixels[c][r].getRed()); 
+	                    }
+	                    b++; 
+	                }//outer for
+	            in.close();
+	            in2.close();
+	        } catch(ArrayIndexOutOfBoundsException e) {
+	            System.out.println("Error: image in "+fileName+" too big");
+	        } catch(FileNotFoundException e) {
+	            System.out.println("Error: file "+fileName+" not found");
+	        } catch(IOException e) {
+	            System.out.println("Error: end of stream encountered when reading "+fileName);
+	        }
+		return pixels;
 	}
 
-	
-	public void readImage(String filename){
-		//Read in image line by line
-		//starting from line 5, break the line into 89*3 sections, 
-		//with each section corresponding to a byte
-		
-		//
-	}
 	/*
 	 * Takes in two histograms and using the normalized L1
 	 * comparison, compares the histograms and determines 
@@ -228,7 +186,7 @@ public class ColorMatching
 		//TODO
 	}
 	
-	public static void main( String[] args ) throws IOException
+	public static void main( String[] args )
    {
       System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
       ColorMatching colorMatching = new ColorMatching(); 
