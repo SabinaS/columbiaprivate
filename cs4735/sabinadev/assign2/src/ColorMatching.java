@@ -26,13 +26,14 @@ public class ColorMatching
 		//TODO
 		// Read in the image
 		Mat src;  
-		src = Highgui.imread(getClass().getResource("Images/i15.ppm").getPath());
+		src = Highgui.imread(getClass().getResource("Images/i15.jpg").getPath());
+		//Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY);
 		Highgui.imwrite("histoimage.jpg", src);
 		List<Mat> rgb_planes = new ArrayList<Mat>(); 
 		Core.split(src, rgb_planes);
 		
-		MatOfInt histSize = new MatOfInt(256);
-	    final MatOfFloat histRange = new MatOfFloat(0f, 256f);
+		MatOfInt histSize = new MatOfInt(512);
+	    final MatOfFloat histRange = new MatOfFloat(0, 256);
 	    boolean accumulate = false;
 		Mat r_hist = new Mat();
 		Mat g_hist = new Mat();
@@ -51,25 +52,35 @@ public class ColorMatching
 
 		int hist_w = 89;
 		int hist_h = 60;
-		long bin_w = Math.round((double) hist_w / 256); 
+		long bin_w = Math.round((double) hist_w / 512); 
 		
 		Mat histImage = new Mat(hist_h, hist_w, CvType.CV_8UC1);
-		Core.normalize(r_hist, r_hist, 3, histImage.rows(), Core.NORM_MINMAX);
-		Core.normalize(g_hist, g_hist, 3, histImage.rows(), Core.NORM_MINMAX);
-		Core.normalize(b_hist, b_hist, 3, histImage.rows(), Core.NORM_MINMAX);
+		
+		Core.normalize(r_hist, r_hist, 3, histImage.rows(), Core.NORM_MINMAX, -1, new Mat());
+		Core.normalize(g_hist, g_hist, 3, histImage.rows(), Core.NORM_MINMAX, -1, new Mat());
+		Core.normalize(b_hist, b_hist, 3, histImage.rows(), Core.NORM_MINMAX, -1, new Mat());
 		
 		for (int i = 1; i < 256; i++) {
-	        Point p1 = new Point(bin_w * (i - 1), hist_h - Math.round(r_hist.get(i - 1, 0)[0]));
-	        Point p2 = new Point(bin_w * (i), hist_h - Math.round(r_hist.get(i, 0)[0]));
-	        Core.line(histImage, p1, p2, new Scalar(255, 0, 0), 2, 8, 0);
+			Core.line(
+	                histImage,
+	                new org.opencv.core.Point( i, histImage.rows() ),
+	                new org.opencv.core.Point( i, histImage.rows()-Math.round( r_hist.get(i,0)[0] )) ,
+	                new Scalar( 255, 255, 255),
+	                1, 8, 0 );
 
-	        Point p3 = new Point(bin_w * (i - 1), hist_h - Math.round(g_hist.get(i - 1, 0)[0]));
-	        Point p4 = new Point(bin_w * (i), hist_h - Math.round(g_hist.get(i, 0)[0]));
-	        Core.line(histImage, p3, p4, new Scalar(0, 255, 0), 2, 8, 0);
+			Core.line(
+	                histImage,
+	                new org.opencv.core.Point( i, histImage.rows() ),
+	                new org.opencv.core.Point( i, histImage.rows()-Math.round( g_hist.get(i,0)[0] )) ,
+	                new Scalar( 255, 255, 255),
+	                1, 8, 0 );
 
-	        Point p5 = new Point(bin_w * (i - 1), hist_h - Math.round(b_hist.get(i - 1, 0)[0]));
-	        Point p6 = new Point(bin_w * (i), hist_h - Math.round(b_hist.get(i, 0)[0]));
-	        Core.line(histImage, p5, p6, new Scalar(0, 0, 255), 2, 8, 0);
+			Core.line(
+	                histImage,
+	                new org.opencv.core.Point( i, histImage.rows() ),
+	                new org.opencv.core.Point( i, histImage.rows()-Math.round( b_hist.get(i,0)[0] )) ,
+	                new Scalar( 255, 255, 255),
+	                1, 8, 0 );
 
 	    }
 		Highgui.imwrite("histogram.jpg", histImage);
