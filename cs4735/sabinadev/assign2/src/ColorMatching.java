@@ -1,4 +1,5 @@
 import java.io.*; 
+import java.text.DecimalFormat;
 import java.util.*; 
 
 import org.opencv.core.Core;
@@ -20,14 +21,20 @@ public class ColorMatching
 		// Read in the image
 		//Mat src;  
 		//src = Highgui.imread(getClass().getResource("Images/i15.jpg").getPath());
-		RGBPixel[][] pixels= new RGBPixel[89][60];
-		pixels = readImage("i15.ppm"); 
+		RGBPixel[][] pixels1= new RGBPixel[89][60];
+		RGBPixel[][] pixels2= new RGBPixel[89][60];
+		pixels1 = readImage("i15.ppm"); 
+		pixels2 = readImage("i16.ppm"); 
 		for(int i = 0; i< 89; i++){
 			for(int j = 0; j<60; j++){
-				//System.out.println(pixels[i][j].getBlue()); 
+				//System.out.println(pixels1[i][j].getBlue()); 
 			}
 		}
-		generateHistogram(pixels); 
+		int[][][] histogram1 = generateHistogram(pixels1); 
+		int[][][] histogram2 = generateHistogram(pixels2); 
+		
+		float normalization = compareHistograms(histogram1, histogram2); 
+		System.out.println("norm: " + normalization); 
 		
 	}
 	
@@ -63,7 +70,7 @@ public class ColorMatching
 				}
 			}
 		}
-		System.out.println("random: " + histogram[6][2][2]); 
+		System.out.println("random: " + histogram[1][1][2]); 
 		return histogram; 
 	}
 	
@@ -135,6 +142,7 @@ public class ColorMatching
 	                    }
 	                    b++; 
 	                }//outer for
+	                System.out.println("a: " + a); 
 	            in.close();
 	            in2.close();
 	        } catch(ArrayIndexOutOfBoundsException e) {
@@ -152,12 +160,13 @@ public class ColorMatching
 	 * comparison, compares the histograms and determines 
 	 * a value between 0 and 1 inclusive of how similar they are. 
 	 */
-	public long compareHistograms(int [][][] histogram1, int [][][] histogram2){
+	public float compareHistograms(int [][][] histogram1, int [][][] histogram2){
 		//TODO
-		long l1distance = 0; 
 		int width = 89;
 		int height = 60; 
-		int twoN = 2*(width * height);
+		int goodPixelsImage1 = (width*height) - histogram1[0][0][0]; 
+		int goodPixelsImage2 = (width*height) - histogram2[0][0][0]; 
+		int twoN = goodPixelsImage1 + goodPixelsImage2; 
 		int global_color_distance = 0; 
 
 		for(int r = 0; r<8; r++){
@@ -167,12 +176,17 @@ public class ColorMatching
 						break;
 					}else{
 						int local_color_distance = Math.abs(histogram1[r][g][b] - histogram2[r][g][b]);
+						System.out.println("local: " + histogram1[r][g][b] + " " + histogram2[r][g][b] + " " + local_color_distance); 
 						global_color_distance = global_color_distance + local_color_distance; 
 					}//else
 				}//inner for
 			}//middle for
 		}//outer for
-		return l1distance; 
+		System.out.println("twoN: " + twoN);
+		System.out.println("global: " + global_color_distance); 
+		float normalization = (float)global_color_distance/twoN; 
+		System.out.println("norm: " + normalization);
+		return normalization; 
 	}
 	
 	/*
