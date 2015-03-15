@@ -36,7 +36,7 @@ public class ColorMatching
     * values. Then based on the RGB value, creates a 3D
     * color histogram. 
     */
-	public void generateHistogram(RGBPixel[][] pixels){
+	public int[][][] generateHistogram(RGBPixel[][] pixels){
 		int[][][] histogram = new int[8][8][8]; //int array auto filled with 0's
 		for(int a = 0; a < 8; a++){
 			for(int b = 0; b < 8; b++){
@@ -64,6 +64,7 @@ public class ColorMatching
 			}
 		}
 		System.out.println("random: " + histogram[6][2][2]); 
+		return histogram; 
 	}
 	
 	public static RGBPixel[][] readImage(String fileName)
@@ -151,8 +152,27 @@ public class ColorMatching
 	 * comparison, compares the histograms and determines 
 	 * a value between 0 and 1 inclusive of how similar they are. 
 	 */
-	public void compareHistograms(){
+	public long compareHistograms(int [][][] histogram1, int [][][] histogram2){
 		//TODO
+		long l1distance = 0; 
+		int width = 89;
+		int height = 60; 
+		int twoN = 2*(width * height);
+		int global_color_distance = 0; 
+
+		for(int r = 0; r<8; r++){
+			for(int g = 0; g<8; g++){
+				for(int b = 0; b<8; b++){
+					if((r==0) && (g==0) && (b==0)){
+						break;
+					}else{
+						int local_color_distance = Math.abs(histogram1[r][g][b] - histogram2[r][g][b]);
+						global_color_distance = global_color_distance + local_color_distance; 
+					}//else
+				}//inner for
+			}//middle for
+		}//outer for
+		return l1distance; 
 	}
 	
 	/*
