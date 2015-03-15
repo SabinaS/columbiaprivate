@@ -1,13 +1,4 @@
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.*; 
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.StringTokenizer;
 import java.util.*; 
 
 import org.opencv.core.Core;
@@ -47,13 +38,23 @@ public class ColorMatching
     */
 	public void generateHistogram(RGBPixel[][] pixels){
 		int[][][] histogram = new int[8][8][8]; //int array auto filled with 0's
+		for(int a = 0; a < 8; a++){
+			for(int b = 0; b < 8; b++){
+				for(int c = 0; c < 8; c++){
+					histogram[a][b][c] = 0; 
+				}
+			}
+		}
 		
 		for(int c = 0; c< 89; c++){
 			for(int r=0; r<60; r++){
-				int newRed = pixels[c][r].getRed()/32;
+				RGBPixel pix = pixels[c][r]; 
+				int newRed = pix.getRed()/32;
 				//System.out.println("red " + newRed); 
-				int newGreen = pixels[c][r].getGreen()/32;
-				int newBlue = pixels[c][r].getBlue()/32; 
+				int newGreen = pix.getGreen()/32;
+				//System.out.println("green: " + newGreen);
+				int newBlue = pix.getBlue()/32; 
+				//System.out.println("blue: " + newBlue); 
 				if((newRed == 0) && (newGreen == 0) && (newBlue ==0)){
 					break;
 				}else{
@@ -62,7 +63,7 @@ public class ColorMatching
 				}
 			}
 		}
-		System.out.println("random: " + histogram[1][1][1]); 
+		System.out.println("random: " + histogram[6][2][2]); 
 	}
 	
 	public static RGBPixel[][] readImage(String fileName)
@@ -126,9 +127,9 @@ public class ColorMatching
 	                    	/*pixels[c][r].setRed(redVal);
 	                    	pixels[c][r].setGreen(greenVal);
 	                    	pixels[c][r].setBlue(blueVal); */
-	                    	
+	                    	pixels[c][r] = pix; 
 	                    	a++; 
-	                    	System.out.println("red: " + greenVal); 
+	                    	//System.out.println("red: " + greenVal); 
 	                    	//System.out.println("get " + pixels[c][r].getRed()); 
 	                    }
 	                    b++; 
