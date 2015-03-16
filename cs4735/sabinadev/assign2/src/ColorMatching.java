@@ -33,6 +33,8 @@ public class ColorMatching
 		float normalization = compareHistograms(histogram1, histogram2); 
 		System.out.println("norm: " + normalization); 
 		
+		String [] threeMostSim= getThreeMostLeastSimilar(histogram1, "i06.ppm", false, 40); 
+		
 	}
 	
    /*
@@ -172,7 +174,7 @@ public class ColorMatching
 						break;
 					}else{
 						int local_color_distance = Math.abs(histogram1[r][g][b] - histogram2[r][g][b]);
-						System.out.println("local: " + histogram1[r][g][b] + " " + histogram2[r][g][b] + " " + local_color_distance); 
+						//System.out.println("local: " + histogram1[r][g][b] + " " + histogram2[r][g][b] + " " + local_color_distance); 
 						global_color_distance = global_color_distance + local_color_distance; 
 					}//else
 				}//inner for
@@ -191,10 +193,10 @@ public class ColorMatching
 	 * least similar images to the target images, based on the 
 	 * boolean most
 	 */
-	public String[] getThreeMostLeastSimilar(int[][][] originalHistogram, String originalFileName, boolean most){
+	public String[] getThreeMostLeastSimilar(int[][][] originalHistogram, String originalFileName, boolean most, int max){
 		//TODO
 		Map<String, Float> histoCompares = new HashMap<String, Float>(); 
-		
+		int counter = 0; 
 		for(int i =1; i< 41; i++){
 			String filename = "";
 			if(i<10){
@@ -202,38 +204,51 @@ public class ColorMatching
 			}else{
 				filename = "i" + Integer.toString(i) + ".ppm"; 
 			}
-			if(filename.equals(originalFileName))
-				break; 
+			if(filename.equals(originalFileName)){
+				continue; 
+			}
 			RGBPixel[][] tempPixels = readImage(filename); 
 			int[][][] tempHistogram = generateHistogram(tempPixels);
 			float normalize = compareHistograms(originalHistogram, tempHistogram); 
+			System.out.println("normnew: " + normalize); 
 			histoCompares.put(filename, normalize); 
+			System.out.println("filename: " + filename); 
+			counter++; 
 		}
-		
+		System.out.println("counter: " + counter); 
 		// Sort the hashmap
-		 ValueComparator bvc =  new ValueComparator(histoCompares);
-	     TreeMap<String,Float> sorted_map = new TreeMap<String,Float>(bvc);
-	     sorted_map.putAll(histoCompares);
+		ValueComparator bvc =  new ValueComparator(histoCompares);
+	    TreeMap<String,Float> sorted_map = new TreeMap<String,Float>(bvc);
+	    sorted_map.putAll(histoCompares);
+	    NavigableSet nset = sorted_map.descendingKeySet();
+	    Iterator<String> iterator = nset.descendingIterator(); //names in descending order
+	    iterator = nset.iterator();
 		
-		String[] imagesToReturn = new String[3]; 
+	    String[] imagesToReturn = new String[3]; 
 		
 		//get the 3 most similar
 		//else get 3 least similar
+		System.out.println("size: " + sorted_map.size()); 
 		if(most){
 			int count=0;
 			for (Map.Entry<String,Float> entry: histoCompares.entrySet()) {
-			     if (count >2 ) break;
-			     imagesToReturn[count] = entry.getKey(); 
+			     if (count >239) break;
+			     //imagesToReturn[count] = entry.getKey(); 
+			     System.out.println("Most Sim: " + entry.getKey() + " " + entry.getValue()); 
 			     //target.put(entry.getKey(), entry.getValue());
 			     count++;
 			}
 		}else{
-			int count=38;
-			for (Map.Entry<String,Float> entry: histoCompares.entrySet()) {
-			     if (count >40 ) break;
-			     imagesToReturn[count] = entry.getKey(); 
-			     //target.put(entry.getKey(), entry.getValue());
-			     count++;
+			int count=0;
+			while (iterator.hasNext()) {
+				if(count>39){
+					break; 
+				}else{
+					String i = iterator.next();
+					//imagesToReturn[counter] = i; 
+					System.out.println("Least Sim: " + i); 
+				}
+				count++; 
 			}
 		}
 		
