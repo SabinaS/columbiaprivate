@@ -22,28 +22,41 @@ public class ColorMatching
 	String[] most4sim = new String[4]; 
 	
 	public void run(){
-		// Read in the image
-		RGBPixel[][] pixels1= new RGBPixel[89][60];
-		RGBPixel[][] pixels2= new RGBPixel[89][60];
-		pixels1 = readImage("i06.ppm"); 
-		pixels2 = readImage("i07.ppm"); 
-		for(int i = 0; i< 89; i++){
-			for(int j = 0; j<60; j++){
-				//System.out.println(pixels1[i][j].getBlue()); 
+		
+		for(int i = 1; i< 41; i++){
+			String filename = "";
+			if(i<10){
+				filename = "i0" + Integer.toString(i) + ".ppm";
+			}else{
+				filename = "i" + Integer.toString(i) + ".ppm";
+			}
+			RGBPixel[][] pixels= new RGBPixel[89][60];
+			pixels = readImage(filename);
+			int[][][] histogram = generateHistogram(pixels); 
+			String[] threeMostSimilar = getThreeMostLeastSimilar(histogram, filename, true); 
+			String[] threeLeastSimilar = getThreeMostLeastSimilar(histogram, filename, false); 
+			
+			System.out.println("The three most similar images to " + filename + " are:"); 
+			for(String s : threeMostSimilar){
+				System.out.println(s); 
+			}
+			
+			System.out.println("The three least similar images to " + filename + " are:"); 
+			for(String s : threeLeastSimilar){
+				System.out.println(s); 
 			}
 		}
-		int[][][] histogram1 = generateHistogram(pixels1); 
-		int[][][] histogram2 = generateHistogram(pixels2); 
-		
-		float normalization = compareHistograms(histogram1, histogram2); 
-		//System.out.println("norm: " + normalization); 
-		
-		String [] threeMostSim= getThreeMostLeastSimilar(histogram1, "i06.ppm", false); 
 		getFourTopBottomSimilar(true); 
+		System.out.println("The 4 most similar images out of the whole are:");
 		for(String s: most4sim){
-			System.out.println("4 most: " + s); 
+			System.out.println(s); 
 		}
 		
+		getFourTopBottomSimilar(false); 
+		System.out.println("The 4 least similar images out of the whole are:");
+		for(String s: least4sim){
+			System.out.println(s); 
+		}
 		
 	}
 	
@@ -353,7 +366,7 @@ public class ColorMatching
 					}
 					
 				}
-				System.out.println("local_l: " + local_least4); 
+				//System.out.println("local_l: " + local_least4); 
 			}//end else
 		}//end for
 
