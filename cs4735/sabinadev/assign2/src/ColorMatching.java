@@ -16,6 +16,11 @@ import quicktime.app.image.ImageViewer;
 
 public class ColorMatching
 {
+	private float least4simsum = 0;
+	private float most4simsum= 3; 
+	String[] least4sim = new String[3];
+	String[] most4sim = new String[3]; 
+	
 	public void run(){
 		// Read in the image
 		RGBPixel[][] pixels1= new RGBPixel[89][60];
@@ -31,9 +36,14 @@ public class ColorMatching
 		int[][][] histogram2 = generateHistogram(pixels2); 
 		
 		float normalization = compareHistograms(histogram1, histogram2); 
-		System.out.println("norm: " + normalization); 
+		//System.out.println("norm: " + normalization); 
 		
-		String [] threeMostSim= getThreeMostLeastSimilar(histogram1, "i06.ppm", false, 40); 
+		String [] threeMostSim= getThreeMostLeastSimilar(histogram1, "i06.ppm", false); 
+		getFourTopBottomSimilar(true); 
+		for(String s: most4sim){
+			System.out.println("4 most: " + s); 
+		}
+		System.out.println("ss: " + most4simsum); 
 		
 	}
 	
@@ -69,7 +79,7 @@ public class ColorMatching
 				}
 			}
 		}
-		System.out.println("random: " + histogram[1][1][2]); 
+		//System.out.println("random: " + histogram[1][1][2]); 
 		return histogram; 
 	}
 	
@@ -99,12 +109,12 @@ public class ColorMatching
 
 	            // skip comments
 	            line = in.readLine();
-	            System.out.println("line: " + line);
+	            //System.out.println("line: " + line);
 	            in2.skip((line+"\n").getBytes().length);
 	            do {
 	                line = in.readLine();
 	                in2.skip((line+"\n").getBytes().length);
-	                System.out.println("saw #"); 
+	                //System.out.println("saw #"); 
 	            } while (line.charAt(0) == '#');
 
 	            // the current line has dimensions
@@ -114,11 +124,11 @@ public class ColorMatching
 
 	            // next line has pixel depth
 	            line = in.readLine();
-	            System.out.println("line2 " + line); 
+	            //System.out.println("line2 " + line); 
 	            in2.skip((line+"\n").getBytes().length);
 	            st = new StringTokenizer(line);
 	            depth = Integer.parseInt(st.nextToken());
-	            System.out.println("depth: " + depth); 
+	            //System.out.println("depth: " + depth); 
 
 	            // read pixels now
 	            int a = 0; 
@@ -141,7 +151,7 @@ public class ColorMatching
 	                    }
 	                    b++; 
 	                }//outer for
-	                System.out.println("a: " + a); 
+	                //System.out.println("a: " + a); 
 	            in.close();
 	            in2.close();
 	        } catch(ArrayIndexOutOfBoundsException e) {
@@ -180,10 +190,10 @@ public class ColorMatching
 				}//inner for
 			}//middle for
 		}//outer for
-		System.out.println("twoN: " + twoN);
-		System.out.println("global: " + global_color_distance); 
+		//System.out.println("twoN: " + twoN);
+		//System.out.println("global: " + global_color_distance); 
 		float normalization = (float)global_color_distance/twoN; 
-		System.out.println("norm: " + normalization);
+		//System.out.println("norm: " + normalization);
 		return normalization; 
 	}
 	
@@ -193,7 +203,7 @@ public class ColorMatching
 	 * least similar images to the target images, based on the 
 	 * boolean most
 	 */
-	public String[] getThreeMostLeastSimilar(int[][][] originalHistogram, String originalFileName, boolean most, int max){
+	public String[] getThreeMostLeastSimilar(int[][][] originalHistogram, String originalFileName, boolean most){
 		//TODO
 		Map<String, Float> histoCompares = new HashMap<String, Float>(); 
 		int counter = 0; 
@@ -210,42 +220,45 @@ public class ColorMatching
 			RGBPixel[][] tempPixels = readImage(filename); 
 			int[][][] tempHistogram = generateHistogram(tempPixels);
 			float normalize = compareHistograms(originalHistogram, tempHistogram); 
-			System.out.println("normnew: " + normalize); 
+			//System.out.println("normnew: " + normalize); 
 			histoCompares.put(filename, normalize); 
-			System.out.println("filename: " + filename); 
+			//System.out.println("filename: " + filename); 
 			counter++; 
 		}
-		System.out.println("counter: " + counter); 
+		//System.out.println("counter: " + counter); 
 		// Sort the hashmap
 		ValueComparator bvc =  new ValueComparator(histoCompares);
 	    TreeMap<String,Float> sorted_map = new TreeMap<String,Float>(bvc);
 	    sorted_map.putAll(histoCompares);
 	    NavigableSet nset = sorted_map.descendingKeySet();
 	    Iterator<String> iterator = nset.descendingIterator(); //names in descending order
-	    iterator = nset.iterator();
 		
 	    String[] imagesToReturn = new String[3]; 
 		
 		//get the 3 most similar
 		//else get 3 least similar
-		System.out.println("size: " + sorted_map.size()); 
+		//System.out.println("size: " + sorted_map.size()); 
 		if(most){
 			int count=0;
-			for (Map.Entry<String,Float> entry: histoCompares.entrySet()) {
-			     if (count >239) break;
-			     //imagesToReturn[count] = entry.getKey(); 
-			     System.out.println("Most Sim: " + entry.getKey() + " " + entry.getValue()); 
-			     //target.put(entry.getKey(), entry.getValue());
-			     count++;
+			iterator = nset.iterator(); //names in ascending order
+			while (iterator.hasNext()) {
+				if(count>2){
+					break; 
+				}else{
+					String i = iterator.next();
+					imagesToReturn[count] = i; 
+					System.out.println("Most Sim: " + i); 
+				}
+				count++; 
 			}
 		}else{
 			int count=0;
 			while (iterator.hasNext()) {
-				if(count>39){
+				if(count>2){
 					break; 
 				}else{
 					String i = iterator.next();
-					//imagesToReturn[counter] = i; 
+					imagesToReturn[count] = i; 
 					System.out.println("Least Sim: " + i); 
 				}
 				count++; 
@@ -262,7 +275,7 @@ public class ColorMatching
 	 * images to the target images. 
 	 */
 	public void getThreeMostSimilar(){
-		//TODO
+		//Don't need
 	}
 	
 	/*
@@ -271,23 +284,91 @@ public class ColorMatching
 	 * images to the target images. 
 	 */
 	public void getThreeLeastSimilar(){
-		//TODO
+		//Don't need
 	}
 	
 	/*
 	 * Outputs the four most similar images out of the 40
 	 */
-	public void getFourTopSimilar(){
-		//TODO
+	public void getFourTopBottomSimilar(boolean most){
+		//TODO 
+		
+		//for each image, get the 3 most/least similar
+		for(int i = 1; i < 41; i++){
+			float local_least4 = 0; 
+			float local_most4 = 0;
+			String[] threeMostSim = new String[3];
+			String[] threeLeastSim = new String[3];
+			//get 3 more similar to that file
+			//get the distance for each of those
+			//compute the local 4's
+			String filename = "";
+			if(i<10){
+				filename = "i0" + Integer.toString(i) + ".ppm";
+			}else{
+				filename = "i" + Integer.toString(i) + ".ppm"; 
+			}
+			
+			if(most){
+				RGBPixel[][] pixels = new RGBPixel[89][60]; 
+				pixels = readImage(filename); 
+				int[][][] histogram = generateHistogram(pixels); 
+				threeMostSim = getThreeMostLeastSimilar(histogram, filename, true); 
+				for(String s: threeMostSim){
+					RGBPixel[][] pixels2 = new RGBPixel[89][60]; 
+					pixels2 = readImage(s); 
+					int[][][] histogram2 = generateHistogram(pixels2);
+					float normalization = compareHistograms(histogram, histogram2); 
+					local_most4 = local_most4 + normalization; 
+				}
+				if(local_most4 < most4simsum){
+					most4simsum = local_most4; 
+					most4sim[0] = filename; 
+					for(int j = 0; i<3; i++){
+						most4sim[j+1] = threeMostSim[j]; 
+					}
+					
+				}
+				System.out.println("local_m: " + local_most4); 
+			}else{
+				RGBPixel[][] pixels = new RGBPixel[89][60]; 
+				pixels = readImage(filename); 
+				int[][][] histogram = generateHistogram(pixels); 
+				threeLeastSim = getThreeMostLeastSimilar(histogram, filename, true); 
+				for(String s: threeLeastSim){
+					RGBPixel[][] pixels2 = new RGBPixel[89][60]; 
+					pixels2 = readImage(s); 
+					int[][][] histogram2 = generateHistogram(pixels2);
+					float normalization = compareHistograms(histogram, histogram2); 
+					local_least4 = local_least4 + normalization; 
+				}
+				if(local_least4 > least4simsum){
+					least4simsum = local_least4; 
+					least4sim[0] = filename; 
+					for(int j = 0; i<3; i++){
+						least4sim[j+1] = threeLeastSim[j]; 
+					}
+					
+				}
+				System.out.println("local_l: " + local_least4); 
+			}//end else
+		}//end for
+
 	}
 	
 	/*
 	 * Outputs the four least similar images out of the 40
 	 */
-	public void getFourBottomSimilar(){
-		//TODO
+	public String[] getFourTopSimilar(){
+		return most4sim;
 	}
 	
+	/*
+	 * Outputs the four least similar images out of the 40
+	 */
+	public String[] getFourBottomSimilar(){
+		return least4sim; 
+	}
 	public static void main( String[] args )
    {
       System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
