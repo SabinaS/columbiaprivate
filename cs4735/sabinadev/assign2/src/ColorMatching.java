@@ -18,8 +18,8 @@ public class ColorMatching
 {
 	private float least4simsum = 0;
 	private float most4simsum= 3; 
-	String[] least4sim = new String[3];
-	String[] most4sim = new String[3]; 
+	String[] least4sim = new String[4];
+	String[] most4sim = new String[4]; 
 	
 	public void run(){
 		// Read in the image
@@ -43,7 +43,7 @@ public class ColorMatching
 		for(String s: most4sim){
 			System.out.println("4 most: " + s); 
 		}
-		System.out.println("ss: " + most4simsum); 
+		
 		
 	}
 	
@@ -247,7 +247,7 @@ public class ColorMatching
 				}else{
 					String i = iterator.next();
 					imagesToReturn[count] = i; 
-					System.out.println("Most Sim: " + i); 
+					//System.out.println("Most Sim: " + i); 
 				}
 				count++; 
 			}
@@ -259,7 +259,7 @@ public class ColorMatching
 				}else{
 					String i = iterator.next();
 					imagesToReturn[count] = i; 
-					System.out.println("Least Sim: " + i); 
+					//System.out.println("Least Sim: " + i); 
 				}
 				count++; 
 			}
@@ -324,12 +324,14 @@ public class ColorMatching
 				if(local_most4 < most4simsum){
 					most4simsum = local_most4; 
 					most4sim[0] = filename; 
-					for(int j = 0; i<3; i++){
+					//System.out.println("size: " + threeMostSim.length); 
+					for(int j = 0; j<3; j++){
 						most4sim[j+1] = threeMostSim[j]; 
+						//System.out.println("mmm: " + most4sim[j+1]); 
 					}
 					
 				}
-				System.out.println("local_m: " + local_most4); 
+				//System.out.println("local_m: " + local_most4); 
 			}else{
 				RGBPixel[][] pixels = new RGBPixel[89][60]; 
 				pixels = readImage(filename); 
@@ -345,8 +347,9 @@ public class ColorMatching
 				if(local_least4 > least4simsum){
 					least4simsum = local_least4; 
 					least4sim[0] = filename; 
-					for(int j = 0; i<3; i++){
+					for(int j = 0; j<3; j++){
 						least4sim[j+1] = threeLeastSim[j]; 
+						//System.out.println("lll: " + least4sim[j+1]); 
 					}
 					
 				}
