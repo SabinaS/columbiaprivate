@@ -15,7 +15,7 @@ import org.opencv.core.Mat;
 public class TextureMatching {
 	
 	public void run(){
-		for(int i = 15; i < 16; i++){
+		for(int i = 1; i < 2; i++){
 			String filename = "";
 			if(i<10){
 				filename = "i0" + Integer.toString(i) + ".ppm";
@@ -111,18 +111,19 @@ public class TextureMatching {
 		
 		for(int c = 0; c <89; c++){
 			for(int r = 0; r < 60; r++){
-				RGBPixel pixel = originalImage[c][r];
-				int rVal = pixel.getRed();
-				int gVal = pixel.getGreen();
-				int bVal = pixel.getBlue();
+				RGBPixel oldPixel = originalImage[c][r];
+				int rVal = oldPixel.getRed();
+				int gVal = oldPixel.getGreen();
+				int bVal = oldPixel.getBlue();
 				int newPixelVal = (rVal + gVal + bVal)/3;
-				//System.out.println("redVal: " + rVal);
+				//System.out.println("newVal: " + newPixelVal);
 				//System.out.println("greenVal: " + gVal);
 				
-				RGBPixel newPixel = bwImage[c][r]; 
+				RGBPixel newPixel = new RGBPixel(0,0,0);  
 				newPixel.setRed(newPixelVal);
 				newPixel.setGreen(newPixelVal);
 				newPixel.setBlue(newPixelVal); 
+				bwImage[c][r] = newPixel; 
 			}
 		}
 		//System.out.println("test: " + bwImage[10][10].getRed() + " " + bwImage[10][10].getGreen() + " " + bwImage[10][10].getBlue()); 
@@ -153,14 +154,12 @@ public class TextureMatching {
 		for(int c = 0; c < 89; c++){
 			for(int r = 0; r < 60; r++){
 				int oldPixelVal = oldPixels[c][r].getRed(); // Doesn't matter which we read; they're all the same
-				int eightTimesOld = oldPixelVal * 8; 
-				
+				//System.out.println("old val: " + oldPixelVal); 
 				/* Again, doesn't matter which RGB we read. 
 				 * They're all the same
 				 */
-				int sum = getSum(c, r, oldPixels); 
+				int newPixelVal = getNewPixelVal(c, r, oldPixels, oldPixelVal); 
 				
-				int newPixelVal = eightTimesOld - sum; 
 				System.out.println("lap: " + newPixelVal); 
 				RGBPixel newLapPixel = new RGBPixel(newPixelVal, newPixelVal, newPixelVal);
 				newLapPixels[c][r] = newLapPixel; 
@@ -170,10 +169,15 @@ public class TextureMatching {
 	}
 	
 	/*
+	 * Returns a new pixel value, which is 8 times the old
+	 * pixel value minus the sum of the eight surrounding pixels,
+	 * or x if the old pixel lies on an edge; 
 	 * 88 and 59 are hardcoded.
 	 * Could easily be fixed. 
 	 */
-	public int getSum(int c, int r, RGBPixel[][] oldPixels){
+	public int getNewPixelVal(int c, int r, RGBPixel[][] oldPixels, int oldPixelVal){
+		int newPixelVal = 0; 
+		int multiplier = 0; 
 		int sum = 0;
 		int greaterCol = c+1;
 		int lesserCol = c-1;
@@ -182,11 +186,13 @@ public class TextureMatching {
 		
 		if((c==0) && (r==0)){
 			//3
+			multiplier = 3; 
 			sum = oldPixels[greaterCol][r].getRed() + 
 					oldPixels[c][greaterRow].getRed() + 
 					oldPixels[greaterCol][greaterRow].getRed();
 		}else if((c==0) && (r!=0) && (r!=59)){
 			//5
+			multiplier = 5; 
 			sum = oldPixels[c][lesserRow].getRed() + 
 					oldPixels[greaterCol][lesserRow].getRed() + 
 					oldPixels[greaterCol][r].getRed() + 
@@ -194,6 +200,7 @@ public class TextureMatching {
 					oldPixels[greaterCol][greaterRow].getRed();
 		}else if((r==0) && (c!=0) && (c!=88)){
 			//5
+			multiplier = 5; 
 			sum = oldPixels[lesserCol][r].getRed() + 
 					oldPixels[lesserCol][greaterRow].getRed() + 
 					oldPixels[c][greaterRow].getRed() + 
@@ -201,6 +208,7 @@ public class TextureMatching {
 					oldPixels[greaterCol][r].getRed();
 		}else if((c==88) && (r!=59) && (r!=0)){
 			//5
+			multiplier = 5; 
 			sum = oldPixels[c][lesserRow].getRed() + 
 					oldPixels[lesserCol][lesserRow].getRed() + 
 					oldPixels[lesserCol][r].getRed() + 
@@ -208,16 +216,19 @@ public class TextureMatching {
 					oldPixels[c][greaterRow].getRed();
 		}else if((c==0) && (r==59)){
 			//3
+			multiplier = 3; 
 			sum =  oldPixels[c][lesserRow].getRed() + 
 					oldPixels[greaterCol][lesserRow].getRed() + 
 					oldPixels[greaterCol][r].getRed();  
 		}else if((r==0) && (c==88)){
 			//3
+			multiplier = 3; 
 			sum  = oldPixels[lesserCol][r].getRed() + 
 					oldPixels[lesserCol][greaterRow].getRed() + 
 					oldPixels[c][greaterRow].getRed(); 
 		}else if((r==59) && (c!=88) && (c!=0)){
 			//5
+			multiplier = 5; 
 			sum = oldPixels[lesserCol][r].getRed() + 
 					oldPixels[lesserCol][lesserRow].getRed() + 
 					oldPixels[c][lesserRow].getRed() + 
@@ -225,10 +236,13 @@ public class TextureMatching {
 					oldPixels[greaterCol][r].getRed();
 		}else if((r==59) && (c==88)){
 			//3
+			multiplier = 3; 
 			sum = oldPixels[lesserCol][r].getRed() + 
 					oldPixels[lesserCol][lesserRow].getRed() + 
 					oldPixels[c][lesserRow].getRed();
 		}else{
+			//8
+			multiplier = 8; 
 			sum = oldPixels[lesserCol][lesserRow].getRed() + 
 					oldPixels[c][lesserRow].getRed() + 
 					oldPixels[greaterCol][greaterRow].getRed() + 
@@ -238,8 +252,11 @@ public class TextureMatching {
 					oldPixels[c][greaterRow].getRed() + 
 					oldPixels[greaterCol][greaterRow].getRed();
 		}
-		
-		return sum; 
+		//System.out.println("oldPixelVal: " + oldPixelVal);
+		//System.out.println("mult: " + multiplier); 
+		//System.out.println("sum: " + sum); 
+		newPixelVal = (oldPixelVal*multiplier) - sum; 
+		return newPixelVal; 
 	}
 	
 	/*
