@@ -24,8 +24,12 @@ public class TextureMatching {
 			}
 			System.out.println("filename: " + filename); 
 			RGBPixel[][] originalImage = readImage(filename);
-			RGBPixel[][] bwImage = createBWImage(originalImage); 
+			RGBPixel[][] bwImage = generateBWImage(originalImage); 
 			RGBPixel[][] lapImage = createLaplacianImage(bwImage); 
+			int [] histogram = generateHistogram(lapImage); 
+			for(int j = 0; j < 512; j++){
+				System.out.println("histo: " + histogram[j] + " " + j); 
+			}
 			
  		}
 	}
@@ -102,7 +106,7 @@ public class TextureMatching {
 	 * Convert that image into black and white by using
 	 * (R+G+B)/3	
 	 */
-	public RGBPixel[][] createBWImage(RGBPixel[][] originalImage) {
+	public RGBPixel[][] generateBWImage(RGBPixel[][] originalImage) {
 		RGBPixel[][] bwImage = new RGBPixel[89][60];
 		RGBPixel bwpixel = new RGBPixel(0,0,0); 
 		for(RGBPixel[] row: bwImage){
@@ -131,18 +135,33 @@ public class TextureMatching {
 	}
 	
 	/*
-	 * Measure the grayscale texture similarity, using 
-	 * edginess distribution. 
+	 * Generates a 1D histogram for the Laplacian
+	 * image taken in. 
 	 */
-	public static void createHistogram(){
-		// TODO create Laplacian image for each image
-		// TODO use the normalized L1 comparison to compare
-		// texture similarity
+	public int[] generateHistogram(RGBPixel[][] lapImage){
+		int[] histogram = new int[512];
+		for(int i = 0; i< 512; i++){
+			histogram[i] = 0; 
+		}
+		
+		for(int c = 0; c < 89; c++){
+			for(int r = 0; r < 60; r++){
+				int pixVal = lapImage[c][r].getRed(); //doesn't matter which; all the same
+				//System.out.println("lap: " + pixVal); 
+				int newPixVal = (pixVal / 8)+255; //because 4096/512 = 8
+												//but since -2048 to 2048, need offset by 255
+				//System.out.println("new: " + newPixVal); 
+				histogram[newPixVal] = histogram[newPixVal] + 1; //increment that value
+																//whenever we see it
+			}
+		}
+		return histogram; 
 	}
 	
 	/*
 	 * Create a Laplacian image for each image
-	 * passed in. 
+	 * passed in, where each pixel represents the 
+	 * edginess of its surroundings and itself
 	 */
 	public RGBPixel[][] createLaplacianImage(RGBPixel[][] oldPixels){
 		RGBPixel[][] newLapPixels = new RGBPixel[89][60];
@@ -160,7 +179,7 @@ public class TextureMatching {
 				 */
 				int newPixelVal = getNewPixelVal(c, r, oldPixels, oldPixelVal); 
 				
-				System.out.println("lap: " + newPixelVal); 
+				//System.out.println("lap: " + newPixelVal); 
 				RGBPixel newLapPixel = new RGBPixel(newPixelVal, newPixelVal, newPixelVal);
 				newLapPixels[c][r] = newLapPixel; 
 			}
@@ -263,8 +282,25 @@ public class TextureMatching {
 	 * Compare two given images using the normalized
 	 * L1 comparison, using edginess distribution. 
 	 */
-	public void compareHistograms(){
+	public float compareHistograms(int[] histogram1, int[] histogram2){
 		//TODO
+		int goodPixelsImage1 = 512- histogram1[0]; 
+		int goodPixelsImage2 = 512 - histogram2[0]; 
+		int twoN = goodPixelsImage1 + goodPixelsImage2; 
+		int global_color_distance = 0; 
+		
+		for(int b = 0; b<512; b++){
+			if((b==0)){
+				break;
+			}else{
+				int local_color_distance = Math.abs(histogram1[b] - histogram2[b]);
+				//System.out.println("local: " + histogram1[r][g][b] + " " + histogram2[r][g][b] + " " + local_color_distance); 
+				global_color_distance = global_color_distance + local_color_distance; 
+			}//else
+		}//inner for
+		float normalization = (float)global_color_distance/twoN; 
+		//System.out.println("norm: " + normalization);
+		return normalization; 
 	}
 	
 	/*
