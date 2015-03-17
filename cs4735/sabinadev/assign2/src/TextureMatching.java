@@ -33,9 +33,11 @@ public class TextureMatching {
 			}else{
 				filename = "i" + Integer.toString(i) + ".ppm";
 			}
-			RGBPixel[][] pixels= new RGBPixel[89][60];
-			pixels = readImage(filename);
-			int[] histogram = generateHistogram(pixels); 
+			RGBPixel[][] originalImage= new RGBPixel[89][60];
+			originalImage = readImage(filename);
+			RGBPixel[][] bwImage = generateBWImage(originalImage); 
+			RGBPixel[][] lapImage = createLaplacianImage(bwImage); 
+			int[] histogram = generateHistogram(lapImage); 
 			String[] threeMostSimilar = getThreeMostLeastSimilar(histogram, filename, true); 
 			String[] threeLeastSimilar = getThreeMostLeastSimilar(histogram, filename, false); 
 			
@@ -60,6 +62,15 @@ public class TextureMatching {
 		for(String s: least4sim){
 			System.out.println(s); 
 		}
+		
+		/*RGBPixel[][] pixels= new RGBPixel[89][60];
+		pixels = readImage("i18.ppm");
+		int[] histogram = generateHistogram(pixels); 
+		RGBPixel[][] pixels2= new RGBPixel[89][60];
+		pixels2 = readImage("i20.ppm");
+		int[] histogram2 = generateHistogram(pixels2); 
+		float com = compareHistograms(histogram, histogram2); 
+		System.out.println("con " + com);*/
 	}
 
 	public static RGBPixel[][] readImage(String fileName)
@@ -332,9 +343,9 @@ public class TextureMatching {
 	}
 	
 	/*
-	 * Takes in target image histogram and a list of histograms 
-	 * and using compareHistory() outputs the three most similar
-	 * images to the target images. 
+	 * Takes in target image histogram and target filename, and boolean most
+	 * and uses compareHistory() outputs the three most or least similar
+	 * images to the target image. 
 	 */
 	public String[] getThreeMostLeastSimilar(int[] originalHistogram, String originalFileName, boolean most){
 		Map<String, Float> histoCompares = new HashMap<String, Float>(); 
@@ -349,8 +360,8 @@ public class TextureMatching {
 			if(filename.equals(originalFileName)){
 				continue; 
 			}
-			RGBPixel[][] originalImage = readImage(filename);
-			RGBPixel[][] bwImage = generateBWImage(originalImage); 
+			RGBPixel[][] pixels = readImage(filename);
+			RGBPixel[][] bwImage = generateBWImage(pixels); //file comparing against
 			RGBPixel[][] lapImage = createLaplacianImage(bwImage); 
 			int[] tempHistogram = generateHistogram(lapImage);
 			float normalize = compareHistograms(originalHistogram, tempHistogram); 
@@ -430,7 +441,7 @@ public class TextureMatching {
 				int[] histogram = generateHistogram(lapImage); 
 				threeMostSim = getThreeMostLeastSimilar(histogram, filename, true); 
 				for(String s: threeMostSim){
-					RGBPixel[][] originalImage2 = readImage(filename);
+					RGBPixel[][] originalImage2 = readImage(s);
 					RGBPixel[][] bwImage2 = generateBWImage(originalImage2); 
 					RGBPixel[][] lapImage2 = createLaplacianImage(bwImage2); 
 					int[] histogram2 = generateHistogram(lapImage2);
@@ -438,6 +449,7 @@ public class TextureMatching {
 					local_most4 = local_most4 + normalization; 
 				}
 				if(local_most4 < most4simsum){
+					//System.out.println("most " + local_most4); 
 					most4simsum = local_most4; 
 					most4sim[0] = filename; 
 					//System.out.println("size: " + threeMostSim.length); 
@@ -455,7 +467,7 @@ public class TextureMatching {
 				int[] histogram = generateHistogram(lapImage); 
 				threeLeastSim = getThreeMostLeastSimilar(histogram, filename, true); 
 				for(String s: threeLeastSim){
-					RGBPixel[][] originalImage2 = readImage(filename);
+					RGBPixel[][] originalImage2 = readImage(s);
 					RGBPixel[][] bwImage2 = generateBWImage(originalImage2); 
 					RGBPixel[][] lapImage2 = createLaplacianImage(bwImage2); 
 					int[] histogram2 = generateHistogram(lapImage2);
@@ -463,6 +475,7 @@ public class TextureMatching {
 					local_least4 = local_least4 + normalization; 
 				}
 				if(local_least4 > least4simsum){
+					//System.out.println("least " + local_least4); 
 					least4simsum = local_least4; 
 					least4sim[0] = filename; 
 					for(int j = 0; j<3; j++){
