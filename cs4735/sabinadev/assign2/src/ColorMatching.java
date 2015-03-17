@@ -61,9 +61,8 @@ public class ColorMatching
 	}
 	
    /*
-    * Takes in an image and generates a 3D array for the RGB
-    * values. Then based on the RGB value, creates a 3D
-    * color histogram. 
+    * Takes in an array of RGBPixels and based on 
+    * the RGB value, creates a 3D color histogram. 
     */
 	public int[][][] generateHistogram(RGBPixel[][] pixels){
 		int[][][] histogram = new int[8][8][8]; //int array auto filled with 0's
@@ -185,6 +184,7 @@ public class ColorMatching
 	public float compareHistograms(int [][][] histogram1, int [][][] histogram2){
 		int width = 89;
 		int height = 60; 
+		/* The good pixels are the total pixels minus any black pixels */
 		int goodPixelsImage1 = (width*height) - histogram1[0][0][0]; 
 		int goodPixelsImage2 = (width*height) - histogram2[0][0][0]; 
 		int twoN = goodPixelsImage1 + goodPixelsImage2; 
@@ -203,7 +203,6 @@ public class ColorMatching
 				}//inner for
 			}//middle for
 		}//outer for
-		//System.out.println("twoN: " + twoN);
 		//System.out.println("global: " + global_color_distance); 
 		float normalization = (float)global_color_distance/twoN; 
 		//System.out.println("norm: " + normalization);
