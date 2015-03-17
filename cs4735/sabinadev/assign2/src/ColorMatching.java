@@ -303,7 +303,6 @@ public class ColorMatching
 	 * Outputs the four most similar images out of the 40
 	 */
 	public void getFourTopBottomSimilar(boolean most){
-		//TODO 
 		
 		//for each image, get the 3 most/least similar
 		for(int i = 1; i < 41; i++){
