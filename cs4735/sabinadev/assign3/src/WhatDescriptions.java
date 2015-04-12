@@ -66,22 +66,34 @@ public class WhatDescriptions {
 		return largest; 
 	}
 	
-	public boolean isSquare(){
-		boolean isSquare = false; 
-		if(building.height == building.width){
-			isSquare = true; 
-		}
-		
-		return isSquare; 
-	}
-	
 	public boolean isRectangle(){
-		boolean isRectangle = false;
-		if(building.height != building.width){
-			isRectangle = true; 
+		boolean isRectangle = true;
+		int width = building.getWidth();
+		int height = building.getHeight();
+		
+		for(each x in height){
+			for(each y in width){
+				if(width == filled){
+					continue;
+				}
+				else{
+					isRectangle = false; 
+				}
+			}
 		}
 		
 		return isRectangle; 
+	}
+	
+	public boolean isSquare(){
+		boolean isSquare = false;
+		if(isRectangle()){
+			if(building.height == building.width){
+				isSquare = true; 
+			}
+		}
+		
+		return isSquare; 
 	}
 	
 	public boolean isNonRectangle(){
@@ -90,6 +102,90 @@ public class WhatDescriptions {
 			isNonRectangle = true; 
 		}
 		return isNonRectangle; 
+	}
+	
+	public boolean hasSimpleBoundary(){
+		boolean hasSimple = false;
+		//TODO
+		return hasSimple; 
+	}
+	
+	public boolean hasJaggedBoundary(){
+		boolean hasJagged = false;
+		//TODO
+		return hasJagged; 
+	}
+	
+	public boolean isIShaped(){
+		boolean isIShaped = false;
+		//TODO
+		return isIShaped; 
+	}
+	
+	public boolean isLShaped(){
+		boolean isLShaped = false;
+		//TODO
+		return isLShaped; 
+	}
+	
+	public boolean isSymmetricEastWest(){
+		boolean isSymmetricEW = false;
+		//TODO
+		return isSymmetricEW; 
+	}
+	
+	public boolean isSymmetricNorthSouth(){
+		boolean isSymmetricNS = false;
+		//TODO
+		return isSymmetricNS; 
+	}
+	
+	public boolean isOrientedEastWest(){
+		boolean isOrientedEW = false;
+		//TODO
+		return isOrientedEW; 
+	}
+	
+	public boolean isOrientedNorthSouth(){
+		boolean isOrientedNS = false;
+		//TODO
+		return isOrientedNS; 
+	}
+	
+	public boolean isLocatedCentrally(){
+		boolean isLocatedCentrally = false;
+		//TODO
+		return isLocatedCentrally;
+	}
+	
+	public boolean isLocatedOnBorder(){
+		boolean isLocatedOnBorder = false;
+		//TODO
+		return isLocatedOnBorder;
+	}
+	
+	public boolean isNorthernMost(){
+		boolean isNorthernMost = false;
+		//TODO
+		return isNorthernMost;
+	}
+	
+	public boolean isSouthernMost(){
+		boolean isSouthernMost = false;
+		//TODO
+		return isSouthernMost;
+	}
+	
+	public boolean isEasternMost(){
+		boolean isEasternMost = false;
+		//TODO
+		return isEasternMost;
+	}
+	
+	public boolean isWesternMost(){
+		boolean isWesternMost = false;
+		//TODOv v v
+		return isWesternMost;
 	}
 	
 	public static void main( String[] args )
