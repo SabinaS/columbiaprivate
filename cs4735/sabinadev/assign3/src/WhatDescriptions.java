@@ -15,8 +15,8 @@ import org.opencv.imgproc.Imgproc;
 
 public class WhatDescriptions {
 	
-	private int magic_small = 4000; //TODO Magic number for small area
-	private int magic_large = 7000; //TODO Magic number for large area
+	private int magic_small = 2000; //TODO Magic number for small area
+	private int magic_large = 5000; //TODO Magic number for large area
 	private int magic_largest; // Corresponds to the integer value of the building
 	private int magic_smallest; //Corresponds to the integer value of the building; 
 
