@@ -1,11 +1,12 @@
-
 public class Building {
 
 	int height;
 	int width;
 	int centerOfMassX;
 	int centerOfMassY;
-	int area; 
+	int area;
+	int buildingNumber;
+	String buildingName; 
 	
 	public Building(){
 		//TODO
@@ -49,5 +50,21 @@ public class Building {
 	
 	public int getArea(){
 		return area; 
+	}
+	
+	public void setBuildingNumber(int newBuildingNumber){
+		buildingNumber = newBuildingNumber; 
+	}
+	
+	public int getBuildingNumber(){
+		return buildingNumber; 
+	}
+	
+	public void setBuildingName(String newBuildingName){
+		buildingName = newBuildingName; 
+	}
+	
+	public String getBuildingName(){
+		return buildingName; 
 	}
 }
