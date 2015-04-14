@@ -22,15 +22,41 @@ public class WhatDescriptions {
 
 	public void run(){
 		//TODO
-		int[][] pixels= new int[275][495];
-		pixels = readImage("ass3-labeled.pgm");
+		int WIDTH = 275;
+		int HEIGHT = 495; 
+		int[][] pixels= new int[WIDTH][HEIGHT];
+		pixels = readImage("ass3-labeled.pgm", WIDTH, HEIGHT);
+		Building[] buildingList = new Building[28]; // 0-27, but will only count 1-27
+		
+		//Initializing the buildings
+		for(int a = 0; a<28; a++){
+			Building b = new Building(a, 0); 
+			buildingList[a] = b; 
+		}
+		//int x = buildingList[27].getBuildingNumber();
+		//System.out.println("x : " + x); 
+		
+		// We start the height at 4 because the first 4 values are extraneous 
+		for(int i = 0; i < WIDTH; i++){
+			for(int j = 0; j < HEIGHT; j++){
+				int pixelVal = pixels[i][j];
+				if(!((i==0) && ((j==0) || (j==1) || (j==2) || (j==3)))){
+					System.out.println("pixelVal " + pixelVal + " " + i + " "+ j); 
+					buildingList[pixelVal].setArea(buildingList[pixelVal].getArea() +1); 
+				}
+			}
+		}
+		
+		for(int c = 0; c < 28; c++){
+			System.out.println("area: " + buildingList[c].getArea());
+		}
 		
 	}
 	
-	public static int[][] readImage(String fileName)
+	public static int[][] readImage(String fileName, int newWidth, int newHeight)
 	{
-		 int WIDTH = 275;
-		 int HEIGHT = 495; 
+		 int WIDTH = newWidth;
+		 int HEIGHT = newHeight; 
 		 int[][] pixels = new int[WIDTH][HEIGHT];
 		 String line;
 		 StringTokenizer st;
@@ -61,18 +87,21 @@ public class WhatDescriptions {
 	            // read pixels now
 	            int a = 0; 
 	            int b = 0; 
-	                for (int c = 0; c < WIDTH; c++){
-	                    for (int r = 0; r < HEIGHT; r++){
+	            for (int c = 0; c < WIDTH; c++){
+	                for (int r = 0; r < HEIGHT; r++){
 	                    	//int x = in2.readUnsignedByte(); 
 	                    	//System.out.println("x : " + x); 
 	                    	int pix = in2.readUnsignedByte(); 
 	                    	pixels[c][r] = pix; 
 	                    	a++; 
-	                    	System.out.println("pix: " + pix); 
+	                    	if(a<100){
+	                    		//System.out.println("pix: " + pix); 
+	                    	}
 	                    }
 	                    b++; 
-	                }//outer for
-	                //System.out.println("a: " + a); 
+	            }//outer for
+	            System.out.println("a: " + a); 
+	            System.out.println("b: " + b); 
 	            in.close();
 	            in2.close();
 	        } catch(ArrayIndexOutOfBoundsException e) {

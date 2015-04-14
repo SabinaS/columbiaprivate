@@ -8,8 +8,10 @@ public class Building {
 	int buildingNumber;
 	String buildingName; 
 	
-	public Building(){
+	public Building(int buildNum, int buildArea){
 		//TODO
+		buildingNumber = buildNum; 
+		area = buildArea; 
 	}
 	
 	public void setHeight(int newHeight){
