@@ -15,8 +15,8 @@ import org.opencv.imgproc.Imgproc;
 
 public class WhatDescriptions {
 	
-	private int magic_small = 2000; //TODO Magic number for small area
-	private int magic_large = 5000; //TODO Magic number for large area
+	private int magic_small = 582; //TODO Magic number for small area
+	private int magic_large = 4400; //TODO Magic number for large area
 	private int magic_largest; // Corresponds to the integer value of the building
 	private int magic_smallest; //Corresponds to the integer value of the building; 
 
@@ -27,31 +27,64 @@ public class WhatDescriptions {
 		int[][] pixels= new int[WIDTH][HEIGHT];
 		pixels = readImage("ass3-labeled.pgm", WIDTH, HEIGHT);
 		Building[] buildingList = new Building[28]; // 0-27, but will only count 1-27
+		HashMap<Integer, ArrayList<String>> buildingDescriptions = new HashMap<>(); 
 		
 		//Initializing the buildings
 		for(int a = 0; a<28; a++){
 			Building b = new Building(a, 0); 
 			buildingList[a] = b; 
 		}
-		//int x = buildingList[27].getBuildingNumber();
-		//System.out.println("x : " + x); 
 		
-		// We start the height at 4 because the first 4 values are extraneous 
+		//We start the height at 4 because the first 4 values are extraneous 
 		for(int i = 0; i < WIDTH; i++){
 			for(int j = 0; j < HEIGHT; j++){
 				int pixelVal = pixels[i][j];
 				if(!((i==0) && ((j==0) || (j==1) || (j==2) || (j==3)))){
-					System.out.println("pixelVal " + pixelVal + " " + i + " "+ j); 
+					//System.out.println("pixelVal " + pixelVal + " " + i + " "+ j); 
+					//Increment the area for each pixel belonging to that building
 					buildingList[pixelVal].setArea(buildingList[pixelVal].getArea() +1); 
 				}
 			}
 		}
 		
-		for(int c = 0; c < 28; c++){
-			System.out.println("area: " + buildingList[c].getArea());
+		//Adding the area, and whether the building is small, medium or large to the descriptions 
+		for(int c = 1; c < 28; c++){
+			//System.out.println("area: " + buildingList[c].getArea());
+			ArrayList<String> descr = new ArrayList<>();
+			String areaSentence = "with area " + Integer.toString(buildingList[c].getArea()); 
+			descr.add(areaSentence); 
+			
+			if(isSmall(buildingList[c])){
+				String smallSentence = "is a small building";
+				descr.add(smallSentence); 
+			}
+			if(isMedium(buildingList[c])){
+				String mediumSentence = "is a medium building";
+				descr.add(mediumSentence); 
+			}
+			if(isLarge(buildingList[c])){
+				String largeSentence = "is a large building";
+				descr.add(largeSentence); 
+			}
+			
+			buildingDescriptions.put(c, descr); 	
 		}
 		
-	}
+		//Adding the building names
+		//TODO
+		
+		for(int d = 1; d < 28; d++){
+			Building b = buildingList[d]; 
+			ArrayList<String> descr = buildingDescriptions.get(d); 
+			System.out.println("building num: " + b.getBuildingNumber());
+			for(String s: descr){
+				System.out.println(s); 
+			}
+		}
+		
+		
+		
+	}//end run
 	
 	public static int[][] readImage(String fileName, int newWidth, int newHeight)
 	{
@@ -100,8 +133,8 @@ public class WhatDescriptions {
 	                    }
 	                    b++; 
 	            }//outer for
-	            System.out.println("a: " + a); 
-	            System.out.println("b: " + b); 
+	            //System.out.println("a: " + a); 
+	            //System.out.println("b: " + b); 
 	            in.close();
 	            in2.close();
 	        } catch(ArrayIndexOutOfBoundsException e) {
@@ -135,7 +168,7 @@ public class WhatDescriptions {
 	public boolean isLarge(Building s){
 		boolean isLargeBool = false;
 		int area = s.getArea(); //TODO get area from pixels
-		if(area<magic_small){
+		if(area>magic_large){
 			isLargeBool= true;
 		}
 		return isLargeBool; 
