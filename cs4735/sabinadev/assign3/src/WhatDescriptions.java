@@ -19,6 +19,8 @@ public class WhatDescriptions {
 	private int magic_large = 4400; //TODO Magic number for large area
 	private int magic_largest; // Corresponds to the integer value of the building
 	private int magic_smallest; //Corresponds to the integer value of the building; 
+	private int smallest;
+	private int largest; 
 
 	public void run(){
 		//TODO
@@ -46,7 +48,8 @@ public class WhatDescriptions {
 				}
 			}
 		}
-		
+		smallest = 10000; 
+		largest = 0; 
 		//Adding the area, and whether the building is small, medium or large to the descriptions 
 		for(int c = 1; c < 28; c++){
 			//System.out.println("area: " + buildingList[c].getArea());
@@ -66,13 +69,33 @@ public class WhatDescriptions {
 				String largeSentence = "is a large building";
 				descr.add(largeSentence); 
 			}
-			
+			if(buildingList[c].getArea() < smallest){
+				smallest = buildingList[c].getArea();
+				magic_smallest = c; //the number of the smallest building
+			}
+			if(buildingList[c].getArea() > largest){
+				largest = buildingList[c].getArea();
+				magic_largest = c; //the number of the largest building
+			}
 			buildingDescriptions.put(c, descr); 	
 		}
+		
+		//Adding smallest and largest description
+		ArrayList<String> tempDescr = buildingDescriptions.get(magic_smallest);
+		String smallestSentence = "is the smallest building";
+		tempDescr.add(smallestSentence);
+		buildingDescriptions.put(magic_smallest, tempDescr); 
+		
+		ArrayList<String> tempLargeDescr = buildingDescriptions.get(magic_largest);
+		String largestSentence = "is the largest building";
+		tempLargeDescr.add(largestSentence);
+		buildingDescriptions.put(magic_largest, tempLargeDescr); 
+		
 		
 		//Adding the building names
 		//TODO
 		
+		//Test
 		for(int d = 1; d < 28; d++){
 			Building b = buildingList[d]; 
 			ArrayList<String> descr = buildingDescriptions.get(d); 
@@ -181,6 +204,7 @@ public class WhatDescriptions {
 		for(Building s : buildings){
 			if(s.getArea() < smallest){
 				smallest = s.getArea(); //TODO
+				if
 			}
 		}
 		
