@@ -1,5 +1,15 @@
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 
 import org.opencv.core.Core;
 
@@ -8,24 +18,64 @@ public class WhereDescriptions {
 
 	public void run(Building[] buildings){
 		HashMap<Integer, ArrayList<int[]>> buildingDescriptions = new HashMap<>(); 
+		
+		Image image = null;
+		try{
+            File image2 = new File("ass3-campus.jpg");
+            image = ImageIO.read(image2);
+
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+		int imageWidth = image.getWidth((ImageObserver) this);
+        int imageHeight = image.getHeight((ImageObserver) this);
+
+        Graphics g = null; 
+        g.drawImage(image, 50, 50, (ImageObserver) this);
+		
 		Building b1 = new Building(28, 1);
-		b1.setCenterOfMassX(222);
-		b1.setCenterOfMassY(152);
+		PointerInfo a0 = MouseInfo.getPointerInfo();
+		Point b = a0.getLocation();
+		int x = (int) b.getX();
+		int y = (int) b.getY();
+		b1.setCenterOfMassX(x);
+		b1.setCenterOfMassY(y);
 		Building b2 = new Building(29, 1);
-		b2.setCenterOfMassX(173);
-		b2.setCenterOfMassY(272);
+		PointerInfo a1 = MouseInfo.getPointerInfo();
+		Point b11 = a1.getLocation();
+		int x1 = (int) b11.getX();
+		int y1 = (int) b11.getY();
+		b2.setCenterOfMassX(x1);
+		b2.setCenterOfMassY(y1);
 		Building b3 = new Building(30, 1); 
-		b3.setCenterOfMassX(59);
-		b3.setCenterOfMassY(60);
+		PointerInfo a2 = MouseInfo.getPointerInfo();
+		Point b22 = a2.getLocation();
+		int x2 = (int) b22.getX();
+		int y2 = (int) b22.getY();
+		b3.setCenterOfMassX(x2);
+		b3.setCenterOfMassY(y2);
 		Building b4 = new Building(31, 1);
-		b4.setCenterOfMassX(144);
-		b4.setCenterOfMassY(229);
+		PointerInfo a3 = MouseInfo.getPointerInfo();
+		Point b33 = a3.getLocation();
+		int x3 = (int) b33.getX();
+		int y3 = (int) b33.getY();
+		b4.setCenterOfMassX(x3);
+		b4.setCenterOfMassY(y3);
 		Building b5 = new Building(32, 1);
-		b5.setCenterOfMassX(71);
-		b5.setCenterOfMassY(12);
+		PointerInfo a4 = MouseInfo.getPointerInfo();
+		Point b44 = a4.getLocation();
+		int x4 = (int) b44.getX();
+		int y4 = (int) b44.getY();
+		b5.setCenterOfMassX(x4);
+		b5.setCenterOfMassY(y4);
 		Building b6 = new Building(33, 1);
-		b6.setCenterOfMassX(111);
-		b6.setCenterOfMassY(466);
+		PointerInfo a5 = MouseInfo.getPointerInfo();
+		Point b55 = a5.getLocation();
+		int x5 = (int) b55.getX();
+		int y5 = (int) b55.getY();
+		b6.setCenterOfMassX(x5);
+		b6.setCenterOfMassY(y5);
 		//buildingDescriptions = compareBuildings(buildingDescriptions, buildings); 
 		buildingDescriptions = compareOneBuilding(buildingDescriptions, buildings, b6); 
 		buildingDescriptions = reduceDescriptions(buildingDescriptions, buildings, b6); 
