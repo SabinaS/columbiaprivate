@@ -8,10 +8,13 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
 public class WhatDescriptions {
 	
@@ -105,6 +108,8 @@ public class WhatDescriptions {
 			}
 		}
 		
+		determineCenterOfMass("ass3-campus.jpg"); 
+		
 		
 		
 	}//end run
@@ -170,6 +175,59 @@ public class WhatDescriptions {
 		return pixels;
 	}
 	
+	public void determineCenterOfMass(String filename){
+		Mat hu = new Mat(); 
+		
+		// Find the contours 
+		Mat image = getMat(filename); 
+	    Mat imageHSV = new Mat(image.size(), Core.DEPTH_MASK_8U);
+	    Mat imageBlurr = new Mat(image.size(), Core.DEPTH_MASK_8U);
+	    Mat imageThresh = new Mat(image.size(), Core.DEPTH_MASK_ALL);
+	    Mat imageCanny = new Mat(image.size(), Core.DEPTH_MASK_ALL);
+	
+	    Imgproc.cvtColor(image, imageHSV, Imgproc.COLOR_BGR2GRAY);
+	    //Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
+	    Imgproc.adaptiveThreshold(imageHSV, imageThresh, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
+	    Imgproc.Canny(image, imageCanny, 100, 200); 
+	    //Imgproc.Canny(imageHSV, imageCanny, 100, 200); 
+	    Highgui.imwrite("Edges.jpg",imageCanny);
+	    
+	    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
+	    Imgproc.findContours(imageCanny, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
+	    System.out.println("Contour size: " + contours.size());
+
+	    // Draw the contours
+	    //Mat drawing = new Mat(image.size(), Core.DEPTH_MASK_8U); 
+	    Mat mask = Mat.zeros(image.rows(),image.cols(),image.type());
+	    for( int i = 0; i< contours.size(); i++ )
+	    {
+	        //Scalar color = new Scalar( 0,0,255);
+	        //Imgproc.drawContours(drawing, contours, i, color, 1);
+	        Imgproc.drawContours(mask, contours, -1, new Scalar(0,0,255));
+	        //System.out.println("contourArea: " + Imgproc.contourArea(contours.get(i)));
+
+	    }   
+	    Highgui.imwrite("Contours.jpg",mask);
+	    
+	    //Find the moments
+	    System.out.println("contour size: " + contours.size()); 
+	    List<Moments> mu = new ArrayList<Moments>(contours.size());
+	    for (int i = 0; i < contours.size(); i++) {
+	        mu.add(i, Imgproc.moments(contours.get(i), false));
+	        Moments p = mu.get(i);
+	        int x = (int) (p.get_m10() / p.get_m00());
+	        int y = (int) (p.get_m01() / p.get_m00());
+	        System.out.println("moments: " + i + " x: "+ x + " y: "+ y); 
+	        Core.circle(image, new Point(x, y), 4, new Scalar(255,49,0,255));
+	    }
+	}
+	
+	public Mat getMat(String filename){
+		System.out.println("fileeeeeeeeeeeeee: " + filename); 
+		Mat image = Highgui.imread(getClass().getResource(filename).getPath());
+		return image; 
+	}
+	
 	public boolean isSmall(Building s){
 		boolean isSmallBool = false;
 		int area = s.getArea(); //TODO get area from pixels
@@ -195,33 +253,6 @@ public class WhatDescriptions {
 			isLargeBool= true;
 		}
 		return isLargeBool; 
-	}
-	
-	public int getSmallest(Building[] buildings){
-		//TODO
-		int smallest = buildings[0].getArea(); // Corresponds to the integer value of the building
-		//Look through all buildings and get smallest area
-		for(Building s : buildings){
-			if(s.getArea() < smallest){
-				smallest = s.getArea(); //TODO
-				if
-			}
-		}
-		
-		return smallest; 
-	}
-	
-	public int getLargest(Building[] buildings){
-		//TODO
-		int largest = buildings[0].getArea(); // Corresponds to the integer value of the building
-		//Look through all buildings and get smallest area
-		for(Building s : buildings){
-			if(s.getArea() > largest){
-				largest = s.getArea(); //TODO
-			}
-		}
-		
-		return largest;  
 	}
 	
 	public boolean isRectangle(Building s){
