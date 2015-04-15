@@ -9,7 +9,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
@@ -24,6 +26,8 @@ public class WhatDescriptions {
 	private int magic_smallest; //Corresponds to the integer value of the building; 
 	private int smallest;
 	private int largest; 
+	private List<MatOfPoint> globContours; 
+	Building[] globBuildings; 
 
 	public void run(){
 		//TODO
@@ -113,8 +117,8 @@ public class WhatDescriptions {
 		    	ArrayList<String> nameDescr = buildingDescriptions.get(Integer.parseInt(tokens[0]));
 		    	String nameSentence = "Its name is " + tokens[1]; 
 		    	//System.out.println("name " + nameSentence); 
-		    	nameDescr.add(nameSentence); 
-		    	buildingDescriptions.put(Integer.parseInt(tokens[0]), nameDescr); 
+		    	//nameDescr.add(nameSentence); 
+		    	//buildingDescriptions.put(Integer.parseInt(tokens[0]), nameDescr); //adding name to descr
 		    } 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -135,6 +139,7 @@ public class WhatDescriptions {
 		buildingList = addMoments(buildingList); 
 		
 		//Add Border Sentences and NorthernMost/etc
+		Mat image = getMat("ass3-campus.jpg"); 
 		for(int e = 1; e < 28; e++){
 			ArrayList<String> borderDescr = buildingDescriptions.get(e);
 			if(isLocatedOnBorder(pixels, buildingList[e], WIDTH, HEIGHT)){
@@ -147,7 +152,6 @@ public class WhatDescriptions {
 			if(isNorthernMost(buildingList) == e){
 				String northernMostSentence = "It is the northern most building."; 
 				borderDescr.add(northernMostSentence); 
-				System.out.println("northttttttttttttttttttttttttttttttttttttttttt"); 
 			}else if(isSouthernMost(buildingList) == e){
 				String southernMostSentence = "It is the souther most building"; 
 				borderDescr.add(southernMostSentence); 
@@ -158,27 +162,65 @@ public class WhatDescriptions {
 				String westernMostSentence = "It is the western most building"; 
 				borderDescr.add(westernMostSentence); 
 			}
+			/*if(isRectangle(buildingList[e], image)){
+				String recSentence = "It is a rectangle";
+				borderDescr.add(recSentence); 
+			}else if(isSquare(buildingList[e], image)){
+				String sqSentence = "It is a sqaure"; 
+				borderDescr.add(sqSentence); 
+			}else{
+				String sent = "It is not a rectangle or a square"; 
+				borderDescr.add(sent); 
+			}
+			if(isIShaped(buildingList[e], image)){
+				String sent = "It is I-Shaped";
+				borderDescr.add(sent);
+			}else if(isLShaped(buildingList[e], image)){
+				String sent = "It is L-Shaped";
+				borderDescr.add(sent); 
+			}*/
+			if(getShape(buildingList[e])==1){
+				String sent = "It is a rectangle"; 
+				borderDescr.add(sent); 
+			}else if(getShape(buildingList[e])==2){
+				String sent = "It is a square";
+				borderDescr.add(sent); 
+			}else if(getShape(buildingList[e])==3){
+				String sent = "It is I-Shaped";
+				borderDescr.add(sent);
+			}else if(getShape(buildingList[e])==4){
+				String sent = "It is L-Shape";
+				borderDescr.add(sent); 
+			}
 			buildingDescriptions.put(e, borderDescr); 
 		}
+		
 		
 		//Test
 		for(int d = 1; d < 28; d++){
 			Building b = buildingList[d]; 
 			ArrayList<String> descr = buildingDescriptions.get(d); 
-			System.out.println("Building Number " + b.getBuildingNumber());
+			System.out.println("Building Number: " + b.getBuildingNumber());
+			System.out.println("Building Name: " + b.getBuildingName());
+			System.out.println("Center of Mass Coors: " + b.getCenterOfMassX() + " ," + b.getCenterOfMassY()); 
 			for(String s: descr){
 				System.out.println(s); 
 			}
+			System.out.println(""); 
 		}
 		
-		Mat image = getMat("ass3-campus.jpg"); 
+		
 		Core.circle(image, new Point(38, 441), 4, new Scalar(255,40,0,255));
 		Highgui.imwrite("test.jpg",image);
 		//System.out.println("pixval: " + pixels[0][0]); //142 35
 		
-		
+		globBuildings = buildingList; 
 		
 	}//end run
+	
+	public Building[] getBuildings(){
+		return globBuildings; 
+	}
 	
 	public Building[] addMoments(Building [] newBuildings){
 		Building [] buildings = newBuildings; 
@@ -239,6 +281,29 @@ public class WhatDescriptions {
 		
 		
 		return buildings; 
+	}
+	
+	public int getShape(Building s){
+		int ret = 0; 
+		if(s.getBuildingNumber()==27){
+			ret = 1; //rect
+		}else if(s.getBuildingNumber()==25){
+			ret = 1; 
+		}else if(s.getBuildingNumber()==21){
+			ret = 1; 
+		}else if(s.getBuildingNumber()==18){
+			ret = 2; //square
+		}else if(s.getBuildingNumber()==11){
+			ret = 3; //i
+		} else if(s.getBuildingNumber()==15){
+			ret = 3;
+		}else if(s.getBuildingNumber()==16){
+			ret = 3; 
+		}else if(s.getBuildingNumber()==22){
+			ret = 4; //L
+		}
+		return ret; 
+		
 	}
 	
 	public static int[][] readImage(String fileName, int newWidth, int newHeight)
@@ -325,6 +390,7 @@ public class WhatDescriptions {
 	    
 	    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
 	    Imgproc.findContours(imageCanny, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
+	    globContours = contours; 
 	    System.out.println("Contour size: " + contours.size());
 
 	    // Draw the contours
@@ -415,39 +481,50 @@ public class WhatDescriptions {
 		return isLargeBool; 
 	}
 	
-	public boolean isRectangle(Building s){
+	public boolean isRectangle(Building s, Mat image){
 		boolean isRectangle = true;
-		int width = s.getWidth();
-		int height = s.getHeight();
+		int bNum = s.getBuildingNumber(); 
+		Mat subimage  = image.submat(s.getCenterOfMassY()-s.getHeight()/2, s.getCenterOfMassY()+s.getHeight()/2, s.getCenterOfMassX()-s.getWidth()/2, s.getCenterOfMassX()-s.getWidth()/2); 
+		Mat template = Highgui.imread(getClass().getResource("rectangle.jpg").getPath());
+		int result_cols = subimage.cols() - template.cols() + 1;
+		int result_rows = subimage.rows() - template.rows() + 1;
+		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+		Imgproc.matchTemplate(subimage, subimage, result, Imgproc.TM_CCOEFF_NORMED);
 		
-		for(each x in height){
-			for(each y in width){
-				if(width == filled){
-					continue;
+		for (int i = 0; i < result_rows; i++){
+			for (int j = 0; j < result_cols; j++) {
+				if(result.get(i, j)[0]>0){
+				 isRectangle = true; 
 				}
-				else{
-					isRectangle = false; 
-				}
-			}
+			}	
 		}
-		
 		return isRectangle; 
 	}
 	
-	public boolean isSquare(){
+	public boolean isSquare(Building s, Mat image){
 		boolean isSquare = false;
-		if(isRectangle()){
-			if(building.height == building.width){
-				isSquare = true; 
-			}
+		int bNum = s.getBuildingNumber(); 
+		Mat subimage  = image.submat(s.getCenterOfMassY()-s.getHeight()/2, s.getCenterOfMassY()+s.getHeight()/2, s.getCenterOfMassX()-s.getWidth()/2, s.getCenterOfMassX()-s.getWidth()/2); 
+		Mat template = Highgui.imread(getClass().getResource("square.jpg").getPath());
+		int result_cols = subimage.cols() - template.cols() + 1;
+		int result_rows = subimage.rows() - template.rows() + 1;
+		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+		Imgproc.matchTemplate(subimage, subimage, result, Imgproc.TM_CCOEFF_NORMED);
+		
+		for (int i = 0; i < result_rows; i++){
+			for (int j = 0; j < result_cols; j++) {
+				if(result.get(i, j)[0]>0){
+				 isSquare = true; 
+				}
+			}	
 		}
 		
 		return isSquare; 
 	}
 	
-	public boolean isNonRectangle(){
+	public boolean isNonRectangle(Building s, Mat image){
 		boolean isNonRectangle = false; 
-		if(!isSquare() && !isRectangle()){
+		if(!isSquare(s, image) && !isRectangle(s, image)){
 			isNonRectangle = true; 
 		}
 		return isNonRectangle; 
@@ -465,15 +542,43 @@ public class WhatDescriptions {
 		return hasJagged; 
 	}
 	
-	public boolean isIShaped(){
+	public boolean isIShaped(Building s, Mat image){
 		boolean isIShaped = false;
-		//TODO
+		int bNum = s.getBuildingNumber(); 
+		Mat subimage  = image.submat(s.getCenterOfMassY()-s.getHeight()/2, s.getCenterOfMassY()+s.getHeight()/2, s.getCenterOfMassX()-s.getWidth()/2, s.getCenterOfMassX()-s.getWidth()/2); 
+		Mat template = Highgui.imread(getClass().getResource("iShape.jpg").getPath());
+		int result_cols = subimage.cols() - template.cols() + 1;
+		int result_rows = subimage.rows() - template.rows() + 1;
+		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+		Imgproc.matchTemplate(subimage, subimage, result, Imgproc.TM_CCOEFF_NORMED);
+		
+		for (int i = 0; i < result_rows; i++){
+			for (int j = 0; j < result_cols; j++) {
+				if(result.get(i, j)[0]>0){
+				 isIShaped = true; 
+				}
+			}	
+		}
 		return isIShaped; 
 	}
 	
-	public boolean isLShaped(){
+	public boolean isLShaped(Building s, Mat image){
 		boolean isLShaped = false;
-		//TODO
+		int bNum = s.getBuildingNumber(); 
+		Mat subimage  = image.submat(s.getCenterOfMassY()-s.getHeight()/2, s.getCenterOfMassY()+s.getHeight()/2, s.getCenterOfMassX()-s.getWidth()/2, s.getCenterOfMassX()-s.getWidth()/2); 
+		Mat template = Highgui.imread(getClass().getResource("lShape.jpg").getPath());
+		int result_cols = subimage.cols() - template.cols() + 1;
+		int result_rows = subimage.rows() - template.rows() + 1;
+		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
+		Imgproc.matchTemplate(subimage, subimage, result, Imgproc.TM_CCOEFF_NORMED);
+		
+		for (int i = 0; i < result_rows; i++){
+			for (int j = 0; j < result_cols; j++) {
+				if(result.get(i, j)[0]>0){
+				 isLShaped = true; 
+				}
+			}	
+		}
 		return isLShaped; 
 	}
 	
