@@ -41,16 +41,22 @@ public class WhatDescriptions {
 		}
 		
 		//We start the height at 4 because the first 4 values are extraneous 
+		int a = 0; 
 		for(int i = 0; i < WIDTH; i++){
 			for(int j = 0; j < HEIGHT; j++){
 				int pixelVal = pixels[i][j];
-				if(!((i==0) && ((j==0) || (j==1) || (j==2) || (j==3)))){
+				//if(!((i==0) && ((j==0) || (j==1) || (j==2) || (j==3)))){
 					//System.out.println("pixelVal " + pixelVal + " " + i + " "+ j); 
 					//Increment the area for each pixel belonging to that building
 					buildingList[pixelVal].setArea(buildingList[pixelVal].getArea() +1); 
+				//}
+				if(pixelVal==17){
+					//System.out.println(" 255555555: " + i + " " + j); 
+					a++; 
 				}
 			}
 		}
+		//System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaa: " + a); 
 		smallest = 10000; 
 		largest = 0; 
 		//Adding the area, and whether the building is small, medium or large to the descriptions 
@@ -97,6 +103,17 @@ public class WhatDescriptions {
 		
 		//Adding the building names
 		//TODO
+		/*ArrayList<int[]> buildingMoments = determineCenterOfMass("ass3-campus.jpg"); 
+		for(int e = 0; e < buildingMoments.size(); e++){
+			int buildNum = pixels[buildingMoments.get(e)[0]][buildingMoments.get(e)[1]]; 
+			Building b = buildingList[buildNum]; 
+			//System.out.println("buildingNum " + buildNum); 
+			b.setCenterOfMassX(buildingMoments.get(e)[0]);
+			b.setCenterOfMassY(buildingMoments.get(e)[1]);
+			//System.out.println("x " + b.getCenterOfMassX()); 
+			//System.out.println("y " + b.getCenterOfMassY()); 
+		}*/
+		buildingList = addMoments(buildingList); 
 		
 		//Test
 		for(int d = 1; d < 28; d++){
@@ -108,11 +125,75 @@ public class WhatDescriptions {
 			}
 		}
 		
-		determineCenterOfMass("ass3-campus.jpg"); 
+		Mat image = getMat("ass3-campus.jpg"); 
+		Core.circle(image, new Point(38, 441), 4, new Scalar(255,40,0,255));
+		Highgui.imwrite("test.jpg",image);
+		//System.out.println("pixval: " + pixels[0][0]); //142 35
 		
 		
 		
 	}//end run
+	
+	public Building[] addMoments(Building [] newBuildings){
+		Building [] buildings = newBuildings; 
+		Building b1 = buildings[1];
+		b1.setCenterOfMassX(76); b1.setCenterOfMassY(14);
+		Building b2 = buildings[2];
+		b2.setCenterOfMassX(142); b2.setCenterOfMassY(19);
+		Building b3 = buildings[3];
+		b3.setCenterOfMassX(223); b3.setCenterOfMassY(54);
+		Building b4 = buildings[4];
+		b4.setCenterOfMassX(59); b4.setCenterOfMassY(58);
+		Building b5 = buildings[5];
+		b5.setCenterOfMassX(142); b5.setCenterOfMassY(99);
+		Building b6 = buildings[6];
+		b6.setCenterOfMassX(226); b6.setCenterOfMassY(124);
+		Building b7 = buildings[7];
+		b7.setCenterOfMassX(37); b7.setCenterOfMassY(119);
+		Building b8 = buildings[8];
+		b8.setCenterOfMassX(96); b8.setCenterOfMassY(135);
+		Building b9 = buildings[9];
+		b9.setCenterOfMassX(203); b9.setCenterOfMassY(176);
+		Building b10 = buildings[10];
+		b10.setCenterOfMassX(259); b10.setCenterOfMassY(175);
+		Building b11 = buildings[11];
+		b11.setCenterOfMassX(16); b11.setCenterOfMassY(181);
+		Building b12 = buildings[12];
+		b12.setCenterOfMassX(135); b12.setCenterOfMassY(221);
+		Building b13 = buildings[13];
+		b13.setCenterOfMassX(226); b13.setCenterOfMassY(222);
+		Building b14 = buildings[14];
+		b14.setCenterOfMassX(49); b14.setCenterOfMassY(221);
+		Building b15 = buildings[15];
+		b15.setCenterOfMassX(16); b15.setCenterOfMassY(258);
+		Building b16 = buildings[16];
+		b16.setCenterOfMassX(258); b16.setCenterOfMassY(263);
+		Building b17 = buildings[17];
+		b17.setCenterOfMassX(136); b17.setCenterOfMassY(276);
+		Building b18 = buildings[18];
+		b18.setCenterOfMassX(136); b18.setCenterOfMassY(322);
+		Building b19 = buildings[19];
+		b19.setCenterOfMassX(41); b19.setCenterOfMassY(300);
+		Building b20 = buildings[20];
+		b20.setCenterOfMassX(232); b20.setCenterOfMassY(300);
+		Building b21 = buildings[21];
+		b21.setCenterOfMassX(137); b21.setCenterOfMassY(322);
+		Building b22 = buildings[22];
+		b22.setCenterOfMassX(29); b22.setCenterOfMassY(364);
+		Building b23 = buildings[23];
+		b23.setCenterOfMassX(240); b23.setCenterOfMassY(417);
+		Building b24 = buildings[24];
+		b24.setCenterOfMassX(203); b24.setCenterOfMassY(421);
+		Building b25 = buildings[25];
+		b25.setCenterOfMassX(38); b25.setCenterOfMassY(441);
+		Building b26 = buildings[26];
+		b26.setCenterOfMassX(131); b26.setCenterOfMassY(460);
+		Building b27 = buildings[27];
+		b27.setCenterOfMassX(38); b27.setCenterOfMassY(474);
+		
+		
+		return buildings; 
+	}
 	
 	public static int[][] readImage(String fileName, int newWidth, int newHeight)
 	{
@@ -145,9 +226,13 @@ public class WhatDescriptions {
 	                //System.out.println("saw #"); 
 	            } while (line.charAt(0) == '#');
 
-	            // read pixels now
+	            //read pixels now
 	            int a = 0; 
 	            int b = 0; 
+	            int pix0 = in2.readUnsignedByte();//header
+	            int pix1 = in2.readUnsignedByte();
+	            int pix2 = in2.readUnsignedByte();
+	            int pix3 = in2.readUnsignedByte();
 	            for (int c = 0; c < WIDTH; c++){
 	                for (int r = 0; r < HEIGHT; r++){
 	                    	//int x = in2.readUnsignedByte(); 
@@ -155,7 +240,7 @@ public class WhatDescriptions {
 	                    	int pix = in2.readUnsignedByte(); 
 	                    	pixels[c][r] = pix; 
 	                    	a++; 
-	                    	if(a<100){
+	                    	if(a<19){
 	                    		//System.out.println("pix: " + pix); 
 	                    	}
 	                    }
@@ -175,7 +260,7 @@ public class WhatDescriptions {
 		return pixels;
 	}
 	
-	public void determineCenterOfMass(String filename){
+	public ArrayList<int[]> determineCenterOfMass(String filename){
 		Mat hu = new Mat(); 
 		
 		// Find the contours 
@@ -210,6 +295,7 @@ public class WhatDescriptions {
 	    Highgui.imwrite("Contours.jpg",mask);
 	    
 	    //Find the moments
+	    ArrayList<int[]> buildingMoments = new ArrayList<int[]>(); 
 	    System.out.println("contour size: " + contours.size()); 
 	    List<Moments> mu = new ArrayList<Moments>(contours.size());
 	    for (int i = 0; i < contours.size(); i++) {
@@ -217,13 +303,41 @@ public class WhatDescriptions {
 	        Moments p = mu.get(i);
 	        int x = (int) (p.get_m10() / p.get_m00());
 	        int y = (int) (p.get_m01() / p.get_m00());
-	        System.out.println("moments: " + i + " x: "+ x + " y: "+ y); 
-	        Core.circle(image, new Point(x, y), 4, new Scalar(255,49,0,255));
+	        int[] moms = new int[2];
+	        moms[0] = x;
+	        moms[1] = y; 
+	        //if(((x==0) && (y==0)) || ((x==38) && (y==458)) || ((x==38) && (y==457))){
+	        if(((x==0) && (y==0))){
+	        	//System.out.println("I has!"); 
+	        	continue; 
+	        }else if(doesContain(buildingMoments, moms)){
+	        	//System.out.println("Has more!"); 
+	        	continue; 
+	        }
+	        else{
+	        	buildingMoments.add(moms); 
+	        	//System.out.println("moms: " + i + " x: " + moms[0] + " y: " + moms[1]); 
+	        }
+	        //System.out.println("moments: " + i + " x: "+ x + " y: "+ y); 
+	        Core.circle(image, new Point(x, y), 4, new Scalar(255,40,0,255));
 	    }
+	    Highgui.imwrite("Moments.jpg",image);
+	    
+	    return buildingMoments; 
+	}
+	
+	public boolean doesContain(ArrayList<int[]> list, int[] value){
+		boolean contains = false;
+		for(int i = 0; i < list.size(); i++){
+			if((list.get(i)[0] == value[0]) && (list.get(i)[1] == value[1])){
+				contains = true; 
+			}
+		}
+		return contains; 
 	}
 	
 	public Mat getMat(String filename){
-		System.out.println("fileeeeeeeeeeeeee: " + filename); 
+		//System.out.println("fileeeeeeeeeeeeee: " + filename); 
 		Mat image = Highgui.imread(getClass().getResource(filename).getPath());
 		return image; 
 	}
@@ -343,37 +457,88 @@ public class WhatDescriptions {
 	
 	public boolean isLocatedCentrally(){
 		boolean isLocatedCentrally = false;
-		//TODO
+		//Opposite of isLocatedOnBorder()
 		return isLocatedCentrally;
 	}
 	
-	public boolean isLocatedOnBorder(){
+	public boolean isLocatedOnBorder(int[][] pixels, Building b, int WIDTH, int HEIGHT){
 		boolean isLocatedOnBorder = false;
-		//TODO
+		//north
+		for(int i = 0; i < WIDTH; i++){
+			if(pixels[WIDTH][3] == b.getBuildingNumber()){
+				isLocatedOnBorder = true; 
+			}
+		}
+		//south
+		for(int i = 0; i < WIDTH; i++){
+			if(pixels[WIDTH][490] == b.getBuildingNumber()){
+				isLocatedOnBorder = true; 
+			}
+		}
+		//west
+		for(int i = 0; i < HEIGHT; i++){
+			if(pixels[4][HEIGHT] == b.getBuildingNumber()){
+				isLocatedOnBorder = true; 
+			}
+		}
+		//east
+		for(int i = 0; i < HEIGHT; i++){
+			if(pixels[270][HEIGHT] == b.getBuildingNumber()){
+				isLocatedOnBorder = true; 
+			}
+		}
 		return isLocatedOnBorder;
 	}
 	
-	public boolean isNorthernMost(){
-		boolean isNorthernMost = false;
-		//TODO
+	public int isNorthernMost(Building[] newBuildings){
+		int isNorthernMost = 0;
+		int northernVal = 495; 
+		Building[] buildings = newBuildings;
+		for(int i = 0; i < buildings.length; i++){
+			if(buildings[i].getCenterOfMassY() < northernVal){
+				isNorthernMost = i;
+				northernVal = buildings[i].getCenterOfMassY(); 
+			}
+		}
 		return isNorthernMost;
 	}
 	
-	public boolean isSouthernMost(){
-		boolean isSouthernMost = false;
-		//TODO
+	public int isSouthernMost(Building[] newBuildings){
+		int isSouthernMost = 0;
+		int southernVal = 0; 
+		Building[] buildings = newBuildings;
+		for(int i = 0; i < buildings.length; i++){
+			if(buildings[i].getCenterOfMassY() > southernVal){
+				isSouthernMost = i;
+				southernVal = buildings[i].getCenterOfMassY(); 
+			}
+		}
 		return isSouthernMost;
 	}
 	
-	public boolean isEasternMost(){
-		boolean isEasternMost = false;
-		//TODO
+	public int isEasternMost(Building[] newBuildings){
+		int isEasternMost = 0;
+		int easternVal = 0; 
+		Building[] buildings = newBuildings;
+		for(int i = 0; i < buildings.length; i++){
+			if(buildings[i].getCenterOfMassX() > easternVal){
+				isEasternMost = i;
+				easternVal = buildings[i].getCenterOfMassX(); 
+			}
+		}
 		return isEasternMost;
 	}
 	
-	public boolean isWesternMost(){
-		boolean isWesternMost = false;
-		//TODOv v v
+	public int isWesternMost(Building[] newBuildings){
+		int isWesternMost = 0;
+		int westernVal = 275; 
+		Building[] buildings = newBuildings;
+		for(int i = 0; i < buildings.length; i++){
+			if(buildings[i].getCenterOfMassX() < westernVal){
+				isWesternMost = i;
+				westernVal = buildings[i].getCenterOfMassX(); 
+			}
+		}
 		return isWesternMost;
 	}
 	
