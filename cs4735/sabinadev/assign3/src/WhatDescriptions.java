@@ -40,7 +40,7 @@ public class WhatDescriptions {
 			buildingList[a] = b; 
 		}
 		
-		//We start the height at 4 because the first 4 values are extraneous 
+		//Setting the areas
 		int a = 0; 
 		for(int i = 0; i < WIDTH; i++){
 			for(int j = 0; j < HEIGHT; j++){
@@ -57,25 +57,26 @@ public class WhatDescriptions {
 			}
 		}
 		//System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaa: " + a); 
+		
 		smallest = 10000; 
 		largest = 0; 
 		//Adding the area, and whether the building is small, medium or large to the descriptions 
 		for(int c = 1; c < 28; c++){
 			//System.out.println("area: " + buildingList[c].getArea());
 			ArrayList<String> descr = new ArrayList<>();
-			String areaSentence = "with area " + Integer.toString(buildingList[c].getArea()); 
+			String areaSentence = "It has area " + Integer.toString(buildingList[c].getArea()); 
 			descr.add(areaSentence); 
 			
 			if(isSmall(buildingList[c])){
-				String smallSentence = "is a small building";
+				String smallSentence = "It is a small building";
 				descr.add(smallSentence); 
 			}
 			if(isMedium(buildingList[c])){
-				String mediumSentence = "is a medium building";
+				String mediumSentence = "It is a medium building";
 				descr.add(mediumSentence); 
 			}
 			if(isLarge(buildingList[c])){
-				String largeSentence = "is a large building";
+				String largeSentence = "It is a large building";
 				descr.add(largeSentence); 
 			}
 			if(buildingList[c].getArea() < smallest){
@@ -91,18 +92,36 @@ public class WhatDescriptions {
 		
 		//Adding smallest and largest description
 		ArrayList<String> tempDescr = buildingDescriptions.get(magic_smallest);
-		String smallestSentence = "is the smallest building";
+		String smallestSentence = "It is the smallest building";
 		tempDescr.add(smallestSentence);
 		buildingDescriptions.put(magic_smallest, tempDescr); 
 		
 		ArrayList<String> tempLargeDescr = buildingDescriptions.get(magic_largest);
-		String largestSentence = "is the largest building";
+		String largestSentence = "It is the largest building";
 		tempLargeDescr.add(largestSentence);
 		buildingDescriptions.put(magic_largest, tempLargeDescr); 
 		
 		
 		//Adding the building names
-		//TODO
+		try (BufferedReader br = new BufferedReader(new FileReader("ass3-table.txt"))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		    	String delims = "=";
+		    	String[] tokens = line.split(delims);
+		    	//System.out.println("tokens: " + tokens[1]); 
+		    	buildingList[Integer.parseInt(tokens[0])].setBuildingName(tokens[1]); 
+		    	ArrayList<String> nameDescr = buildingDescriptions.get(Integer.parseInt(tokens[0]));
+		    	String nameSentence = "Its name is " + tokens[1]; 
+		    	//System.out.println("name " + nameSentence); 
+		    	nameDescr.add(nameSentence); 
+		    	buildingDescriptions.put(Integer.parseInt(tokens[0]), nameDescr); 
+		    } 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//Adding the moments and center of mass
 		/*ArrayList<int[]> buildingMoments = determineCenterOfMass("ass3-campus.jpg"); 
 		for(int e = 0; e < buildingMoments.size(); e++){
 			int buildNum = pixels[buildingMoments.get(e)[0]][buildingMoments.get(e)[1]]; 
@@ -115,11 +134,38 @@ public class WhatDescriptions {
 		}*/
 		buildingList = addMoments(buildingList); 
 		
+		//Add Border Sentences and NorthernMost/etc
+		for(int e = 1; e < 28; e++){
+			ArrayList<String> borderDescr = buildingDescriptions.get(e);
+			if(isLocatedOnBorder(pixels, buildingList[e], WIDTH, HEIGHT)){
+				String borderSentence = "It is located on the border";
+				borderDescr.add(borderSentence); 
+			}else{
+				String borderSentence = "It is located centrally";
+				borderDescr.add(borderSentence); 
+			}
+			if(isNorthernMost(buildingList) == e){
+				String northernMostSentence = "It is the northern most building."; 
+				borderDescr.add(northernMostSentence); 
+				System.out.println("northttttttttttttttttttttttttttttttttttttttttt"); 
+			}else if(isSouthernMost(buildingList) == e){
+				String southernMostSentence = "It is the souther most building"; 
+				borderDescr.add(southernMostSentence); 
+			}else if(isEasternMost(buildingList) == e){
+				String easternMostSentence = "It is the eastern most building.";
+				borderDescr.add(easternMostSentence); 
+			}else if(isWesternMost(buildingList) == e){
+				String westernMostSentence = "It is the western most building"; 
+				borderDescr.add(westernMostSentence); 
+			}
+			buildingDescriptions.put(e, borderDescr); 
+		}
+		
 		//Test
 		for(int d = 1; d < 28; d++){
 			Building b = buildingList[d]; 
 			ArrayList<String> descr = buildingDescriptions.get(d); 
-			System.out.println("building num: " + b.getBuildingNumber());
+			System.out.println("Building Number " + b.getBuildingNumber());
 			for(String s: descr){
 				System.out.println(s); 
 			}
@@ -465,25 +511,25 @@ public class WhatDescriptions {
 		boolean isLocatedOnBorder = false;
 		//north
 		for(int i = 0; i < WIDTH; i++){
-			if(pixels[WIDTH][3] == b.getBuildingNumber()){
+			if(pixels[i][3] == b.getBuildingNumber()){
 				isLocatedOnBorder = true; 
 			}
 		}
 		//south
 		for(int i = 0; i < WIDTH; i++){
-			if(pixels[WIDTH][490] == b.getBuildingNumber()){
+			if(pixels[i][490] == b.getBuildingNumber()){
 				isLocatedOnBorder = true; 
 			}
 		}
 		//west
 		for(int i = 0; i < HEIGHT; i++){
-			if(pixels[4][HEIGHT] == b.getBuildingNumber()){
+			if(pixels[4][i] == b.getBuildingNumber()){
 				isLocatedOnBorder = true; 
 			}
 		}
 		//east
 		for(int i = 0; i < HEIGHT; i++){
-			if(pixels[270][HEIGHT] == b.getBuildingNumber()){
+			if(pixels[270][i] == b.getBuildingNumber()){
 				isLocatedOnBorder = true; 
 			}
 		}
@@ -494,7 +540,7 @@ public class WhatDescriptions {
 		int isNorthernMost = 0;
 		int northernVal = 495; 
 		Building[] buildings = newBuildings;
-		for(int i = 0; i < buildings.length; i++){
+		for(int i = 1; i < buildings.length; i++){
 			if(buildings[i].getCenterOfMassY() < northernVal){
 				isNorthernMost = i;
 				northernVal = buildings[i].getCenterOfMassY(); 
@@ -507,7 +553,7 @@ public class WhatDescriptions {
 		int isSouthernMost = 0;
 		int southernVal = 0; 
 		Building[] buildings = newBuildings;
-		for(int i = 0; i < buildings.length; i++){
+		for(int i = 1; i < buildings.length; i++){
 			if(buildings[i].getCenterOfMassY() > southernVal){
 				isSouthernMost = i;
 				southernVal = buildings[i].getCenterOfMassY(); 
@@ -520,7 +566,7 @@ public class WhatDescriptions {
 		int isEasternMost = 0;
 		int easternVal = 0; 
 		Building[] buildings = newBuildings;
-		for(int i = 0; i < buildings.length; i++){
+		for(int i = 1; i < buildings.length; i++){
 			if(buildings[i].getCenterOfMassX() > easternVal){
 				isEasternMost = i;
 				easternVal = buildings[i].getCenterOfMassX(); 
@@ -533,7 +579,7 @@ public class WhatDescriptions {
 		int isWesternMost = 0;
 		int westernVal = 275; 
 		Building[] buildings = newBuildings;
-		for(int i = 0; i < buildings.length; i++){
+		for(int i = 1; i < buildings.length; i++){
 			if(buildings[i].getCenterOfMassX() < westernVal){
 				isWesternMost = i;
 				westernVal = buildings[i].getCenterOfMassX(); 
