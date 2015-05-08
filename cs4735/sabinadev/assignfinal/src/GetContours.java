@@ -17,13 +17,13 @@ public class GetContours {
 	public void run(){
 		
 		// Find the contours 
-		String filename = "playing_card_3.jpg"; 
+		String filename = "Images/playing_card_5.jpg"; 
 		Mat image = Highgui.imread(getClass().getResource(filename).getPath());
 		
 		Mat imageHSV = new Mat(image.size(), Core.DEPTH_MASK_8U);
 	    Mat imageThresh = new Mat(image.size(), Core.DEPTH_MASK_ALL);
 	    Mat imageCanny = new Mat(image.size(), Core.DEPTH_MASK_ALL);
-			
+		System.out.println("dims " + image.dims()); 
 	    Imgproc.cvtColor(image, imageHSV, Imgproc.COLOR_BGR2GRAY);
 	    //Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
 	    //Imgproc.adaptiveThreshold(imageHSV, imageThresh, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
@@ -31,10 +31,26 @@ public class GetContours {
 	    Imgproc.Canny(image, imageCanny, 100, 200); 
 	    Highgui.imwrite("Edges.jpg",imageCanny);
 			    
-	    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();    
-	    Imgproc.findContours(imageThresh, contours, new Mat(), Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
+	    List<MatOfPoint> contours = new ArrayList<MatOfPoint>(); 
+	    Mat hierarchy = new Mat();
+	    Imgproc.findContours(imageThresh, contours, hierarchy, Imgproc.RETR_CCOMP,Imgproc.CHAIN_APPROX_SIMPLE);
 	    System.out.println("Contour size: " + contours.size());
-
+	    
+	    // Get the moments 
+	    List<Moments> moments = new ArrayList<Moments>(contours.size());
+	    for (int i = 0; i < contours.size(); i++) {
+	        moments.add(i, Imgproc.moments(contours.get(i), false));
+		    // Get hu moments
+		    //Imgproc.HuMoments(moments.get(i), hu); 
+	    }
+	    System.out.println("Size of moments: " + moments.size());
+	    Mat hu =  new Mat();
+	    Imgproc.HuMoments(moments.get(0), hu); 
+	    System.out.println("hu size: " + hu.total());
+	    double buff[] = new double[(int) (hu.total() * hu.channels())];
+	    hu.get(0, 0, buff);
+	    System.out.println("Buff values: " + buff[0] + " " + buff[1] + " " + buff[2]);
+	    
 	    // Draw the contours
 	    //Mat drawing = new Mat(image.size(), Core.DEPTH_MASK_8U); 
 	    Mat mask = Mat.zeros(image.rows(),image.cols(),image.type());
@@ -48,8 +64,10 @@ public class GetContours {
 	        Highgui.imwrite(iname,mask); 
 	    }   
 	    Highgui.imwrite("Contours.jpg",mask); 
-		
-		
+	    String dump = hierarchy.dump();
+		System.out.println("hierarchy: " + hierarchy.get(0, 0).getClass()); 
+		System.out.println("size " + hierarchy.size()); 
+		System.out.println("dump " + dump); 
 		
 	}
 	
