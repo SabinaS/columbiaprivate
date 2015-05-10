@@ -26,7 +26,7 @@ public class GetContours {
 		System.out.println("isSameX : " + c); 
 		
 		// Read the image
-		String filename = "Images/playing_card_3.png"; 
+		String filename = "Images/playing_card_6.png"; 
 		Mat image = Highgui.imread(getClass().getResource(filename).getPath());
 		
 		// Apply the thresh and canny
@@ -50,7 +50,16 @@ public class GetContours {
 	   // Reduce the number of moments
 	    int actualMoments = getReducedMoments(moments); 
 	    
-		
+		// Return the card number
+	    int cardNumber = getCardNumber(actualMoments); 
+	    System.out.println("cardNumber: " + cardNumber); 
+	}
+
+
+	private int getCardNumber(int actualMoments) {
+		int extraContours = 5; 
+		int cardNumber = actualMoments - extraContours; 
+		return cardNumber;
 	}
 
 
@@ -75,7 +84,7 @@ public class GetContours {
 	        //Imgproc.drawContours(mask, contours, -1, new Scalar(0,0,255));
 	        //System.out.println("contourArea: " + Imgproc.contourArea(contours.get(i)));
 	        String iname = "contours" + Integer.toString(i) + ".jpg"; 
-	        Highgui.imwrite(iname,mask); 
+	        //Highgui.imwrite(iname,mask); 
 	    }   
 	    Highgui.imwrite("Contours.jpg",mask); 
 	    
@@ -96,7 +105,7 @@ public class GetContours {
 	        int y = (int) (p.get_m01() / p.get_m00());
 	        System.out.println("x " + x + " -- y " + y); 
 	        // Draw moment on the original image
-	        Core.circle(image, new Point(x, y), 10, new Scalar(255,0,0), 1); 
+	        //Core.circle(image, new Point(x, y), 10, new Scalar(255,0,0), 1); 
 	    }
 	    Highgui.imwrite("Moments.jpg",image);
 	    
@@ -152,7 +161,7 @@ public class GetContours {
 		}
 		System.out.println("momentCount: " + momentCount); 
 		
-		return 0;
+		return momentCount;
 	}
 	
 	public boolean isSameX(int x1, int x2){
