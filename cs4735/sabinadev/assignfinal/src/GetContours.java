@@ -26,14 +26,15 @@ public class GetContours {
 		//System.out.println("isSameX : " + c); 
 		
 		// Read the image
-		String filename = "CardNumbers/playing_card_10.png"; 
+		String filename = "CardNumbers/playing_card_5.png"; 
+		System.out.println("Reading in: " + filename); 
 		Mat image = Highgui.imread(getClass().getResource(filename).getPath());
 		
 		// Apply the thresh and canny
 		Mat imageHSV = new Mat(image.size(), Core.DEPTH_MASK_8U);
 	    Mat imageThresh = new Mat(image.size(), Core.DEPTH_MASK_ALL);
 	    Mat imageCanny = new Mat(image.size(), Core.DEPTH_MASK_ALL);
-		System.out.println("dims " + image.dims()); 
+		//System.out.println("dims " + image.dims()); 
 	    Imgproc.cvtColor(image, imageHSV, Imgproc.COLOR_BGR2GRAY);
 	    //Imgproc.GaussianBlur(imageHSV, imageBlurr, new Size(5,5), 0);
 	    //Imgproc.adaptiveThreshold(imageHSV, imageThresh, 255,Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY,7, 5);
@@ -94,9 +95,9 @@ public class GetContours {
 	    Highgui.imwrite("Contours.jpg",mask); 
 	    
 	    String dump = hierarchy.dump();
-		System.out.println("hierarchy: " + hierarchy.get(0, 0).getClass()); 
-		System.out.println("size " + hierarchy.size()); 
-		System.out.println("dump " + dump); 
+		//System.out.println("hierarchy: " + hierarchy.get(0, 0).getClass()); 
+		//System.out.println("size " + hierarchy.size()); 
+		//System.out.println("dump " + dump); 
 		
 	    return contours; 
 	}
@@ -108,9 +109,9 @@ public class GetContours {
 	        Moments p = mu.get(i);
 	        int x = (int) (p.get_m10() / p.get_m00());
 	        int y = (int) (p.get_m01() / p.get_m00());
-	        System.out.println("x: " + x + " -- y: " + y); 
+	        //System.out.println("x: " + x + " -- y: " + y); 
 	        // Draw moment on the original image
-	        //Core.circle(image, new Point(x, y), 10, new Scalar(255,0,0), 1); 
+	        Core.circle(image, new Point(x, y), 10, new Scalar(255,0,0), 3); 
 	    }
 	    Highgui.imwrite("Moments.jpg",image);
 	    
@@ -133,7 +134,7 @@ public class GetContours {
 	        Moments p = mu.get(i);
 	        int x = (int) (p.get_m10() / p.get_m00());
 	        int y = (int) (p.get_m01() / p.get_m00());
-	        System.out.println("x " + x + " -- y " + y);
+	        //System.out.println("x " + x + " -- y " + y);
 	       
 	        if(x>max_x){
 	        	max_x = x;
@@ -153,7 +154,7 @@ public class GetContours {
 		 	        	if(numFound >maxSame){
 		 	        		maxSame = numFound; 
 		 	        	}
-		 	        	System.out.println("sameX: " + x + " " + x2 + " sameY: " + y + " " + y2 + " " +numFound); 
+		 	        	//System.out.println("sameX: " + x + " " + x2 + " sameY: " + y + " " + y2 + " " +numFound); 
 		 	        }
 	        	}
 	        }
@@ -164,7 +165,7 @@ public class GetContours {
 		if(extraMoments != 1){
 		momentCount = momentCount - extraMoments; 
 		}
-		System.out.println("momentCount: " + momentCount); 
+		//System.out.println("momentCount: " + momentCount); 
 		
 		return momentCount;
 	}
