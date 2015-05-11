@@ -9,7 +9,7 @@ from operator import itemgetter
 
 import cv2
 import numpy as np
-from VisualBlackjack import VisualBlackjack 
+from VisualBlackjack import readImage
 
 CARD_VALUE = 10
 
@@ -20,7 +20,6 @@ class GetThreshold():
         thresh_value = ([0, 175, 0], [255, 255, 255])
         
         # Open the webcam and read an image
-        vb = VisualBlackjack()
         cap = cv2.VideoCapture(0)
         if cap.isOpened():
             ret, frame = cap.read()
@@ -42,7 +41,7 @@ class GetThreshold():
                 continue
         
         # Get number of card value of that image
-        card_val= vb.readImage(frame, thresh_value)
+        card_val= readImage(frame, thresh_value)
         
         # Continuously compare to CARD_VALUE
         # If we still haven't gotten 10 or our green is above 230, don't keep going
@@ -54,7 +53,7 @@ class GetThreshold():
                 else: 
                     new_thresh = thresh_value[0][1] + 10
                     thresh_value[0][1] = new_thresh
-                    card_val= vb.readImage(frame, thresh_value)
+                    card_val= readImage(frame, thresh_value)
             else:
                 keep_going = False
         return thresh_value

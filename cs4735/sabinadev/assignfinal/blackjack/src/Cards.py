@@ -19,7 +19,13 @@ class Cards():
     QUEEN = 12
     KING = 13
     
+    HEARTS = 0
+    SPADES = 1
+    CLUBS = 2
+    DIAMONDS = 3
+    
     CARDS = ["Unknown", "Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
+    SUITS = ["Hearts", "Spades", "Clubs", "Diamonds"]
     
     CARD_VALUES = [None, 11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 

@@ -1,6 +1,5 @@
 '''
 Created on May 7, 2015
-
 @author: sabinasmajlaj
 '''
 
@@ -20,50 +19,46 @@ class ContourValue():
     '''
     Given the original image and a contour of a card, get its rank
     '''
-    def getContourValue(self, img, cnt):
+    def getContourValue(self, img, cnt, b_thresh):
         cv2.imwrite('Orig.png', img)
-        # Threshold the image to BW
-        # A boundary for any non-green pixel
-        green_boundary = ([0, 230, 0], [255, 255, 255])
-        lower_boundary = np.array(green_boundary[0], dtype="uint8")
-        upper_boundary = np.array(green_boundary[1], dtype="uint8")
+        # Black out everything except the card we're dealing with
+        mask = np.zeros_like(img)
+        cv2.drawContours(mask, [cnt], 0, (255, 255, 255), -1)
+        card_img = np.zeros_like(img)
+        card_img[mask == (255, 255, 255)] = img[mask == (255, 255, 255)]
         
-        # Apply a mask to the image, using the boundaries
-        mask = cv2.inRange(img, lower_boundary, upper_boundary)
-        img = cv2.bitwise_and(img, img, mask = mask)
-        #cv2.imwrite('Orig2.png', img)
+        cv2.imwrite("Output.png", card_img)
         
-        # Get an image of only this card from this
-        mask = np.zeros_like(img) # Create mask where white is what we want, black otherwise
-        cv2.drawContours(mask, [cnt], 0, 255, -1) # Draw filled contour in mask
-        card_img = np.zeros_like(img) # Extract out the object and place into output image
-        card_img[mask == 255] = img[mask == 255]
-        
+        # Binarize the image
         imggray = cv2.cvtColor(card_img, cv2.COLOR_BGR2GRAY)
-        ret, card_img = cv2.threshold(imggray, 0, 255, 0)
         
-        # Apply BW and threshold
-        #image_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        #ret, image_thresh = cv2.threshold(image_HSV,100,255,cv2.THRESH_BINARY)
-         #cv2.imwrite('Thresh.png', card_img)
-        image_canny = cv2.Canny(card_img,100,200) 
-        cv2.imwrite('Canny.png', image_canny)
+        #print b_thresh
+        ret, card_img = cv2.threshold(imggray, b_thresh, 255, 0)
+        
+        kernel = np.ones((2,2), np.uint8)
+        card_img = cv2.erode(card_img, kernel, iterations=1)
+        card_img = cv2.dilate(card_img, kernel, iterations=1)
+        #if b_thresh == 195:
+        #    cv2.imshow('b_out', card_img)
+        #    cv2.imwrite("b_out.png", card_img)
+        #    cv2.waitKey(0)
+        #    cv2.destroyAllWindows()
+
+        #image_canny = cv2.Canny(card_img,100,200) 
+        #cv2.imwrite('Canny.png', image_canny)
         
         # Get contours
         contours = self.getContours(card_img)
-        contour_img = cv2.drawContours(img, contours, 3, (0,255,0), 3)
-        #cv2.imwrite('Contours.png', contour_img)
+        #contour_img = cv2.drawContours(img, contours, 3, (0,255,0), 3)
         
         # Get the moments
         moment_list = self.getMoments(contours)
         
         # Reduce the moments
         moment_count = self.getReducedMoments(moment_list)
-        print "moment_count: %d" %moment_count
         
         # Get the final card number value
         card_number = self.getCardNumber(moment_count)
-        print "card_number %d" %card_number
         return card_number
     
     def getContours(self, img):
@@ -76,8 +71,7 @@ class ContourValue():
             M = cv2.moments(contours[i])
             #testing
             moment_list.append(M) #add the moment to the list
-            #print("m10: %d and m00: %d" % (M['m10'], M['m00']))
-            #print("m01: %d and m00: %d" % (M['m01'], M['m00']))
+
             if((M['m10'] !=0) and (M['m01'] !=0) and (M['m00'] !=0)):
                 cx = int(M['m10']/M['m00'])
                 cy = int(M['m01']/M['m00'])
@@ -112,7 +106,6 @@ class ContourValue():
                                 numFound +=1
                                 if(numFound > maxSame):
                                     maxSame = numFound
-                                print("cx: %d and dx: %d -- cy: %d and dy: %d found: %d" % (cx, dx, cy, dy, numFound))
             
         # Check for extra contours
         extra_moments = (maxSame -1) *2
@@ -141,12 +134,12 @@ class ContourValue():
       
     def getCardNumber(self, moment_count): 
         extra_contours = 5
-        if(moment_count>16):
-            extra_contours = 7
+        if moment_count == 19:
+            extra_contours = 9
+        elif moment_count > 15:
+            return moment_count
         card_number = moment_count - extra_contours
         return card_number
         
     def __init__(self):
         return None
-    
-    
